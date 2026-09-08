@@ -603,22 +603,30 @@ def benchmark(question: str) -> None:
     console.print(answer)
     
 @app.command("evaluate")
-def evaluate(dataset: str) -> None:
+def evaluate(
+    dataset: str,
+    judge: bool = typer.Option(False, "--judge", help="Enable LLM-as-a-judge faithfulness and relevance scoring"),
+) -> None:
     """Evaluate retrieval quality on a benchmark dataset."""
 
     evaluator = RetrievalEvaluator()
 
-    report = evaluator.evaluate(dataset)
+    report = evaluator.evaluate(dataset, judge=judge)
 
-    console.print("\n[bold cyan]KnowledgeOS Evaluation[/bold cyan]\n")
+    console.print("\n[bold cyan]RAGForge Evaluation Report[/bold cyan]\n")
 
-    console.print(f"Queries            : {report['queries']}")
-    console.print(f"Accuracy@1         : {report['accuracy@1']:.2%}")
-    console.print(f"Accuracy@3         : {report['accuracy@3']:.2%}")
-    console.print(f"Precision@3        : {report['precision@3']:.3f}")
-    console.print(f"Recall@3           : {report['recall@3']:.3f}")
+    console.print(f"Queries              : {report['queries']}")
+    console.print(f"Accuracy@1           : {report['accuracy@1']:.2%}")
+    console.print(f"Accuracy@3           : {report['accuracy@3']:.2%}")
+    console.print(f"Precision@3          : {report['precision@3']:.3f}")
+    console.print(f"Recall@3             : {report['recall@3']:.3f}")
     console.print(f"Mean Reciprocal Rank : {report['mrr']:.3f}")
-    console.print(f"Average Latency    : {report['avg_latency_ms']:.2f} ms")
+    console.print(f"Average Latency      : {report['avg_latency_ms']:.2f} ms")
+
+    if "avg_faithfulness" in report:
+        console.print(f"[bold yellow]Faithfulness (Judge) : {report['avg_faithfulness']:.2%}[/bold yellow]")
+    if "avg_relevance" in report:
+        console.print(f"[bold yellow]Relevance (Judge)    : {report['avg_relevance']:.2%}[/bold yellow]")
 
     console.print("\n[bold green]Per Query Results[/bold green]\n")
 
@@ -632,6 +640,10 @@ def evaluate(dataset: str) -> None:
         console.print(
             f"[magenta]Latency:[/magenta] {result['latency_ms']:.2f} ms"
         )
+        if "faithfulness" in result and result["faithfulness"] is not None:
+            console.print(f"[yellow]Faithfulness:[/yellow] {result['faithfulness']:.2f}")
+        if "relevance" in result and result["relevance"] is not None:
+            console.print(f"[yellow]Relevance:[/yellow] {result['relevance']:.2f}")
         console.print("-" * 70)
 
 

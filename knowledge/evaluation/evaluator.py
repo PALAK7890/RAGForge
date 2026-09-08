@@ -12,6 +12,7 @@ from knowledge.rerankers.cross_encoder import CrossEncoderReranker
 from knowledge.vectorstores.faiss_store import FAISSStore
 
 from knowledge.evaluation.dataset import EvaluationDataset
+from knowledge.evaluation.judge import LLMJudgeEvaluator
 from knowledge.evaluation.metrics import (
     accuracy_at_k,
     precision_at_k,
@@ -19,23 +20,24 @@ from knowledge.evaluation.metrics import (
     reciprocal_rank,
     mean_reciprocal_rank,
 )
+from knowledge.llms.ollama_llm import OllamaLLM
 
 
 class RetrievalEvaluator:
 
-    def __init__(self):
-
+    def __init__(self) -> None:
         self.embedder = SentenceTransformerEmbedding()
-
         self.vector_store = FAISSStore()
         self.vector_store.load(".knowledge/index/faiss.index")
-
         self.reranker = CrossEncoderReranker()
+        self.llm = OllamaLLM()
+        self.judge = LLMJudgeEvaluator()
 
     def evaluate(
         self,
         dataset_path: str,
-    ):
+        judge: bool = False,
+    ) -> dict:
 
         dataset = EvaluationDataset(dataset_path).load()
 
@@ -60,6 +62,8 @@ class RetrievalEvaluator:
         rr_scores = []
 
         latencies = []
+        faithfulness_scores = []
+        relevance_scores = []
 
         results = []
 
@@ -154,25 +158,45 @@ class RetrievalEvaluator:
 
             latencies.append(latency)
 
-            results.append(
-                {
-                    "question": question,
-                    "expected": expected,
-                    "retrieved": [
-                        Path(chunks[i]["source_path"]).name
-                        for i in retrieved
-                    ],
-                    "latency_ms": latency,
-                }
-            )
+            faith_score = None
+            rel_score = None
+            if judge:
+                context_str = "\n\n".join(chunks[i]["text"] for i in retrieved)
+                ans = self.llm.generate(question, context_str)
+                j_res = self.judge.evaluate_response(question, context_str, ans)
+                faith_score = j_res["faithfulness"]
+                rel_score = j_res["relevance"]
+                faithfulness_scores.append(faith_score)
+                relevance_scores.append(rel_score)
 
-        return {
+            result_entry = {
+                "question": question,
+                "expected": expected,
+                "retrieved": [
+                    Path(chunks[i]["source_path"]).name
+                    for i in retrieved
+                ],
+                "latency_ms": latency,
+            }
+            if judge:
+                result_entry["faithfulness"] = faith_score
+                result_entry["relevance"] = rel_score
+
+            results.append(result_entry)
+
+        report = {
             "queries": len(dataset),
-            "accuracy@1": sum(accuracy1) / len(accuracy1),
-            "accuracy@3": sum(accuracy3) / len(accuracy3),
-            "precision@3": sum(precision3) / len(precision3),
-            "recall@3": sum(recall3) / len(recall3),
+            "accuracy@1": sum(accuracy1) / len(accuracy1) if accuracy1 else 0.0,
+            "accuracy@3": sum(accuracy3) / len(accuracy3) if accuracy3 else 0.0,
+            "precision@3": sum(precision3) / len(precision3) if precision3 else 0.0,
+            "recall@3": sum(recall3) / len(recall3) if recall3 else 0.0,
             "mrr": mean_reciprocal_rank(rr_scores),
-            "avg_latency_ms": sum(latencies) / len(latencies),
+            "avg_latency_ms": sum(latencies) / len(latencies) if latencies else 0.0,
             "results": results,
         }
+
+        if judge and faithfulness_scores:
+            report["avg_faithfulness"] = sum(faithfulness_scores) / len(faithfulness_scores)
+            report["avg_relevance"] = sum(relevance_scores) / len(relevance_scores)
+
+        return report
