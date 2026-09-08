@@ -778,5 +778,66 @@ def topics_cmd() -> None:
     console.print(table)
 
 
+@app.command("feedback")
+def feedback_cmd(
+    query: str = typer.Argument(..., help="Search query"),
+    chunk_text: str = typer.Option(..., "--text", "-t", help="Chunk text being rated"),
+    rating: int = typer.Option(1, "--rating", "-r", help="Rating (+1 for relevant/thumbs up, 0 or -1 for irrelevant)"),
+    chunk_id: str = typer.Option(None, "--chunk-id", help="Chunk identifier"),
+) -> None:
+    """Record user relevance judgment on retrieved context."""
+    from knowledge.feedback.store import FeedbackStore
+    store = FeedbackStore()
+    entry = store.record_feedback(query=query, chunk_text=chunk_text, rating=rating, chunk_id=chunk_id)
+    console.print(f"[bold green]Feedback recorded with ID: {entry['feedback_id']}[/bold green]")
+
+
+@app.command("list-feedback")
+def list_feedback_cmd() -> None:
+    """List accumulated user feedback judgments."""
+    from rich.table import Table
+    from knowledge.feedback.store import FeedbackStore
+
+    store = FeedbackStore()
+    records = store.get_all()
+
+    if not records:
+        console.print("[yellow]No feedback recorded yet. Use 'knowledge feedback' to add ratings.[/yellow]")
+        return
+
+    table = Table(title=f"Logged Feedback Judgments ({len(records)} entries)")
+    table.add_column("ID", justify="center", style="cyan")
+    table.add_column("Query", style="green")
+    table.add_column("Rating", justify="center", style="magenta")
+    table.add_column("Chunk Snippet", style="white")
+
+    for r in records:
+        table.add_row(
+            r["feedback_id"],
+            r["query"][:40],
+            str(r["rating"]),
+            r["chunk_text"][:60] + "...",
+        )
+
+    console.print(table)
+
+
+@app.command("tune-reranker")
+def tune_reranker_cmd(
+    epochs: int = typer.Option(1, "--epochs", "-e", help="Fine-tuning epochs"),
+    output_dir: str = typer.Option(".knowledge/models/fine_tuned_reranker", "--output", "-o", help="Model destination"),
+) -> None:
+    """Fine-tune the CrossEncoder reranker from accumulated user feedback."""
+    from knowledge.feedback.tuner import FeedbackRerankerTuner
+    console.print("[bold cyan]Starting active learning CrossEncoder tuning from feedback...[/bold cyan]")
+    tuner = FeedbackRerankerTuner()
+    try:
+        result = tuner.tune_from_feedback(output_dir=output_dir, epochs=epochs)
+        console.print(f"[bold green]Reranker successfully fine-tuned and saved to: {result['model_path']}[/bold green]")
+        console.print(f"Trained on {result['training_samples']} feedback judgments.")
+    except Exception as e:
+        console.print(f"[bold red]Tuning failed: {str(e)}[/bold red]")
+
+
 if __name__ == "__main__":
     app()

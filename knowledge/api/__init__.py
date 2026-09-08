@@ -15,6 +15,8 @@ from knowledge.api.schemas import (
     BenchmarkRequest,
     BenchmarkResponse,
     EvaluateRequest,
+    FeedbackRequest,
+    FeedbackResponse,
 )
 
 __all__ = [
@@ -30,4 +32,6 @@ __all__ = [
     "BenchmarkRequest",
     "BenchmarkResponse",
     "EvaluateRequest",
+    "FeedbackRequest",
+    "FeedbackResponse",
 ]

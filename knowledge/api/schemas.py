@@ -112,3 +112,20 @@ class BenchmarkResponse(BaseModel):
 class EvaluateRequest(BaseModel):
     """Payload to evaluate against a benchmark dataset."""
     dataset_path: str = Field(default="knowledge/evaluation/question.json", description="Path to evaluation questions dataset")
+
+
+class FeedbackRequest(BaseModel):
+    """Payload to record relevance judgment."""
+    query: str
+    chunk_text: str
+    rating: int = Field(default=1, description="+1 for positive, 0 or -1 for negative")
+    chunk_id: Optional[str] = None
+    source_path: Optional[str] = None
+
+
+class FeedbackResponse(BaseModel):
+    """Response returning confirmation of logged feedback."""
+    feedback_id: str
+    query: str
+    rating: int
+    timestamp: str

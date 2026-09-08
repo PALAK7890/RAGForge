@@ -59,3 +59,20 @@ def test_agent_ask_fallback_endpoint() -> None:
         assert "answer" in data
         assert "query_type" in data
         assert "sufficiency" in data
+
+
+def test_record_feedback_endpoint() -> None:
+    """Verify posting feedback returns 200 and confirms logged feedback ID."""
+    response = client.post(
+        "/feedback",
+        json={
+            "query": "What is FAISS?",
+            "chunk_text": "FAISS is a vector index library.",
+            "rating": 1,
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "feedback_id" in data
+    assert data["query"] == "What is FAISS?"
+    assert data["rating"] == 1

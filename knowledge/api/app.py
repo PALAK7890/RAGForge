@@ -22,6 +22,8 @@ from knowledge.api.schemas import (
     SearchResponse,
     SearchResultChunk,
     StatsResponse,
+    FeedbackRequest,
+    FeedbackResponse,
 )
 from knowledge.api.service import RAGService
 
@@ -179,3 +181,18 @@ def run_evaluation(payload: EvaluateRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/feedback", response_model=FeedbackResponse)
+def record_feedback(payload: FeedbackRequest) -> FeedbackResponse:
+    """Record user relevance judgment for active learning."""
+    from knowledge.feedback.store import FeedbackStore
+    store = FeedbackStore()
+    res = store.record_feedback(
+        query=payload.query,
+        chunk_text=payload.chunk_text,
+        rating=payload.rating,
+        chunk_id=payload.chunk_id,
+        source_path=payload.source_path,
+    )
+    return FeedbackResponse(**res)
