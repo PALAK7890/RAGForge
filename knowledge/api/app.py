@@ -196,3 +196,87 @@ def record_feedback(payload: FeedbackRequest) -> FeedbackResponse:
         source_path=payload.source_path,
     )
     return FeedbackResponse(**res)
+
+
+@app.get("/agent-stream/{query}")
+def agent_stream(
+    query: str,
+    max_retries: int = Query(default=3, ge=1, le=10, description="Max retrieve-rewrite cycles"),
+) -> StreamingResponse:
+    """Stream agentic RAG progress events via Server-Sent Events.
+
+    Yields newline-delimited JSON strings, one per logical step:
+    - ``{"event": "start", "attempt": 1, "query": "..."}``
+    - ``{"event": "retrieved", "attempt": 1, "chunks": <count>}``
+    - ``{"event": "graded", "attempt": 1, "sufficiency": "insufficient"}``
+    - ``{"event": "rewriting", "attempt": 2, "query": "..."}``
+    - ``{"event": "answer", "sufficiency": "...", "rewrites": N, "text": "..."}``
+
+    This is a manual loop mirroring run_agent_workflow so it works across
+    LangGraph versions without depending on internal streaming APIs.
+    """
+    import json as _json
+
+    from knowledge.agent.nodes import (
+        generate_answer as _generate,
+    )
+    from knowledge.agent.nodes import (
+        grade_sufficiency as _grade,
+    )
+    from knowledge.agent.nodes import (
+        retrieve_context as _retrieve,
+    )
+    from knowledge.agent.nodes import (
+        rewrite_query as _rewrite,
+    )
+    from knowledge.agent.nodes import (
+        route_query as _route,
+    )
+    from knowledge.agent.state import AgentState
+
+    def event_stream() -> Iterator[str]:
+        state: AgentState = {
+            "original_query": query,
+            "current_query": query,
+            "query_type": "factual",
+            "top_k": 5,
+            "retrieved_chunks": [],
+            "sufficiency": "pending",
+            "sufficiency_reason": "",
+            "rewrite_count": 0,
+            "max_retries": max_retries,
+            "answer": "",
+            "sources": [],
+            "latencies": {},
+        }
+
+        # Route once to classify intent
+        state = _route(state)
+
+        attempt = 1
+        while True:
+            yield _json.dumps({"event": "start", "attempt": attempt, "query": state["current_query"]}) + "\n"
+
+            state = _retrieve(state)
+            yield _json.dumps({"event": "retrieved", "attempt": attempt, "chunks": len(state["retrieved_chunks"])}) + "\n"
+
+            state = _grade(state)
+            yield _json.dumps({"event": "graded", "attempt": attempt, "sufficiency": state["sufficiency"]}) + "\n"
+
+            if state["sufficiency"] == "sufficient" or state["rewrite_count"] >= max_retries:
+                break
+
+            state = _rewrite(state)
+            attempt += 1
+            yield _json.dumps({"event": "rewriting", "attempt": attempt, "query": state["current_query"]}) + "\n"
+
+        state = _generate(state)
+        yield _json.dumps({
+            "event": "answer",
+            "sufficiency": state["sufficiency"],
+            "rewrites": state["rewrite_count"],
+            "sources": state["sources"],
+            "text": state["answer"],
+        }) + "\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

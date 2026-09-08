@@ -77,3 +77,36 @@ def test_record_feedback_endpoint() -> None:
     assert "feedback_id" in data
     assert data["query"] == "What is FAISS?"
     assert data["rating"] == 1
+
+
+def test_agent_stream_endpoint() -> None:
+    """Verify /agent-stream/{query} returns an SSE stream with start and answer events.
+
+    Collects all newline-delimited JSON events emitted by the stream, then
+    confirms at minimum a 'start' event and an 'answer' event are present.
+    """
+    import json as _json
+
+    raw_lines: list[str] = []
+    with client.stream("GET", "/agent-stream/What%20is%20RAGForge") as response:
+        assert response.status_code == 200
+        assert "event-stream" in response.headers.get("content-type", "")
+        for line in response.iter_lines():
+            if line.strip():
+                raw_lines.append(line.strip())
+
+    events = []
+    for line in raw_lines:
+        try:
+            events.append(_json.loads(line))
+        except _json.JSONDecodeError:
+            pass  # ignore non-JSON lines
+
+    event_types = [e.get("event") for e in events]
+    assert "start" in event_types, f"Expected 'start' event, got: {event_types}"
+    assert "answer" in event_types, f"Expected 'answer' event, got: {event_types}"
+
+    answer_event = next(e for e in events if e.get("event") == "answer")
+    assert "text" in answer_event
+    assert "rewrites" in answer_event
+    assert "sufficiency" in answer_event
