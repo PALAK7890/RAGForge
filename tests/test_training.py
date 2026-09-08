@@ -67,3 +67,13 @@ def test_reranker_trainer_validation(tmp_path: Path) -> None:
     empty_file.write_text("[]", encoding="utf-8")
     with pytest.raises(ValueError):
         trainer.train(training_data_path=str(empty_file))
+
+
+def test_synthetic_generator_empty_chunks_raises(tmp_path: Path) -> None:
+    """Verify SyntheticDataGenerator raises ValueError when chunks list is empty."""
+    chunks_file = tmp_path / "chunks.json"
+    chunks_file.write_text(json.dumps({"chunks": []}), encoding="utf-8")
+
+    generator = SyntheticDataGenerator(chunks_path=str(chunks_file))
+    with pytest.raises(ValueError, match="No indexed chunks"):
+        generator.generate_pairs(num_pairs=2, output_path=str(tmp_path / "out.json"))
