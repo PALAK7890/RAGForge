@@ -43,5 +43,14 @@
     "rating": 1,
     "source_path": "",
     "timestamp": "2026-09-08T09:33:22.239578+00:00"
+  },
+  {
+    "feedback_id": "3d6eea3e",
+    "query": "What is FAISS?",
+    "chunk_id": "chunk_5",
+    "chunk_text": "FAISS is a vector index library.",
+    "rating": 1,
+    "source_path": "",
+    "timestamp": "2026-09-08T14:19:22.192621+00:00"
   }
 ]

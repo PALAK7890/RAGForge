@@ -214,26 +214,65 @@ ollama serve
 RAGForge/
 │
 ├── knowledge/
+│   ├── agent/          # LangGraph agentic retrieval graph
+│   ├── api/            # FastAPI REST endpoints + RAGService layer
 │   ├── chunkers/
 │   ├── cli/
+│   ├── clustering/     # KMeans + TF-IDF topic clustering
 │   ├── config/
 │   ├── embeddings/
-│   ├── evaluation/
+│   ├── evaluation/     # Metrics + LLM-as-a-Judge
+│   ├── feedback/       # Feedback store + reranker tuner
 │   ├── indexing/
 │   ├── llms/
 │   ├── loaders/
 │   ├── rerankers/
-│   ├── retrievers/
+│   ├── retrievers/     # Hybrid retrieval + LTR fusion
+│   ├── training/       # Bi-encoder + reranker fine-tuning
 │   └── vectorstores/
 │
 ├── docs/
+│   └── architecture.md
 │
 ├── tests/
-│
 ├── README.md
 ├── pyproject.toml
 └── requirements.txt
 ```
+
+---
+
+# Advanced Usage
+
+RAGForge ships with 7 extensions beyond the core retrieval pipeline. Full architecture diagrams for each are in [`docs/architecture.md`](docs/architecture.md).
+
+### REST API
+
+Launch the FastAPI server with `knowledge serve`. Endpoints cover indexing, hybrid search, streaming Q&A, agentic retrieval, evaluation, feedback, and statistics. The `/agent-stream/{query}` endpoint streams per-step SSE progress events during multi-attempt retrieval cycles.
+
+### Self-Correcting Agent
+
+`knowledge agent-ask` runs a LangGraph state machine that classifies query intent, retrieves context, grades sufficiency via an LLM, and rewrites the query if context is lacking. A hard cap (`max_retrieval_attempts` in `config.yaml`, default 3) prevents infinite loops. The `/agent-stream/{query}` API endpoint exposes the same loop with SSE progress events.
+
+### Model Fine-Tuning
+
+`knowledge finetune` commands cover synthetic training data generation (LLM-prompted query–document pairs), bi-encoder fine-tuning with `MultipleNegativesRankingLoss`, and CrossEncoder reranker fine-tuning on labeled triplets.
+
+### Learning-to-Rank Fusion
+
+`knowledge retrieve-ltr` replaces static RRF with a trainable GBDT ranker (`HistGradientBoostingClassifier`) that combines dense + sparse retrieval signals. Falls back to RRF automatically when no trained model is present or inference fails.
+
+### LLM-as-a-Judge Evaluation
+
+`knowledge evaluate --judge` adds faithfulness and answer-relevance scoring to the standard evaluation pass. The judge LLM returns structured JSON scores that are aggregated across the question set.
+
+### Topic Clustering
+
+`knowledge topics` runs unsupervised KMeans over the FAISS index vectors (or TF-IDF features as fallback) to group chunks by theme and extract keyword tags. Results are saved to `.knowledge/index/topics.json` and tagged into `chunks.json`.
+
+### Feedback Loop
+
+`knowledge feedback up/down` logs relevance judgments to `.knowledge/feedback.json`. `knowledge feedback tune` converts accumulated judgments into training triplets and fine-tunes the CrossEncoder. This is a **manual trigger** — it does not run automatically after each judgment.
 
 ---
 
@@ -545,11 +584,16 @@ The evaluation framework is designed to benchmark retrieval performance independ
 | Embeddings | SentenceTransformers |
 | Vector Search | FAISS |
 | Sparse Retrieval | BM25 |
-| Rank Fusion | Reciprocal Rank Fusion |
+| Rank Fusion | Reciprocal Rank Fusion & Trainable GBDT |
 | Reranker | CrossEncoder |
 | Local LLM | Ollama |
+| REST API | FastAPI + Uvicorn |
+| Agent Orchestration | LangGraph |
+| LTR Ranker | scikit-learn HistGradientBoostingClassifier |
+| Topic Clustering | KMeans + TF-IDF |
+| Active Learning | Feedback logging + CrossEncoder fine-tuning |
 | Configuration | YAML |
-| Evaluation | Custom Metrics |
+| Evaluation | Custom Metrics + LLM-as-a-Judge |
 
 ---
 
@@ -573,29 +617,37 @@ Each subsystem is isolated behind a simple interface, allowing retrieval algorit
 
 ## Completed
 
-- Multi-format document loaders
-- Recursive chunking
+- Multi-format document loaders (PDF, DOCX, TXT, HTML)
+- Recursive chunking with configurable overlap
 - SentenceTransformer embeddings
 - FAISS vector indexing
 - BM25 lexical retrieval
-- Hybrid retrieval
+- Hybrid Reciprocal Rank Fusion (RRF)
 - Query expansion
 - Cross-Encoder reranking
-- Ollama integration
+- Ollama LLM integration
 - Incremental indexing
 - Benchmarking framework
-- Retrieval evaluation
+- Retrieval evaluation metrics (Accuracy@K, Precision, Recall, MRR)
+- FastAPI REST API with streaming `/ask` and SSE `/agent-stream`
+- LangGraph self-correcting agentic retrieval with configurable retry cap
+- SentenceTransformer bi-encoder fine-tuning
+- CrossEncoder reranker fine-tuning
+- Synthetic training pair generation
+- Learning-to-Rank fusion (GBDT + RRF fallback)
+- LLM-as-a-Judge evaluation (faithfulness + relevance)
+- Unsupervised topic clustering (KMeans + TF-IDF fallback)
+- Feedback logging and manual reranker retraining
 
 ## Planned
 
-- Metadata-aware filtering
-- Streaming responses
-- REST API
+- `feedback tune --watch` — automatic retraining when feedback store reaches threshold
+- Scheduled fine-tuning via cron or background thread
 - Docker support
-- Configuration profiles
-- Additional embedding backends
-- Multi-vector retrieval
-- Automated benchmark reports
+- Metadata-aware filtering (date, source, topic)
+- Additional embedding backends (OpenAI, Cohere)
+- Multi-vector retrieval (ColBERT-style)
+- Automated benchmark report generation
 
 ---
 
