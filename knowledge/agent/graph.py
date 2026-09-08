@@ -2,7 +2,7 @@
 LangGraph StateGraph definition and execution wrapper for RAGForge agent.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from langgraph.graph import END, StateGraph
 
@@ -14,6 +14,7 @@ from knowledge.agent.nodes import (
     route_query,
 )
 from knowledge.agent.state import AgentState
+from knowledge.config.manager import AppConfig
 
 
 def should_continue(state: AgentState) -> str:
@@ -54,8 +55,16 @@ def build_agent_graph() -> Any:
     return workflow.compile()
 
 
-def run_agent_workflow(question: str, max_retries: int = 2) -> Dict[str, Any]:
-    """Execute the full agentic loop for a given question."""
+def run_agent_workflow(question: str, max_retries: Optional[int] = None) -> Dict[str, Any]:
+    """Execute the full agentic loop for a given question.
+
+    Args:
+        question: The user's question.
+        max_retries: Hard cap on retrieve-grade-rewrite cycles. Defaults to
+            ``AppConfig.max_retrieval_attempts`` (config.yaml, default 3).
+    """
+    if max_retries is None:
+        max_retries = AppConfig().max_retrieval_attempts
     initial_state: AgentState = {
         "original_query": question,
         "current_query": question,

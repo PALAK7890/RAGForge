@@ -81,6 +81,12 @@ class AppConfig(BaseModel):
         description="Whether to use LLM-as-judge during evaluation"
     )
 
+    # Agent settings
+    max_retrieval_attempts: int = Field(
+        default=3,
+        description="Maximum number of retrieve-grade-rewrite cycles before the agent forces generation"
+    )
+
 
 class ConfigManager:
     """Manages reading, writing, and accessing YAML-based configurations."""

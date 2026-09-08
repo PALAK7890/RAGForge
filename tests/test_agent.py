@@ -2,6 +2,10 @@
 Unit tests for the LangGraph agentic retrieval layer.
 """
 
+from typing import Any
+
+import pytest
+
 from knowledge.agent.graph import build_agent_graph, should_continue
 from knowledge.agent.nodes import grade_sufficiency, route_query
 from knowledge.agent.state import AgentState
@@ -146,3 +150,62 @@ def test_build_agent_graph() -> None:
     """Verify StateGraph compiles successfully."""
     graph = build_agent_graph()
     assert graph is not None
+
+
+def test_agent_graph_terminates_at_max_retries(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Full graph integration: permanently-insufficient grader must exit at max_retries.
+
+    Monkeypatches grade_sufficiency to always mark context insufficient so the
+    rewrite loop is forced to hit the hard cap, then asserts the graph returned
+    a result (not an infinite loop) and that rewrites == max_retries.
+    """
+    import knowledge.agent.nodes as nodes_module
+    from knowledge.agent.graph import run_agent_workflow
+
+    def always_insufficient(state: AgentState) -> AgentState:
+        state["sufficiency"] = "insufficient"
+        state["sufficiency_reason"] = "Forced insufficient for test."
+        return state
+
+    # Patch both the module-level function and the reference used inside the graph node
+    monkeypatch.setattr(nodes_module, "grade_sufficiency", always_insufficient)
+
+    # Also patch retrieve_context so the test never touches disk/network
+    def mock_retrieve(state: AgentState) -> AgentState:
+        state["retrieved_chunks"] = [{"text": "stub context", "source_path": "stub.txt"}]
+        return state
+
+    monkeypatch.setattr(nodes_module, "retrieve_context", mock_retrieve)
+
+    # Rebuild graph with patched nodes so monkeypatched functions are wired in
+    from langgraph.graph import END, StateGraph
+
+    from knowledge.agent import graph as graph_module
+
+    def _patched_graph() -> Any:
+        wf = StateGraph(AgentState)
+        wf.add_node("route", nodes_module.route_query)
+        wf.add_node("retrieve", nodes_module.retrieve_context)
+        wf.add_node("grade", nodes_module.grade_sufficiency)
+        wf.add_node("rewrite", nodes_module.rewrite_query)
+        wf.add_node("generate", nodes_module.generate_answer)
+        wf.set_entry_point("route")
+        wf.add_edge("route", "retrieve")
+        wf.add_edge("retrieve", "grade")
+        wf.add_conditional_edges("grade", graph_module.should_continue, {"generate": "generate", "rewrite": "rewrite"})
+        wf.add_edge("rewrite", "retrieve")
+        wf.add_edge("generate", END)
+        return wf.compile()
+
+    monkeypatch.setattr(graph_module, "build_agent_graph", _patched_graph)
+
+    max_cap = 2
+    result = run_agent_workflow("Will this loop forever?", max_retries=max_cap)
+
+    # Graph must have exited
+    assert result is not None
+    assert isinstance(result["answer"], str)
+    # Must have retried exactly max_cap times, not more
+    assert result["rewrites"] == max_cap
+    # Sufficiency stays insufficient (forced), but graph still generated an answer
+    assert result["sufficiency"] == "insufficient"
