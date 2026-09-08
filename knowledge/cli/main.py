@@ -679,5 +679,34 @@ def agent_ask_cmd(
             console.print(f"  {stage:<12}: {lat:.2f} ms")
 
 
+@app.command("generate-synthetic-data")
+def generate_synthetic_data_cmd(
+    num_pairs: int = typer.Option(20, "--num-pairs", "-n", help="Number of query-document pairs to generate"),
+    output: str = typer.Option(".knowledge/training_pairs.json", "--output", "-o", help="Output path for training pairs"),
+) -> None:
+    """Generate domain query-document pairs from indexed chunks using local LLM."""
+    from knowledge.training.synthetic_generator import SyntheticDataGenerator
+    console.print(f"[bold cyan]Generating up to {num_pairs} synthetic training pairs...[/bold cyan]")
+    generator = SyntheticDataGenerator()
+    pairs = generator.generate_pairs(num_pairs=num_pairs, output_path=output)
+    console.print(f"[bold green]Successfully created {len(pairs)} training pairs at {output}[/bold green]")
+
+
+@app.command("train-bi-encoder")
+def train_bi_encoder_cmd(
+    pairs_file: str = typer.Option(".knowledge/training_pairs.json", "--pairs", "-p", help="Training pairs file"),
+    output_dir: str = typer.Option(".knowledge/models/fine_tuned_bi_encoder", "--output", "-o", help="Output directory"),
+    epochs: int = typer.Option(1, "--epochs", "-e", help="Training epochs"),
+    batch_size: int = typer.Option(4, "--batch-size", "-b", help="Batch size"),
+) -> None:
+    """Fine-tune the SentenceTransformer bi-encoder model on domain pairs."""
+    from knowledge.training.bi_encoder_trainer import BiEncoderTrainer
+    console.print(f"[bold cyan]Starting Bi-Encoder fine-tuning for {epochs} epoch(s)...[/bold cyan]")
+    trainer = BiEncoderTrainer()
+    result = trainer.train(training_pairs_path=pairs_file, output_dir=output_dir, epochs=epochs, batch_size=batch_size)
+    console.print(f"[bold green]Fine-tuned model saved to: {result['model_path']}[/bold green]")
+    console.print(f"Trained on {result['training_samples']} samples.")
+
+
 if __name__ == "__main__":
     app()
