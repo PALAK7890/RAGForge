@@ -35,10 +35,29 @@ class RAGService:
 
         self.router = LoaderRouter()
         self.chunker = RecursiveChunker()
-        self.embedder = SentenceTransformerEmbedding()
-        self.llm = OllamaLLM()
-        self.reranker = CrossEncoderReranker()
         self.expander = QueryExpander()
+
+        self._embedder: Optional[SentenceTransformerEmbedding] = None
+        self._llm: Optional[OllamaLLM] = None
+        self._reranker: Optional[CrossEncoderReranker] = None
+
+    @property
+    def embedder(self) -> SentenceTransformerEmbedding:
+        if self._embedder is None:
+            self._embedder = SentenceTransformerEmbedding()
+        return self._embedder
+
+    @property
+    def llm(self) -> OllamaLLM:
+        if self._llm is None:
+            self._llm = OllamaLLM()
+        return self._llm
+
+    @property
+    def reranker(self) -> CrossEncoderReranker:
+        if self._reranker is None:
+            self._reranker = CrossEncoderReranker()
+        return self._reranker
 
     # -------------------------------------------------------------------------
     # Document Indexing & Management

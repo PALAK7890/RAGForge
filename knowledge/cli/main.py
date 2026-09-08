@@ -634,5 +634,19 @@ def evaluate(dataset: str) -> None:
         )
         console.print("-" * 70)
 
+
+@app.command("serve")
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", "-h", help="Host to bind to"),
+    port: int = typer.Option(8000, "--port", "-p", help="Port to listen on"),
+    reload: bool = typer.Option(False, "--reload", help="Enable auto-reload"),
+) -> None:
+    """Launch the RAGForge REST API server."""
+    import uvicorn
+    console.print(f"[bold green]Starting RAGForge API server on http://{host}:{port}...[/bold green]")
+    console.print(f"[cyan]OpenAPI Swagger docs available at: http://{host}:{port}/docs[/cyan]")
+    uvicorn.run("knowledge.api.app:app", host=host, port=port, reload=reload)
+
+
 if __name__ == "__main__":
     app()
