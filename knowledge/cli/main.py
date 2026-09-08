@@ -708,5 +708,19 @@ def train_bi_encoder_cmd(
     console.print(f"Trained on {result['training_samples']} samples.")
 
 
+@app.command("train-ltr")
+def train_ltr_cmd(
+    questions: str = typer.Option("knowledge/evaluation/question.json", "--questions", "-q", help="Questions dataset path"),
+    output_model: str = typer.Option(".knowledge/models/ltr_model.joblib", "--output", "-o", help="Model destination"),
+) -> None:
+    """Train a gradient-boosted Learning-to-Rank fusion model."""
+    from knowledge.retrievers.ltr_fusion import LTRFusion
+    console.print(f"[bold cyan]Training Learning-to-Rank model using {questions}...[/bold cyan]")
+    ltr = LTRFusion(model_path=None)
+    result = ltr.train_on_judgments(training_data_path=questions, output_model_path=output_model)
+    console.print(f"[bold green]LTR model trained successfully on {result['samples']} samples![/bold green]")
+    console.print(f"Weights saved to: {result['model_path']}")
+
+
 if __name__ == "__main__":
     app()
