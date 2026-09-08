@@ -734,5 +734,49 @@ def train_ltr_cmd(
     console.print(f"Weights saved to: {result['model_path']}")
 
 
+@app.command("cluster")
+def cluster_cmd(
+    n_clusters: int = typer.Option(5, "--n-clusters", "-k", help="Number of topic clusters to discover"),
+) -> None:
+    """Cluster indexed chunks and assign topic metadata."""
+    from knowledge.clustering.clusterer import TopicClusterer
+    console.print(f"[bold cyan]Running KMeans clustering with k={n_clusters}...[/bold cyan]")
+    clusterer = TopicClusterer()
+    topics = clusterer.cluster_chunks(n_clusters=n_clusters)
+    console.print(f"[bold green]Successfully discovered {len(topics)} topic clusters and tagged chunks![/bold green]")
+
+
+@app.command("topics")
+def topics_cmd() -> None:
+    """Inspect discovered topic clusters and representative keywords."""
+    from rich.table import Table
+    from knowledge.clustering.clusterer import TopicClusterer
+
+    clusterer = TopicClusterer()
+    topics = clusterer.get_topics()
+
+    if not topics:
+        console.print("[yellow]No topic clusters found. Run 'knowledge cluster' first.[/yellow]")
+        return
+
+    table = Table(title="Discovered Topic Clusters")
+    table.add_column("ID", justify="center", style="cyan")
+    table.add_column("Topic Label", style="green")
+    table.add_column("Keywords", style="magenta")
+    table.add_column("Chunks", justify="right", style="yellow")
+    table.add_column("Sample Text", style="white")
+
+    for t in topics:
+        table.add_row(
+            str(t["topic_id"]),
+            t["name"],
+            ", ".join(t.get("keywords", [])),
+            str(t["chunk_count"]),
+            t.get("sample_text", ""),
+        )
+
+    console.print(table)
+
+
 if __name__ == "__main__":
     app()
