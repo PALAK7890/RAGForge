@@ -2,7 +2,6 @@
 Simple query expansion using domain-specific synonyms.
 """
 
-from typing import List
 
 
 class QueryExpander:

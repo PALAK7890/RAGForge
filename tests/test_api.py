@@ -3,6 +3,7 @@ Unit tests for the RAGForge REST API endpoints.
 """
 
 from fastapi.testclient import TestClient
+
 from knowledge.api.app import app
 
 client = TestClient(app)

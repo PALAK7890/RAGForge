@@ -4,7 +4,9 @@ Loader for PDF documents.
 
 from pathlib import Path
 from typing import List
+
 import fitz  # PyMuPDF
+
 from knowledge.loaders.base import BaseLoader, LoadedDocument, compute_document_id
 
 

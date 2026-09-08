@@ -6,11 +6,12 @@ and provides safe loading wrappers to handle errors gracefully.
 import logging
 from pathlib import Path
 from typing import Dict, List, Type
+
 from knowledge.loaders.base import BaseLoader, LoadedDocument
-from knowledge.loaders.txt import TxtLoader
-from knowledge.loaders.pdf import PdfLoader
 from knowledge.loaders.docx import DocxLoader
 from knowledge.loaders.html_loader import HtmlLoader
+from knowledge.loaders.pdf import PdfLoader
+from knowledge.loaders.txt import TxtLoader
 
 logger = logging.getLogger(__name__)
 

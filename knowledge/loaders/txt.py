@@ -4,6 +4,7 @@ Loader for plain text and Markdown files.
 
 from pathlib import Path
 from typing import List
+
 from knowledge.loaders.base import BaseLoader, LoadedDocument, compute_document_id
 
 

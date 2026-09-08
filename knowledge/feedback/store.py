@@ -3,11 +3,11 @@ Local feedback logging store for RAGForge retrieval judgments.
 Records user ratings (thumbs up/down or relevance scores) to close the active learning loop.
 """
 
-from datetime import datetime, timezone
 import json
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-import uuid
 
 
 class FeedbackStore:
@@ -21,7 +21,8 @@ class FeedbackStore:
             return []
         try:
             with open(self.store_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                return list(data) if isinstance(data, list) else []
         except Exception:
             return []
 

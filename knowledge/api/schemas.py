@@ -2,7 +2,8 @@
 Pydantic schemas for the RAGForge REST API.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
+
 from pydantic import BaseModel, Field
 
 

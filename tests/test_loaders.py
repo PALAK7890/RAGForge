@@ -2,17 +2,18 @@
 Unit tests for document loaders (TXT, MD, PDF, DOCX, HTML) and error handling.
 """
 
-import os
 import tempfile
 from pathlib import Path
-import pytest
+
 import docx
 import fitz  # PyMuPDF
-from knowledge.loaders.router import LoaderRouter, load_file_safely
-from knowledge.loaders.txt import TxtLoader
-from knowledge.loaders.pdf import PdfLoader
+import pytest
+
 from knowledge.loaders.docx import DocxLoader
 from knowledge.loaders.html_loader import HtmlLoader
+from knowledge.loaders.pdf import PdfLoader
+from knowledge.loaders.router import LoaderRouter, load_file_safely
+from knowledge.loaders.txt import TxtLoader
 
 
 @pytest.fixture

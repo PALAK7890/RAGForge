@@ -5,8 +5,8 @@ Clusters dense vector embeddings with KMeans and extracts keyword tags via TF-ID
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-import numpy as np
+from typing import Any, Dict, List
+
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -120,4 +120,5 @@ class TopicClusterer:
             return []
 
         with open(self.topics_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            return list(data) if isinstance(data, list) else []

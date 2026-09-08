@@ -4,10 +4,12 @@ Unit tests for retrieval model fine-tuning and synthetic data generation.
 
 import json
 from pathlib import Path
+
 import pytest
-from knowledge.training.synthetic_generator import SyntheticDataGenerator
+
 from knowledge.training.bi_encoder_trainer import BiEncoderTrainer
 from knowledge.training.reranker_trainer import RerankerTrainer
+from knowledge.training.synthetic_generator import SyntheticDataGenerator
 
 
 def test_synthetic_generator_with_mock_chunks(tmp_path: Path) -> None:

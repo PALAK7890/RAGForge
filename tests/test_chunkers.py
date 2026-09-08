@@ -2,12 +2,10 @@
 Unit tests for text chunking strategies (Fixed-size, Sentence-aware, Recursive).
 """
 
-from typing import List
-import pytest
-from knowledge.loaders.base import LoadedDocument
 from knowledge.chunkers.fixed_size import FixedSizeChunker
-from knowledge.chunkers.sentence import SentenceChunker
 from knowledge.chunkers.recursive import RecursiveChunker
+from knowledge.chunkers.sentence import SentenceChunker
+from knowledge.loaders.base import LoadedDocument
 
 
 def test_fixed_size_chunker_basic() -> None:

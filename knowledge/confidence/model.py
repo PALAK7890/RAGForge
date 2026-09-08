@@ -20,15 +20,6 @@ class ConfidenceModel:
         features: ConfidenceFeatures,
     ) -> float:
 
-        x = np.array([
-            features.semantic_score,
-            features.keyword_score,
-            features.retrieval_rank,
-            features.agreement,
-            features.context_length,
-            features.query_length,
-        ])
-
         # Temporary normalized confidence
         confidence = (
             0.40 * min(features.semantic_score, 1.0)

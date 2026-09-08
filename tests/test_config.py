@@ -4,8 +4,8 @@ Unit tests for the configuration manager.
 
 import os
 import tempfile
-from pathlib import Path
-from knowledge.config.manager import ConfigManager, AppConfig
+
+from knowledge.config.manager import ConfigManager
 
 
 def test_default_config() -> None:

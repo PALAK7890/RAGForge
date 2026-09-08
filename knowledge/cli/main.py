@@ -3,23 +3,24 @@ Main entrypoint for the KnowledgeOS CLI.
 """
 
 import json
-from pathlib import Path
-import typer
-from rich.console import Console
 import os
-import yaml
 import time
+from pathlib import Path
+
+import typer
+import yaml
+from rich.console import Console
 
 from knowledge.chunkers.recursive import RecursiveChunker
 from knowledge.embeddings import SentenceTransformerEmbedding
-from knowledge.loaders.router import LoaderRouter
-from knowledge.vectorstores.faiss_store import FAISSStore
-from knowledge.llms.ollama_llm import OllamaLLM
-from knowledge.retrievers import BM25Retriever, HybridRetriever
-from knowledge.rerankers import CrossEncoderReranker
-from knowledge.query import QueryExpander
-from knowledge.indexing import DocumentRegistry
 from knowledge.evaluation.evaluator import RetrievalEvaluator
+from knowledge.indexing import DocumentRegistry
+from knowledge.llms.ollama_llm import OllamaLLM
+from knowledge.loaders.router import LoaderRouter
+from knowledge.query import QueryExpander
+from knowledge.rerankers import CrossEncoderReranker
+from knowledge.retrievers import BM25Retriever, HybridRetriever
+from knowledge.vectorstores.faiss_store import FAISSStore
 
 app = typer.Typer(
     name="knowledge",
@@ -347,7 +348,7 @@ def stats() -> None:
         vector_store.load(str(index_path))
 
         if vector_store.index is not None:
-            embedding_dim = vector_store.index.d
+            embedding_dim = str(vector_store.index.d)
 
     index_size = (
         f"{os.path.getsize(index_path)/1024:.2f} KB"
@@ -750,6 +751,7 @@ def cluster_cmd(
 def topics_cmd() -> None:
     """Inspect discovered topic clusters and representative keywords."""
     from rich.table import Table
+
     from knowledge.clustering.clusterer import TopicClusterer
 
     clusterer = TopicClusterer()
@@ -796,6 +798,7 @@ def feedback_cmd(
 def list_feedback_cmd() -> None:
     """List accumulated user feedback judgments."""
     from rich.table import Table
+
     from knowledge.feedback.store import FeedbackStore
 
     store = FeedbackStore()

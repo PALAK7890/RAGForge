@@ -3,6 +3,7 @@ LangGraph StateGraph definition and execution wrapper for RAGForge agent.
 """
 
 from typing import Any, Dict
+
 from langgraph.graph import END, StateGraph
 
 from knowledge.agent.nodes import (

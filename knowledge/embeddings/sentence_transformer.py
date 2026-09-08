@@ -2,6 +2,8 @@
 SentenceTransformer embedding model implementation.
 """
 
+from typing import cast
+
 from sentence_transformers import SentenceTransformer
 
 from knowledge.embeddings.base import BaseEmbeddingModel
@@ -19,7 +21,7 @@ class SentenceTransformerEmbedding(BaseEmbeddingModel):
             convert_to_numpy=True,
             normalize_embeddings=True,
         )
-        return embeddings.tolist()
+        return cast(list[list[float]], embeddings.tolist())
 
     def embed_query(self, text: str) -> list[float]:
         embedding = self.model.encode(
@@ -27,4 +29,4 @@ class SentenceTransformerEmbedding(BaseEmbeddingModel):
             convert_to_numpy=True,
             normalize_embeddings=True,
         )
-        return embedding.tolist()
+        return cast(list[float], embedding.tolist())

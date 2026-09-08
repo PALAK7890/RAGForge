@@ -4,8 +4,9 @@ Sentence-aware text chunker implementation.
 
 import re
 from typing import Dict, List
-from knowledge.loaders.base import LoadedDocument
+
 from knowledge.chunkers.base import BaseChunker, DocumentChunk
+from knowledge.loaders.base import LoadedDocument
 
 
 class SentenceChunker(BaseChunker):

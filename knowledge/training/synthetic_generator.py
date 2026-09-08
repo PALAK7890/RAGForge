@@ -5,7 +5,8 @@ Uses local LLM to generate realistic query-document pairs from indexed corpus ch
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, List
+
 from knowledge.llms.ollama_llm import OllamaLLM
 
 

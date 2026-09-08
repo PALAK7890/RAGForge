@@ -3,11 +3,11 @@ Benchmark retrieval quality.
 """
 
 import time
-
 from typing import Dict
+
 from knowledge.evaluation.metrics import (
-    recall_at_k,
     precision_at_k,
+    recall_at_k,
     reciprocal_rank,
 )
 

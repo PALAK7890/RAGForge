@@ -2,7 +2,7 @@
 State definition for the RAGForge LangGraph agent.
 """
 
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, TypedDict
 
 
 class AgentState(TypedDict):

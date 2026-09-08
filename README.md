@@ -58,14 +58,19 @@ The project is designed for developers, students, and researchers interested in 
 | Recursive Chunking | Configurable chunk size and overlap |
 | Dense Retrieval | SentenceTransformers embeddings with FAISS |
 | Sparse Retrieval | BM25 lexical ranking |
-| Hybrid Retrieval | Reciprocal Rank Fusion (RRF) |
+| Hybrid Retrieval | Reciprocal Rank Fusion (RRF) & Trainable LTR GBDT |
 | Query Expansion | Improves retrieval recall |
 | Cross-Encoder Reranking | Second-stage neural reranking |
 | Local LLM | Ollama integration |
 | Incremental Indexing | Detects new, modified and unchanged documents |
-| Evaluation Framework | Accuracy@K, Precision@K, Recall@K, MRR |
-| Benchmarking | End-to-end latency analysis |
-| Modular Design | Replace individual pipeline components independently |
+| Self-Correcting Agent | LangGraph query routing, sufficiency grading & query rewrite |
+| REST API | FastAPI async endpoints with streaming answer responses |
+| Domain Adaptation | SentenceTransformer bi-encoder & CrossEncoder fine-tuning |
+| Synthetic Data Gen | Automatic query-chunk pair generation using local LLM |
+| LLM-as-a-Judge | Faithfulness and Answer Relevance evaluation scoring |
+| Topic Clustering | Unsupervised KMeans & TF-IDF keyword extraction |
+| Active Learning | Feedback collection and continuous reranker tuning |
+| Benchmarking | End-to-end latency analysis per pipeline stage |
 
 ---
 
@@ -276,10 +281,50 @@ Benchmark the retrieval pipeline.
 python -m knowledge.cli.main benchmark "What is RAGForge?"
 ```
 
-Evaluate retrieval quality.
+Evaluate retrieval quality (with optional LLM-as-a-judge faithfulness and relevance).
 
 ```bash
-python -m knowledge.cli.main evaluate knowledge/evaluation/questions.json
+python -m knowledge.cli.main evaluate knowledge/evaluation/question.json --judge
+```
+
+Run self-correcting agentic Q&A (LangGraph loop).
+
+```bash
+python -m knowledge.cli.main agent-ask "Compare dense and sparse retrieval"
+```
+
+Launch the FastAPI REST server.
+
+```bash
+python -m knowledge.cli.main serve --port 8000
+```
+
+Generate synthetic training data & fine-tune the bi-encoder.
+
+```bash
+python -m knowledge.cli.main generate-synthetic-data --num-pairs 20
+python -m knowledge.cli.main train-bi-encoder --epochs 1
+```
+
+Train the Learning-to-Rank (LTR) fusion model.
+
+```bash
+python -m knowledge.cli.main train-ltr
+```
+
+Discover unsupervised topic clusters across chunks.
+
+```bash
+python -m knowledge.cli.main cluster --n-clusters 5
+python -m knowledge.cli.main topics
+```
+
+Record feedback judgments and fine-tune the reranker.
+
+```bash
+python -m knowledge.cli.main feedback "What is BM25?" --text "BM25 is..." --rating 1
+python -m knowledge.cli.main list-feedback
+python -m knowledge.cli.main tune-reranker
 ```
 
 ---

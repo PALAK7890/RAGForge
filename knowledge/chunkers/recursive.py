@@ -3,8 +3,9 @@ Recursive character text chunker implementation.
 """
 
 from typing import Dict, List, Optional
-from knowledge.loaders.base import LoadedDocument
+
 from knowledge.chunkers.base import BaseChunker, DocumentChunk
+from knowledge.loaders.base import LoadedDocument
 
 
 class RecursiveChunker(BaseChunker):

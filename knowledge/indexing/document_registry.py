@@ -2,12 +2,10 @@
 Persistent document registry for incremental indexing.
 """
 
-from pathlib import Path
 import hashlib
 import json
-
-
-from typing import Any, Dict, List, Optional, Set, Union
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class DocumentRegistry:

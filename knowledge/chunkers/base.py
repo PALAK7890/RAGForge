@@ -4,7 +4,9 @@ Base schema and interface for text chunking strategies.
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field
+
 from knowledge.loaders.base import LoadedDocument
 
 

@@ -5,7 +5,8 @@ Measures Faithfulness (groundedness in context) and Answer Relevance (addressing
 
 import json
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Dict
+
 from knowledge.llms.ollama_llm import OllamaLLM
 
 
@@ -19,7 +20,8 @@ class LLMJudgeEvaluator:
         """Extract and parse JSON object from LLM response text."""
         # Try direct parse
         try:
-            return json.loads(text.strip())
+            parsed = json.loads(text.strip())
+            return dict(parsed) if isinstance(parsed, dict) else {}
         except Exception:
             pass
 
@@ -27,7 +29,8 @@ class LLMJudgeEvaluator:
         match = re.search(r"\{.*?\}", text, re.DOTALL)
         if match:
             try:
-                return json.loads(match.group(0))
+                parsed = json.loads(match.group(0))
+                return dict(parsed) if isinstance(parsed, dict) else {}
             except Exception:
                 pass
 

@@ -3,10 +3,11 @@ Learning-to-Rank (LTR) fusion module.
 Replaces or supplements static Reciprocal Rank Fusion with a trainable gradient-boosted ranker.
 """
 
-from collections import defaultdict
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
 import joblib
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -165,7 +166,7 @@ class LTRFusion:
         for sample in questions:
             expected_doc = sample.get("expected_document", "").lower()
 
-            for i, chunk in enumerate(chunks[:30]):
+            for chunk in chunks[:30]:
                 chunk_source = Path(chunk.get("source_path", "")).name.lower()
                 is_relevant = 1 if expected_doc and (expected_doc in chunk_source) else 0
 

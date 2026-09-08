@@ -2,9 +2,9 @@
 Unit tests for Learning-to-Rank (LTR) fusion and feature extraction.
 """
 
-from pathlib import Path
 import json
-import pytest
+from pathlib import Path
+
 from knowledge.retrievers.ltr_fusion import LTRFeatureExtractor, LTRFusion
 
 

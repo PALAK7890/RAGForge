@@ -3,6 +3,7 @@ Ollama LLM wrapper with batch and streaming generation.
 """
 
 from typing import Iterator
+
 import ollama
 
 

@@ -2,10 +2,11 @@
 Base classes and schemas for document loading.
 """
 
-from abc import ABC, abstractmethod
 import hashlib
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field
 
 

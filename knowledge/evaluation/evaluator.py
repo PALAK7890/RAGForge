@@ -6,21 +6,20 @@ import time
 from pathlib import Path
 
 from knowledge.embeddings.sentence_transformer import SentenceTransformerEmbedding
-from knowledge.retrievers.bm25 import BM25Retriever
-from knowledge.retrievers.hybrid import HybridRetriever
-from knowledge.rerankers.cross_encoder import CrossEncoderReranker
-from knowledge.vectorstores.faiss_store import FAISSStore
-
 from knowledge.evaluation.dataset import EvaluationDataset
 from knowledge.evaluation.judge import LLMJudgeEvaluator
 from knowledge.evaluation.metrics import (
     accuracy_at_k,
+    mean_reciprocal_rank,
     precision_at_k,
     recall_at_k,
     reciprocal_rank,
-    mean_reciprocal_rank,
 )
 from knowledge.llms.ollama_llm import OllamaLLM
+from knowledge.rerankers.cross_encoder import CrossEncoderReranker
+from knowledge.retrievers.bm25 import BM25Retriever
+from knowledge.retrievers.hybrid import HybridRetriever
+from knowledge.vectorstores.faiss_store import FAISSStore
 
 
 class RetrievalEvaluator:

@@ -3,7 +3,9 @@ Unit tests for feedback logging and active reranker tuning.
 """
 
 from pathlib import Path
+
 import pytest
+
 from knowledge.feedback.store import FeedbackStore
 from knowledge.feedback.tuner import FeedbackRerankerTuner
 

@@ -3,7 +3,6 @@ Simple FAISS vector store.
 """
 
 from pathlib import Path
-
 from typing import Optional
 
 import faiss

@@ -5,9 +5,10 @@ Used by both the CLI commands and FastAPI endpoints.
 
 import json
 import os
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple
+
 import yaml
 
 from knowledge.chunkers.recursive import RecursiveChunker
@@ -75,7 +76,6 @@ class RAGService:
 
         registry = DocumentRegistry()
         vector_store = FAISSStore()
-        bm25 = BM25Retriever()
 
         all_chunks: List[Any] = []
         all_embeddings: List[List[float]] = []
@@ -97,7 +97,7 @@ class RAGService:
                 all_embeddings.extend(embeddings)
                 registry.add_document(file, len(chunks))
                 indexed_count += 1
-            except Exception as e:
+            except Exception:
                 continue
 
         if not all_embeddings:

@@ -3,9 +3,9 @@ Configuration manager module for KnowledgeOS.
 Handles reading and writing configurations from YAML.
 """
 
-import os
 from pathlib import Path
 from typing import Any, Dict
+
 import yaml
 from pydantic import BaseModel, Field
 

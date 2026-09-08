@@ -2,7 +2,8 @@
 FastAPI application for RAGForge.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterator
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -18,12 +19,11 @@ from knowledge.api.schemas import (
     DocumentListResponse,
     DocumentRecord,
     EvaluateRequest,
-    SearchRequest,
+    FeedbackRequest,
+    FeedbackResponse,
     SearchResponse,
     SearchResultChunk,
     StatsResponse,
-    FeedbackRequest,
-    FeedbackResponse,
 )
 from knowledge.api.service import RAGService
 
@@ -57,9 +57,9 @@ def index_documents(payload: DocumentIndexRequest) -> Dict[str, Any]:
         result = service.index_documents(payload.path)
         return result
     except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Indexing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Indexing failed: {str(e)}") from e
 
 
 @app.get("/documents", response_model=DocumentListResponse)
@@ -95,9 +95,9 @@ def search(
         ]
         return SearchResponse(query=q, results=results)
     except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/ask")
@@ -107,7 +107,7 @@ def ask(payload: AskRequest) -> Any:
         if payload.stream:
             sources, chunks, token_stream = service.ask_stream(payload.question, top_k=payload.top_k)
 
-            def event_generator():
+            def event_generator() -> Iterator[str]:
                 for token in token_stream:
                     yield token
 
@@ -122,9 +122,9 @@ def ask(payload: AskRequest) -> Any:
                 chunks=chunk_models,
             )
     except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/agent-ask", response_model=AgentAskResponse)
@@ -149,7 +149,7 @@ def agent_ask(payload: AgentAskRequest) -> AgentAskResponse:
                 latencies={"fallback": 0.0},
             )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.get("/stats", response_model=StatsResponse)
@@ -166,9 +166,9 @@ def run_benchmark(payload: BenchmarkRequest) -> BenchmarkResponse:
         result = service.benchmark(payload.query)
         return BenchmarkResponse(**result)
     except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/evaluate", response_model=Dict[str, Any])
@@ -178,9 +178,9 @@ def run_evaluation(payload: EvaluateRequest) -> Dict[str, Any]:
         report = service.evaluate(payload.dataset_path)
         return report
     except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/feedback", response_model=FeedbackResponse)

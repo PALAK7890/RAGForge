@@ -2,9 +2,9 @@
 Unit tests for the LangGraph agentic retrieval layer.
 """
 
-from knowledge.agent.nodes import grade_sufficiency, rewrite_query, route_query
-from knowledge.agent.state import AgentState
 from knowledge.agent.graph import build_agent_graph, should_continue
+from knowledge.agent.nodes import grade_sufficiency, route_query
+from knowledge.agent.state import AgentState
 
 
 def test_route_query_classification() -> None:

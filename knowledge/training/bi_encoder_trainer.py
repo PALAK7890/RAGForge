@@ -4,10 +4,11 @@ SentenceTransformer Bi-Encoder fine-tuning module using contrastive loss.
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-import torch
+from typing import Any, Dict
+
+from sentence_transformers import InputExample, SentenceTransformer
+from sentence_transformers.losses import MultipleNegativesRankingLoss
 from torch.utils.data import DataLoader
-from sentence_transformers import InputExample, SentenceTransformer, losses
 
 
 class BiEncoderTrainer:
@@ -45,8 +46,8 @@ class BiEncoderTrainer:
             raise ValueError("No valid query-positive pairs found in training file.")
 
         model = SentenceTransformer(self.base_model)
-        train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=batch_size)
-        train_loss = losses.MultipleNegativesRankingLoss(model)
+        train_dataloader: Any = DataLoader(train_examples, shuffle=True, batch_size=batch_size)  # type: ignore[arg-type]
+        train_loss = MultipleNegativesRankingLoss(model)
 
         out_path = Path(output_dir)
         out_path.mkdir(parents=True, exist_ok=True)

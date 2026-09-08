@@ -4,9 +4,10 @@ CrossEncoder reranker fine-tuning module.
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List
-from torch.utils.data import DataLoader
+from typing import Any, Dict
+
 from sentence_transformers import CrossEncoder, InputExample
+from torch.utils.data import DataLoader
 
 
 class RerankerTrainer:
@@ -41,7 +42,7 @@ class RerankerTrainer:
         ]
 
         model = CrossEncoder(self.base_model, num_labels=1)
-        train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=batch_size)
+        train_dataloader: Any = DataLoader(train_examples, shuffle=True, batch_size=batch_size)  # type: ignore[arg-type]
 
         out_path = Path(output_dir)
         out_path.mkdir(parents=True, exist_ok=True)

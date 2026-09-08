@@ -4,7 +4,9 @@ Loader for HTML documents.
 
 from pathlib import Path
 from typing import List
+
 from bs4 import BeautifulSoup
+
 from knowledge.loaders.base import BaseLoader, LoadedDocument, compute_document_id
 
 

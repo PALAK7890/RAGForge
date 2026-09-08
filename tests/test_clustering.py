@@ -4,6 +4,7 @@ Unit tests for unsupervised topic clustering and keyword tagging.
 
 import json
 from pathlib import Path
+
 from knowledge.clustering.clusterer import TopicClusterer
 
 
