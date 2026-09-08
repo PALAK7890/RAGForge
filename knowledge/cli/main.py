@@ -648,5 +648,36 @@ def serve(
     uvicorn.run("knowledge.api.app:app", host=host, port=port, reload=reload)
 
 
+@app.command("agent-ask")
+def agent_ask_cmd(
+    question: str,
+    max_retries: int = typer.Option(2, "--max-retries", "-r", help="Max query reformulation retries"),
+) -> None:
+    """Answer questions using a self-correcting LangGraph agentic loop."""
+    from knowledge.agent.graph import run_agent_workflow
+
+    console.print(f"\n[bold cyan]Agent Query:[/bold cyan] {question}")
+    console.print("[dim]Starting LangGraph self-correcting retrieval workflow...[/dim]\n")
+
+    result = run_agent_workflow(question, max_retries=max_retries)
+
+    console.print(f"[blue]Classified Query Type :[/blue] {result['query_type']}")
+    console.print(f"[yellow]Sufficiency Grade     :[/yellow] {result['sufficiency']}")
+    console.print(f"[magenta]Query Rewrites        :[/magenta] {result['rewrites']}")
+
+    console.print("\n[bold green]Generated Answer[/bold green]\n")
+    console.print(result["answer"])
+
+    if result.get("sources"):
+        console.print("\n[bold cyan]Attributed Sources[/bold cyan]\n")
+        for src in result["sources"]:
+            console.print(f"• {src}")
+
+    if result.get("latencies"):
+        console.print("\n[dim]Stage Latencies:[/dim]")
+        for stage, lat in result["latencies"].items():
+            console.print(f"  {stage:<12}: {lat:.2f} ms")
+
+
 if __name__ == "__main__":
     app()
