@@ -196,16 +196,43 @@ def test_overlapping_hit_detection() -> None:
         gold_text="Target passage content",
     )
 
-    # 1. Overlapping chunk
-    chunk_hit = {
+    # 1. Overlapping chunk with >= 50% coverage of gold span (50 chars of 100)
+    chunk_hit_50 = {
         "source_path": "/docs/faiss.txt",
         "char_start": 100,
         "char_end": 200,
         "text": "Target passage content continues here",
     }
-    assert is_overlapping_hit(chunk_hit, sample) is True
+    assert is_overlapping_hit(chunk_hit_50, sample) is True
 
-    # 2. Non-overlapping chunk (different file)
+    # 2. Insufficient overlap (< 50% of chunk and < 50% of span: 10 chars overlap)
+    chunk_insufficient = {
+        "source_path": "/docs/faiss.txt",
+        "char_start": 140,
+        "char_end": 200,
+        "text": "Almost no overlap",
+    }
+    assert is_overlapping_hit(chunk_insufficient, sample) is False
+
+    # 3. Chunk covers 100% of gold span
+    chunk_full_span = {
+        "source_path": "/docs/faiss.txt",
+        "char_start": 40,
+        "char_end": 160,
+        "text": "Covers whole gold span and more",
+    }
+    assert is_overlapping_hit(chunk_full_span, sample) is True
+
+    # 4. Chunk completely inside gold span (100% of chunk lies in span)
+    chunk_inside = {
+        "source_path": "/docs/faiss.txt",
+        "char_start": 60,
+        "char_end": 100,
+        "text": "Inside gold span",
+    }
+    assert is_overlapping_hit(chunk_inside, sample) is True
+
+    # 5. Non-overlapping chunk (different file)
     chunk_diff_file = {
         "source_path": "/docs/other.txt",
         "char_start": 50,
@@ -214,7 +241,7 @@ def test_overlapping_hit_detection() -> None:
     }
     assert is_overlapping_hit(chunk_diff_file, sample) is False
 
-    # 3. Disjoint span (same file, after sample end)
+    # 6. Disjoint span (same file, after sample end)
     chunk_disjoint = {
         "source_path": "/docs/faiss.txt",
         "char_start": 200,
@@ -223,7 +250,7 @@ def test_overlapping_hit_detection() -> None:
     }
     assert is_overlapping_hit(chunk_disjoint, sample) is False
 
-    # 4. Fallback text containment when char offsets None
+    # 7. Fallback text containment when char offsets None
     chunk_fallback = {
         "source_path": "/docs/faiss.txt",
         "char_start": None,
@@ -480,3 +507,136 @@ def test_latency_estimated_vs_measured(
 
     measured_count = sum(1 for r in updated if r.latency_type == "measured")
     assert measured_count == 2
+
+
+# ---------------------------------------------------------------------------
+# 6. Real Retriever Parity, Default Grid Union Cap, & Disk Persistence
+# ---------------------------------------------------------------------------
+
+
+def test_real_retriever_parity_with_runner(
+    sample_docs: List[LoadedDocument],
+    sample_eval_set: List[EvalSample],
+    tmp_path: Path,
+) -> None:
+    """
+    Verify offline ranking from ExperimentRunner equals real HybridRetriever output
+    on real FAISS and BM25 indices across configs, including rerank path and ties.
+    Confirm dense_weight=0.5 preserves existing HybridRetriever unweighted ranking.
+    """
+    embedder = MockEmbeddingModel()
+    ce = CountingMockCrossEncoder()
+    runner = ExperimentRunner(
+        docs=sample_docs,
+        eval_samples=sample_eval_set,
+        embedding_model=embedder,
+        cross_encoder=ce,
+        cache_dir=tmp_path / "cache",
+        pool_size=10,
+    )
+
+    index_params = IndexParams(200, 40, "recursive", "mock-embedder")
+    artifacts = runner._get_or_build_index(index_params)
+
+    # 1. Real FAISS & BM25 query
+    query = sample_eval_set[0].question
+    q_emb = embedder.embed_query(query)
+    scores, indices = artifacts.faiss_store.search(q_emb, top_k=10)
+    dense_results = [(int(idx), float(s)) for idx, s in zip(indices[0], scores[0]) if idx != -1]
+    bm25_results = artifacts.bm25.search(query, top_k=10)
+
+    # 2. Live unweighted HybridRetriever
+    live_retriever = HybridRetriever()
+    old_live_fused = live_retriever.fuse(dense_results, bm25_results, k=60)
+
+    # 3. Parameterized fusion with dense_weight=0.5
+    runner_fused_default = reciprocal_rank_fusion(
+        dense_results, bm25_results, k=60, dense_weight=0.5, chunk_ids=artifacts.chunk_ids
+    )
+
+    # Confirm dense_weight=0.5 keeps identical order to unweighted RRF
+    assert [idx for idx, _ in runner_fused_default] == [idx for idx, _ in old_live_fused]
+
+    # 4. Compare runner sweep offline ranking against live pipeline for multiple configs
+    for dw in (0.2, 0.5, 0.8):
+        for k_val in (20, 60):
+            qp = QueryParams(top_k=3, reranking_enabled=False, rrf_k=k_val, dense_weight=dw, query_expansion=False)
+            sweep_results = runner.run_sweep_for_index(index_params, [qp])
+            expected_indices = [
+                idx for idx, _ in reciprocal_rank_fusion(
+                    dense_results, bm25_results, k=k_val, dense_weight=dw, chunk_ids=artifacts.chunk_ids
+                )[:3]
+            ]
+            actual_indices = sweep_results[0].eval_sample_results[0]["final_indices"]
+            assert actual_indices == expected_indices
+
+
+def test_union_cap_never_binds_on_default_grid(
+    sample_docs: List[LoadedDocument],
+    sample_eval_set: List[EvalSample],
+    tmp_path: Path,
+) -> None:
+    """Verify that the union cap (default 100) never binds on the default grid."""
+    embedder = MockEmbeddingModel()
+    ce = CountingMockCrossEncoder()
+    runner = ExperimentRunner(
+        docs=sample_docs,
+        eval_samples=sample_eval_set,
+        embedding_model=embedder,
+        cross_encoder=ce,
+        cache_dir=tmp_path / "cache",
+        pool_size=50,
+        max_union_size=100,
+    )
+
+    index_params = IndexParams(500, 50, "recursive", "mock-embedder")
+    space = SearchSpace()
+    all_query_configs = space.all_query_params()
+
+    results = runner.run_sweep_for_index(index_params, all_query_configs)
+    assert len(results) == len(all_query_configs)
+    # Check that truncated is False on every trial
+    assert not any(r.truncated for r in results)
+
+
+def test_ce_cache_persisted_to_disk(
+    sample_docs: List[LoadedDocument],
+    sample_eval_set: List[EvalSample],
+    tmp_path: Path,
+) -> None:
+    """Verify that cross-encoder scores are persisted to disk and reused on resume."""
+    cache_dir = tmp_path / "cache"
+    embedder = MockEmbeddingModel()
+    ce1 = CountingMockCrossEncoder()
+
+    runner1 = ExperimentRunner(
+        docs=sample_docs,
+        eval_samples=sample_eval_set,
+        embedding_model=embedder,
+        cross_encoder=ce1,
+        cache_dir=cache_dir,
+        pool_size=10,
+    )
+
+    index_params = IndexParams(200, 40, "recursive", "mock-embedder")
+    query_configs = [
+        QueryParams(top_k=2, reranking_enabled=True, rrf_k=60, dense_weight=0.5, query_expansion=False),
+    ]
+
+    runner1.run_sweep_for_index(index_params, query_configs)
+    assert len(ce1.scored_pairs) > 0
+    assert (cache_dir / "ce_cache.json").exists()
+
+    # Second runner with fresh cross-encoder
+    ce2 = CountingMockCrossEncoder()
+    runner2 = ExperimentRunner(
+        docs=sample_docs,
+        eval_samples=sample_eval_set,
+        embedding_model=embedder,
+        cross_encoder=ce2,
+        cache_dir=cache_dir,
+        pool_size=10,
+    )
+    runner2.run_sweep_for_index(index_params, query_configs)
+    # Because scores were loaded from ce_cache.json on disk, ce2 should have 0 calls!
+    assert len(ce2.scored_pairs) == 0

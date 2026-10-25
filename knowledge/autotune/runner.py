@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import shutil
 import time
@@ -30,6 +31,8 @@ from knowledge.loaders.base import LoadedDocument
 from knowledge.retrievers.bm25 import BM25Retriever
 from knowledge.retrievers.hybrid import reciprocal_rank_fusion
 from knowledge.vectorstores.faiss_store import FAISSStore
+
+logger = logging.getLogger(__name__)
 
 EXTRACTOR_HASH = "v1_char_offset_extractor"
 
@@ -89,6 +92,7 @@ class TrialResult:
     stage_latencies: Dict[str, float] = field(default_factory=dict)
     eval_sample_results: List[Dict[str, Any]] = field(default_factory=list)
     pool_size: int = 50
+    truncated: bool = False
 
     @property
     def candidate(self) -> CandidateConfig:
@@ -105,6 +109,7 @@ class TrialResult:
             "latency_type": self.latency_type,
             "stage_latencies": self.stage_latencies,
             "pool_size": self.pool_size,
+            "truncated": self.truncated,
         }
 
 
@@ -139,12 +144,14 @@ def compute_doc_set_hash(docs: Sequence[LoadedDocument]) -> str:
     return hasher.hexdigest()
 
 
-def is_overlapping_hit(chunk: Dict[str, Any], sample: EvalSample) -> bool:
+def is_hit(chunk: Dict[str, Any], sample: EvalSample) -> bool:
     """
-    Return True if the retrieved chunk overlaps with the gold eval sample.
+    Return True if the retrieved chunk matches the gold eval sample.
 
-    First checks source_path equality. Then checks interval overlap:
-    max(c_start, s_start) < min(c_end, s_end).
+    Criterion:
+    The chunk must originate from the same source file, AND:
+      (chunk covers >= 50% of gold span) OR (>= 50% of chunk lies inside gold span).
+
     Falls back to text containment if character offsets are missing.
     """
     c_source = str(chunk.get("source_path", ""))
@@ -163,7 +170,15 @@ def is_overlapping_hit(chunk: Dict[str, Any], sample: EvalSample) -> bool:
         and s_start is not None
         and s_end is not None
     ):
-        return bool(max(c_start, s_start) < min(c_end, s_end))
+        chunk_len = max(1, c_end - c_start)
+        span_len = max(1, s_end - s_start)
+        overlap_start = max(c_start, s_start)
+        overlap_end = min(c_end, s_end)
+        overlap_len = max(0, overlap_end - overlap_start)
+
+        covers_gold = bool((overlap_len / span_len) >= 0.5)
+        chunk_in_gold = bool((overlap_len / chunk_len) >= 0.5)
+        return covers_gold or chunk_in_gold
 
     # Fallback when offsets are absent
     c_text = chunk.get("text", "")
@@ -171,6 +186,9 @@ def is_overlapping_hit(chunk: Dict[str, Any], sample: EvalSample) -> bool:
     if s_text and c_text:
         return bool(s_text in c_text or c_text in s_text)
     return False
+
+
+is_overlapping_hit = is_hit
 
 
 def find_hit_rank(
@@ -357,13 +375,44 @@ class ExperimentRunner:
         self.cache_mgr = IndexCacheManager(self.cache_dir)
         self.doc_set_hash = compute_doc_set_hash(self.docs)
 
+        self.ce_cache_path = self.cache_dir / "ce_cache.json"
         # Caches across runs
         # Key: (ce_model_name, query_text, sha1(chunk_text)) -> score
         self._ce_cache: Dict[Tuple[str, str, str], float] = {}
+        self._load_ce_cache()
         # Key: original_query -> expanded_query
         self._expansion_cache: Dict[str, str] = {}
         # Telemetry for tests
         self.index_build_count = 0
+        self.has_truncated = False
+
+    def _load_ce_cache(self) -> None:
+        """Load persisted cross-encoder scores from disk for resume support."""
+        if self.ce_cache_path.exists():
+            try:
+                with open(self.ce_cache_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for k, score in data.items():
+                    parts = k.split("\t", 2)
+                    if len(parts) == 3:
+                        self._ce_cache[(parts[0], parts[1], parts[2])] = float(score)
+            except Exception:
+                pass
+
+    def _save_ce_cache(self) -> None:
+        """Atomically persist cross-encoder cache to disk."""
+        try:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+            data = {
+                f"{k[0]}\t{k[1]}\t{k[2]}": v
+                for k, v in self._ce_cache.items()
+            }
+            tmp_file = self.cache_dir / f".tmp_ce_cache_{uuid.uuid4().hex[:8]}.json"
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+            os.replace(str(tmp_file), str(self.ce_cache_path))
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------
     # Public API
@@ -630,8 +679,17 @@ class ExperimentRunner:
                 top_rerank_candidates = [idx for idx, _ in fused[: self.rerank_depth]]
                 union_indices.update(top_rerank_candidates)
 
-            # Cap the union size
-            capped_indices = list(union_indices)[: self.max_union_size]
+            # Cap the union size with deterministic sorting
+            sorted_union = sorted(union_indices)
+            if len(sorted_union) > self.max_union_size:
+                self.has_truncated = True
+                logger.warning(
+                    "Union cap exceeded: %d candidates truncated to %d for query %r",
+                    len(sorted_union),
+                    self.max_union_size,
+                    sample.question,
+                )
+            capped_indices = sorted_union[: self.max_union_size]
 
             # Query text for reranker
             q_text = sample.question
@@ -652,6 +710,7 @@ class ExperimentRunner:
             scores = self.cross_encoder.predict(pairs_to_score)
             for key, score in zip(keys_to_score, scores):
                 self._ce_cache[key] = float(score)
+            self._save_ce_cache()
 
     # ------------------------------------------------------------------
     # Offline Query Config Evaluation
@@ -760,6 +819,7 @@ class ExperimentRunner:
             stage_latencies=dict(artifacts.stage_latencies),
             eval_sample_results=sample_results,
             pool_size=self.pool_size,
+            truncated=self.has_truncated,
         )
 
     # ------------------------------------------------------------------
