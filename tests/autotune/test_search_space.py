@@ -24,14 +24,14 @@ def _ip(**kw) -> IndexParams:  # type: ignore[no-untyped-def]
     defaults = dict(chunk_size=500, chunk_overlap=50,
                     chunking_strategy="recursive", embedding_model="all-MiniLM-L6-v2")
     defaults.update(kw)
-    return IndexParams(**defaults)
+    return IndexParams(**defaults)  # type: ignore[arg-type]
 
 
 def _qp(**kw) -> QueryParams:  # type: ignore[no-untyped-def]
     defaults = dict(top_k=5, reranking_enabled=False, rrf_k=60,
                     dense_weight=0.7, query_expansion=False)
     defaults.update(kw)
-    return QueryParams(**defaults)
+    return QueryParams(**defaults)  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -195,16 +195,18 @@ class TestCandidateConfig:
 
     def test_to_full_dict_autotune_values(self) -> None:
         d = self._cfg().to_full_dict()
-        assert d["autotune"]["rrf_k"] == 60
-        assert d["autotune"]["dense_weight"] == pytest.approx(0.7)
-        assert d["autotune"]["query_expansion"] is False
+        autotune = d["autotune"]
+        assert isinstance(autotune, dict)
+        assert autotune["rrf_k"] == 60
+        assert autotune["dense_weight"] == pytest.approx(0.7)
+        assert autotune["query_expansion"] is False
 
     def test_appconfig_round_trip(self) -> None:
         """config.autotuned.yaml must load cleanly through AppConfig."""
         from knowledge.config.manager import AppConfig
         full = self._cfg().to_full_dict()
         # AppConfig must accept the full dict (Pydantic v2 ignores 'autotune' key)
-        loaded = AppConfig(**full)
+        loaded = AppConfig(**full)  # type: ignore[arg-type]
         assert loaded.chunk_size == 500
         assert loaded.top_k == 5
         assert loaded.reranking_enabled is False

@@ -48,11 +48,22 @@ class RecursiveChunker(BaseChunker):
 
             # Split the document text recursively
             split_texts = self._split_text(text, self.separators, chunk_size, chunk_overlap)
+            search_from = 0  # cursor for char-offset tracking within `text`
 
             for chunk_text in split_texts:
                 chunk_text = chunk_text.strip()
                 if not chunk_text:
                     continue
+
+                # Locate this chunk in the original (stripped) doc text.
+                pos = text.find(chunk_text, search_from)
+                if pos != -1:
+                    char_start: Optional[int] = pos
+                    char_end: Optional[int] = pos + len(chunk_text)
+                    search_from = pos + 1  # advance cursor past this occurrence
+                else:
+                    char_start = None
+                    char_end = None
 
                 chunk_index = running_indices[doc_id]
                 chunks.append(
@@ -63,7 +74,9 @@ class RecursiveChunker(BaseChunker):
                         source_path=doc.source_path,
                         page_number=doc.page_number,
                         chunk_index=chunk_index,
-                        metadata=doc.metadata.copy()
+                        metadata=doc.metadata.copy(),
+                        char_start=char_start,
+                        char_end=char_end,
                     )
                 )
                 running_indices[doc_id] += 1

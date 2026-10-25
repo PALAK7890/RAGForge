@@ -57,7 +57,9 @@ class FixedSizeChunker(BaseChunker):
                         source_path=doc.source_path,
                         page_number=doc.page_number,
                         chunk_index=chunk_index,
-                        metadata=doc.metadata.copy()
+                        metadata=doc.metadata.copy(),
+                        char_start=0,
+                        char_end=text_len,
                     )
                 )
                 running_indices[doc_id] += 1
@@ -77,7 +79,9 @@ class FixedSizeChunker(BaseChunker):
                         source_path=doc.source_path,
                         page_number=doc.page_number,
                         chunk_index=chunk_index,
-                        metadata=doc.metadata.copy()
+                        metadata=doc.metadata.copy(),
+                        char_start=start,
+                        char_end=end,
                     )
                 )
                 running_indices[doc_id] += 1

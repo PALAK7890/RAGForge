@@ -28,6 +28,21 @@ class DocumentChunk(BaseModel):
         default_factory=dict,
         description="Extensible metadata inherited or generated for this chunk"
     )
+    char_start: Optional[int] = Field(
+        default=None,
+        description=(
+            "Character offset of the chunk's start within the source page text "
+            "(after strip()). None when the chunker cannot determine it."
+        ),
+    )
+    char_end: Optional[int] = Field(
+        default=None,
+        description=(
+            "Exclusive character offset of the chunk's end within the source "
+            "page text (after strip()). Satisfies text[char_start:char_end] == chunk.text. "
+            "None when the chunker cannot determine it."
+        ),
+    )
 
 
 class BaseChunker(ABC):
