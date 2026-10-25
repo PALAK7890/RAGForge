@@ -23,6 +23,7 @@ Output schema (list of ``EvalSample``)
 
 from __future__ import annotations
 
+import hashlib
 import random
 from dataclasses import dataclass
 from typing import List, Optional, Protocol, Sequence
@@ -65,6 +66,15 @@ class EvalSample:
     char_start: Optional[int]
     char_end: Optional[int]
     gold_text: str
+    text_hash: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.text_hash:
+            object.__setattr__(
+                self,
+                "text_hash",
+                hashlib.sha1(self.gold_text.encode("utf-8")).hexdigest(),
+            )
 
     def has_span(self) -> bool:
         """Return True when source-span offsets are available."""
@@ -77,6 +87,7 @@ class EvalSample:
             "char_start": self.char_start,
             "char_end": self.char_end,
             "gold_text": self.gold_text,
+            "text_hash": self.text_hash,
         }
 
 

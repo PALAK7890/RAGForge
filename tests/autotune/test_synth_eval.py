@@ -39,10 +39,12 @@ def test_eval_sample_properties() -> None:
         gold_text="FAISS is a library for efficient similarity search.",
     )
     assert sample.has_span() is True
+    assert len(sample.text_hash) == 40
     d = sample.to_dict()
     assert d["question"] == "What is FAISS?"
     assert d["char_start"] == 10
     assert d["char_end"] == 120
+    assert d["text_hash"] == sample.text_hash
 
     # Without span
     sample_no_span = EvalSample(
@@ -53,6 +55,7 @@ def test_eval_sample_properties() -> None:
         gold_text="FAISS is a library...",
     )
     assert sample_no_span.has_span() is False
+    assert len(sample_no_span.text_hash) == 40
 
 
 def test_eval_set_lengths() -> None:
