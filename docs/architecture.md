@@ -1,6 +1,6 @@
 # RAGForge System Architecture
 
-RAGForge is a modular, production-inspired Retrieval-Augmented Generation (RAG) framework with hybrid retrieval, neural reranking, agentic self-correction, domain fine-tuning, and active learning.
+RAGForge is a modular, production-inspired Retrieval-Augmented Generation (RAG) framework with hybrid retrieval, neural reranking, agentic self-correction, domain fine-tuning, and active learning via user feedback.
 
 ---
 
@@ -14,7 +14,6 @@ flowchart TD
         C --> EMB[SentenceTransformer Embeddings]
         EMB --> FAISS[(FAISS Dense Index)]
         C --> BM25[(BM25 Sparse Index)]
-        C --> CLUST[Topic Clustering: KMeans & TF-IDF]
     end
 
     subgraph QueryExecution["Hybrid Search & Ranking"]
@@ -23,7 +22,7 @@ flowchart TD
         QE --> S_SEARCH[BM25 Lexical Search]
         FAISS -.-> D_SEARCH
         BM25 -.-> S_SEARCH
-        D_SEARCH --> FUSION{Fusion Layer: LTR GBDT or RRF}
+        D_SEARCH --> FUSION{Fusion Layer: Reciprocal Rank Fusion}
         S_SEARCH --> FUSION
         FUSION --> CE[Cross-Encoder Neural Reranker]
         CE --> TOPK[Top-K Grounded Context]
@@ -99,48 +98,4 @@ flowchart LR
     MANUAL --> TUNER[FeedbackRerankerTuner]
     TUNER --> MODEL[Fine-Tuned Cross-Encoder Reranker]
     MODEL --> RETRIEVE[Improved Production Retrieval]
-```
-
----
-
-## 5. Learning-to-Rank Fusion
-
-The LTR layer combines dense and sparse retrieval signals into a feature vector and re-ranks candidates using a trained GBDT classifier, with automatic fallback to static RRF when no model is loaded or inference fails.
-
-```mermaid
-flowchart TD
-    FAISS[FAISS Dense Results: rank and score] --> FEAT[LTRFeatureExtractor: 7 features]
-    BM25_R[BM25 Sparse Results: rank and score] --> FEAT
-    META[Chunk Metadata: length and position] --> FEAT
-
-    FEAT --> MODEL_CHECK{Trained GBDT available?}
-
-    MODEL_CHECK -- Yes --> GBDT[HistGradientBoostingClassifier predict_proba]
-    MODEL_CHECK -- No --> RRF[Static Reciprocal Rank Fusion]
-    GBDT -- predict_proba raises --> RRF
-
-    GBDT --> RANKED[Re-ranked Candidate List]
-    RRF --> RANKED
-    RANKED --> CE_R[Cross-Encoder Reranker]
-```
-
----
-
-## 6. Topic Clustering
-
-Unsupervised KMeans groups indexed chunks by theme using FAISS embedding vectors when available, with TF-IDF fallback when the index is absent or mismatched.
-
-```mermaid
-flowchart TD
-    CHUNKS[chunks.json] --> VCHECK{FAISS exists and ntotal equals len chunks?}
-    VCHECK -- Yes --> FAISS_V[Reconstruct FAISS Embedding Vectors]
-    VCHECK -- No --> TFIDF_F[TF-IDF Feature Matrix: max 256 features]
-
-    FAISS_V --> KMEANS[KMeans: k = min n_clusters len chunks]
-    TFIDF_F --> KMEANS
-
-    KMEANS --> LABELS[Cluster Label per Chunk]
-    LABELS --> KW[Per-cluster TF-IDF Keywords: top 3]
-    KW --> TOPICS[topics.json saved]
-    LABELS --> TAGGED[chunks.json updated with topic_id and topic_name]
 ```

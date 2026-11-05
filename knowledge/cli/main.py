@@ -721,65 +721,6 @@ def train_bi_encoder_cmd(
     console.print(f"Trained on {result['training_samples']} samples.")
 
 
-@app.command("train-ltr")
-def train_ltr_cmd(
-    questions: str = typer.Option("knowledge/evaluation/question.json", "--questions", "-q", help="Questions dataset path"),
-    output_model: str = typer.Option(".knowledge/models/ltr_model.joblib", "--output", "-o", help="Model destination"),
-) -> None:
-    """Train a gradient-boosted Learning-to-Rank fusion model."""
-    from knowledge.retrievers.ltr_fusion import LTRFusion
-    console.print(f"[bold cyan]Training Learning-to-Rank model using {questions}...[/bold cyan]")
-    ltr = LTRFusion(model_path=None)
-    result = ltr.train_on_judgments(training_data_path=questions, output_model_path=output_model)
-    console.print(f"[bold green]LTR model trained successfully on {result['samples']} samples![/bold green]")
-    console.print(f"Weights saved to: {result['model_path']}")
-
-
-@app.command("cluster")
-def cluster_cmd(
-    n_clusters: int = typer.Option(5, "--n-clusters", "-k", help="Number of topic clusters to discover"),
-) -> None:
-    """Cluster indexed chunks and assign topic metadata."""
-    from knowledge.clustering.clusterer import TopicClusterer
-    console.print(f"[bold cyan]Running KMeans clustering with k={n_clusters}...[/bold cyan]")
-    clusterer = TopicClusterer()
-    topics = clusterer.cluster_chunks(n_clusters=n_clusters)
-    console.print(f"[bold green]Successfully discovered {len(topics)} topic clusters and tagged chunks![/bold green]")
-
-
-@app.command("topics")
-def topics_cmd() -> None:
-    """Inspect discovered topic clusters and representative keywords."""
-    from rich.table import Table
-
-    from knowledge.clustering.clusterer import TopicClusterer
-
-    clusterer = TopicClusterer()
-    topics = clusterer.get_topics()
-
-    if not topics:
-        console.print("[yellow]No topic clusters found. Run 'knowledge cluster' first.[/yellow]")
-        return
-
-    table = Table(title="Discovered Topic Clusters")
-    table.add_column("ID", justify="center", style="cyan")
-    table.add_column("Topic Label", style="green")
-    table.add_column("Keywords", style="magenta")
-    table.add_column("Chunks", justify="right", style="yellow")
-    table.add_column("Sample Text", style="white")
-
-    for t in topics:
-        table.add_row(
-            str(t["topic_id"]),
-            t["name"],
-            ", ".join(t.get("keywords", [])),
-            str(t["chunk_count"]),
-            t.get("sample_text", ""),
-        )
-
-    console.print(table)
-
-
 @app.command("feedback")
 def feedback_cmd(
     query: str = typer.Argument(..., help="Search query"),
