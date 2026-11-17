@@ -116,6 +116,7 @@ class EvidenceStore:
         Verify whether in-text citation keys or document references in the generated answer
         correspond to real, retrieved evidence in the store.
         """
+        text = str(text or "")
         valid_doc_names = {r.document_id.lower() for r in self._records.values() if r.document_id}
         valid_evidence_ids = set(self._records.keys())
 

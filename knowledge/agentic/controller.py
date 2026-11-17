@@ -280,7 +280,8 @@ Evidence:
 Answer:"""
 
         try:
-            raw_answer = self.llm.generate(state["question"], prompt).strip()
+            raw_gen = self.llm.generate(state["question"], prompt)
+            raw_answer = str(raw_gen).strip() if raw_gen is not None else ""
         except Exception as e:
             # Deterministic fallback when LLM fails or is unavailable
             top_evidence = sorted(
