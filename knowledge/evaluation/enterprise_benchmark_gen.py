@@ -6,6 +6,7 @@ Divided into 8 categories across dev (62 questions) and held_out (58 questions) 
 import json
 from pathlib import Path
 
+
 def generate_benchmark(output_path=None) -> None:
     questions = []
 

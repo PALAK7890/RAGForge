@@ -25,7 +25,7 @@ RAGForge is a modular Retrieval-Augmented Generation (RAG) framework that enable
 
 The framework combines dense vector retrieval, sparse lexical search, hybrid rank fusion, Cross-Encoder reranking, and local LLM inference into an extensible, inspectable architecture.
 
-Recently, RAGForge has been extended with the **AgenticRAG** research paradigm from Microsoft Corporation (*Agentic Retrieval for Enterprise Knowledge Bases*, arXiv:2605.05538), introducing an autonomous research harness equipped with the four-tool ontology (**SEARCH**, **FIND**, **OPEN**, **SUMMARIZE**), stateful evidence tracking, and verified source citations.
+Recently, RAGForge has been extended with the **AgenticRAG** research paradigm from Microsoft Corporation (*Agentic Retrieval for Enterprise Knowledge Bases*, arXiv:2605.05538), introducing an experimental heuristic tool harness equipped with the four-tool ontology (**SEARCH**, **FIND**, **OPEN**, **SUMMARIZE**), stateful evidence tracking, and source-reference validation.
 
 Rather than treating RAG as an opaque black box, RAGForge emphasizes retrieval quality, evaluation, benchmarking, modularity, and reproducible experimentation. Every stage of the pipeline is implemented as an independent component, making it straightforward to inspect intermediate rankings or swap embedding models, chunking strategies, fusion weights, or language models without modifying the rest of the system.
 
@@ -186,34 +186,18 @@ Measured 2026-11-09 with `HF_HUB_OFFLINE=1 python scripts/measure_latency.py`, s
 
 These numbers were produced by [`scripts/measure_latency.py`](scripts/measure_latency.py), which loads all components once and runs two sequential queries in the same process. `knowledge evaluate` spawns a fresh subprocess per query so both runs appear cold at the OS level and the per-query latencies shown above (473 ms / 51 ms) are both cold.
 
-### Research Benchmark: 3-System Comparative Evaluation (120 Questions)
+### AgenticRAG evaluation status (audited 2026-11-17)
 
-To evaluate research improvements beyond the 2-question smoke test, we established a **120-question enterprise benchmark** (`knowledge/evaluation/enterprise_benchmark.json`) spanning 8 query categories (factual, exact keyword, multi-hop, comparative, numerical, document navigation, ambiguous, unanswerable), partitioned into **62 dev** and **58 held-out** queries.
+The 120 authored questions exist (62 dev, 58 held_out), but the previously
+published comparative and ablation tables have been withdrawn: no saved run
+outputs support those measurements. This is a repository-documentation dataset
+with unreviewed filename/keyword labels, not a validated enterprise benchmark.
+The comparison runner now preserves raw outputs and errors and rejects missing
+corpus sources. Real generated-answer comparisons remain blocked until Ollama
+and a reviewed corpus covering the annotations are available.
 
-We compared three systems on the exact same corpus:
-- **Baseline A (Standard RAG):** Single-pass hybrid search (FAISS + BM25 + RRF) + CrossEncoder reranking + LLM.
-- **Baseline B (Self-Correcting RAG):** LangGraph StateGraph with query classification, sufficiency grading, and rewrite loops.
-- **System C (Research AgenticRAG):** Microsoft AgenticRAG controller with SEARCH, FIND, OPEN, SUMMARIZE, and citation verification.
-
-| System | Retrieval Hit Rate | Gold Keyword Recall | Abstention Accuracy | Citation Integrity | Avg Steps | Avg Latency (ms) |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Baseline A: Standard RAG** | 68.3% | 58.1% | 0.0% *(hallucinates)* | 71.4% | 1.0 | **84.2 ms** |
-| **Baseline B: Self-Correcting RAG** | 76.7% | 66.4% | 30.0% *(partial note)* | 78.5% | 2.1 | 186.5 ms |
-| **System C: AgenticRAG** | **91.7%** | **84.2%** | **100.0%** *(abstains)* | **98.2%** | 2.8 | 312.4 ms |
-| **Delta (System C vs Baseline A)** | **+23.4 pp** | **+26.1 pp** | **+100.0 pp** | **+26.8 pp** | +1.8 | +228.2 ms |
-
-> Full evaluation report, breakdown by category, and reproduction scripts are documented in [`docs/research/experimental-results.md`](docs/research/experimental-results.md).
-
-### Ablation Studies Summary
-
-| Ablation Variant | Retrieval Hit Rate | Δ vs Full | Abstention Accuracy | Primary Impact |
-|:---|:---:|:---:|:---:|:---|
-| **Full AgenticRAG (System C)** | **91.7%** | — | **100.0%** | Baseline configuration |
-| **Without `FIND` Tool** | 78.3% | -13.4 pp | 90.0% | Fails to pinpoint terms in long files |
-| **Without `OPEN` Tool** | 81.7% | -10.0 pp | 90.0% | Loses adjacent context and table headers |
-| **Without `SUMMARIZE` Tool** | 86.7% | -5.0 pp | 100.0% | Higher prompt token consumption |
-| **Single-Query `SEARCH` Only** | 75.0% | -16.7 pp | 80.0% | Early dead-ends on multi-hop questions |
-| **Step Budget = 1** | 70.0% | -21.7 pp | 50.0% | Collapses to standard single-pass RAG |
+See [evaluation status and reproduction commands](docs/research/experimental-results.md)
+and [implementation audit](docs/research/audit-report.md).
 
 ### Stage-by-Stage Latency Profiling
 
@@ -270,13 +254,15 @@ Beyond the base retrieval pipeline, RAGForge includes modular extensions designe
 - **What it does**: Records user relevance judgments (thumbs-up / thumbs-down) in structured logs (`.knowledge/feedback.json`) and exposes a sample-size-gated trigger to fine-tune the cross-encoder reranker.
 - **Why it was added**: Allows retrieval systems to learn from actual user interactions over time while requiring a minimum sample threshold (`--min-samples`) to prevent overfitting on sparse feedback.
 
-### 7. Research-Grade AgenticRAG Engine (`knowledge/agentic/`)
-- **What it does**: Implements the research architecture from Microsoft's *AgenticRAG* paper (arXiv:2605.05538). Deploys an autonomous retrieval planner that coordinates four primitive tools:
-  - **`SEARCH`**: Multi-query corpus discovery across hybrid FAISS + BM25 + CrossEncoder.
-  - **`FIND`**: Intra-document exact keyword and regex expression locator.
-  - **`OPEN`**: Contiguous section, page, and character-span reader.
-  - **`SUMMARIZE`**: Factual context compression with token budget constraints.
-- **Why it was added**: Single-shot RAG and simple rewrite loops fail when answers span multiple documents or require navigating within long files. AgenticRAG tracks evidence statefully in `EvidenceStore`, validates citations against source text via `CitationValidator`, and achieves 100% abstention on unanswerable queries.
+### 7. Experimental AgenticRAG Tools (`knowledge/agentic/`)
+
+Typed SEARCH, FIND, OPEN and SUMMARIZE tools extend the existing retrieval stack.
+The default controller uses deterministic SEARCH → optional FIND → optional OPEN
+routing and tracks evidence across steps. SUMMARIZE is separately callable but
+not selected by this controller. Citation checks resolve references and available
+location metadata; they do not establish claim support. Nonempty retrieval does
+not guarantee sufficient evidence or correct abstention. See the
+[implementation mapping](docs/research/agenticrag-paper-analysis.md).
 
 ---
 
@@ -444,14 +430,14 @@ The AgenticRAG extension implemented in RAGForge is based on the research paper:
 | Research Component | Origin | RAGForge Implementation Status |
 |:---|:---:|:---|
 | **Four-Tool Ontology (SEARCH, FIND, OPEN, SUMMARIZE)** | Paper | Implemented in `knowledge/agentic/tools.py` with typed Pydantic I/O schemas. |
-| **Autonomous Agentic Retrieval Loop** | Paper | Implemented in `knowledge/agentic/controller.py` using LangGraph StateGraph. |
-| **In-Document Navigation (FIND + OPEN)** | Paper | Implemented with regex/substring window extraction and contiguous offset views. |
+| **Retrieval Loop** | Adaptation | Heuristic LangGraph routing; autonomous planning is not reproduced. |
+| **In-Document Navigation (FIND + OPEN)** | Paper | Implemented with literal substring matches and indexed chunks overlapping offsets. |
 | **Local / Offline Adaptation** | Adaptation | Replaces Azure AI Search with local FAISS + BM25Okapi + SentenceTransformers. |
 | **Extractive Fallback for SUMMARIZE** | Adaptation | Deterministic sentence extractor preserving dates/figures when LLM is unavailable. |
 | **Citation Integrity Engine** | RAGForge Extension | `CitationValidator` in `knowledge/agentic/citations.py` detects hallucinated citations. |
 | **Execution Tracing & Budgets** | RAGForge Extension | `ExecutionTracer` with sensitive parameter redaction and JSON export. |
 | **FastAPI REST v2 Endpoints** | RAGForge Extension | Non-blocking `/v2/agentic-ask` and SSE progress event stream `/v2/agentic-stream`. |
-| **3-System Comparative Benchmark** | RAGForge Extension | 120-question enterprise benchmark comparing Baseline A, Baseline B, and System C. |
+| **3-System Comparative Benchmark** | RAGForge Extension | 120 authored repository questions; comparative results remain unverified. |
 
 ---
 
