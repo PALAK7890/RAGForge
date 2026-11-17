@@ -99,3 +99,52 @@ flowchart LR
     TUNER --> MODEL[Fine-Tuned Cross-Encoder Reranker]
     MODEL --> RETRIEVE[Improved Production Retrieval]
 ```
+
+---
+
+## 5. Research-Grade AgenticRAG Architecture (Microsoft AgenticRAG)
+
+The AgenticRAG module extends RAGForge from reactive query rewriting to an active, tool-driven document investigation architecture based on research by Microsoft Corporation (*AgenticRAG: Agentic Retrieval for Enterprise Knowledge Bases*, arXiv:2605.05538).
+
+### Agentic Retrieval & Navigation Workflow
+
+```mermaid
+flowchart TD
+    QUERY([User Query]) --> PLAN["Plan & Route Node: Query Decomposition & Initial Strategy"]
+    PLAN --> DISPATCH["Execute Tool Node: Action Dispatch"]
+
+    subgraph ToolHarness["Enterprise Tool Suite"]
+        T_SEARCH["SEARCH: Corpus-wide Hybrid Vector + Lexical Search"]
+        T_FIND["FIND: In-Document Keyword / Regex Location"]
+        T_OPEN["OPEN: Contiguous Spans & Page Reader"]
+        T_SUM["SUMMARIZE: Evidence Compression & Synthesis"]
+    end
+
+    DISPATCH --> T_SEARCH & T_FIND & T_OPEN & T_SUM
+
+    T_SEARCH & T_FIND & T_OPEN & T_SUM --> ESTORE[("Stateful EvidenceStore: Dedup & Provenance")]
+
+    ESTORE --> EVAL["Evaluate Evidence Node: Sufficiency & Stopping Check"]
+
+    EVAL --> DECIDE{Sufficient or Budget Cap?}
+    DECIDE -- "No, Next Tool Selected" --> DISPATCH
+    DECIDE -- "Yes, Evidence Sufficient" --> SYNTH["Synthesize Answer Node"]
+    DECIDE -- "Yes, Evidence Absent" --> ABSTAIN["Grounded Abstention Node"]
+
+    SYNTH --> CITE["CitationValidator: In-Text Verification & Provenance Check"]
+    CITE --> FINAL_ANS([Grounded Answer + Verified Citations])
+    ABSTAIN --> FINAL_ANS
+```
+
+### Architectural Comparison
+
+| Capability | Standard RAG | Existing Self-Correcting RAG | AgenticRAG (Microsoft) |
+|---|---|---|---|
+| **Retrieval Paradigm** | Single-pass static retrieve | Iterative single-pass retries | Multi-action autonomous investigation |
+| **Tool-Directed Retrieval** | No | Limited (query rewriting only) | **Yes (SEARCH, FIND, OPEN, SUMMARIZE)** |
+| **In-Document Navigation** | No | No | **Yes (`FIND` in doc, `OPEN` page/span)** |
+| **Evidence Management** | Ephemeral context list | Ephemeral chunk list | **Stateful `EvidenceStore` with UUID tracking** |
+| **Citation Verification** | Basic filename list | Basic filename list | **`CitationValidator` with span & offset checking** |
+| **Grounded Abstention** | No (hallucinates) | Weak (attaches warning) | **Strict refusal when evidence is absent** |
+| **Observability** | Per-stage latencies | Node latencies | **Granular execution trace + JSON export** |
+
