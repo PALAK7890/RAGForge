@@ -74,8 +74,13 @@ class RAGService:
         if not files:
             return {"indexed": 0, "message": "No files found to index."}
 
-        registry = DocumentRegistry()
+        registry = DocumentRegistry(str(self.index_dir / "manifest.json"))
         vector_store = FAISSStore()
+        previous_chunks = []
+        if self.chunks_path.exists():
+            previous_chunks = json.loads(self.chunks_path.read_text(encoding="utf-8"))["chunks"]
+        updated_paths = set()
+        errors = []
 
         all_chunks: List[Any] = []
         all_embeddings: List[List[float]] = []
@@ -83,13 +88,19 @@ class RAGService:
 
         for file in files:
             status = registry.get_status(file)
-            if status == "UNCHANGED":
+            if (
+                status == "UNCHANGED"
+                and Path(self.faiss_path).exists()
+                and any(Path(c["source_path"]).resolve() == file.resolve() for c in previous_chunks)
+            ):
                 continue
 
             try:
                 loader = self.router.get_loader(file)
                 loaded_docs = loader.load(file)
                 chunks = self.chunker.chunk(loaded_docs, chunk_size=500, chunk_overlap=100)
+                if not chunks:
+                    raise ValueError("Document produced no chunks")
                 texts = [chunk.text for chunk in chunks]
 
                 embeddings = self.embedder.embed_documents(texts)
@@ -97,18 +108,30 @@ class RAGService:
                 all_embeddings.extend(embeddings)
                 registry.add_document(file, len(chunks))
                 indexed_count += 1
-            except Exception:
+                updated_paths.add(file.resolve())
+            except Exception as exc:
+                errors.append({"file": str(file), "error": str(exc)})
                 continue
 
         if not all_embeddings:
-            return {"indexed": 0, "message": "All documents are already indexed and unchanged."}
+            return {
+                "indexed": 0,
+                "message": "No documents were changed successfully.",
+                "errors": errors,
+            }
 
-        # Save to vector store
+        # Retain unrelated and unchanged sources when adding or replacing documents.
+        retained = [
+            c for c in previous_chunks if Path(c["source_path"]).resolve() not in updated_paths
+        ]
+        if retained:
+            all_embeddings = (
+                self.embedder.embed_documents([c["text"] for c in retained]) + all_embeddings
+            )
         self.index_dir.mkdir(parents=True, exist_ok=True)
         vector_store.add(all_embeddings)
         vector_store.save(self.faiss_path)
 
-        document_records = [{"name": file.name, "path": str(file.resolve())} for file in files]
         chunk_records = [
             {
                 "chunk_id": chunk.chunk_id,
@@ -121,15 +144,31 @@ class RAGService:
             }
             for chunk in all_chunks
         ]
+        chunk_records = retained + chunk_records
+        document_records = list(
+            {
+                str(Path(c["source_path"]).resolve()): {
+                    "name": Path(c["source_path"]).name,
+                    "path": str(Path(c["source_path"]).resolve()),
+                }
+                for c in chunk_records
+            }.values()
+        )
 
         with open(self.chunks_path, "w", encoding="utf-8") as f:
-            json.dump({"documents": document_records, "chunks": chunk_records}, f, indent=2, ensure_ascii=False)
+            json.dump(
+                {"documents": document_records, "chunks": chunk_records},
+                f,
+                indent=2,
+                ensure_ascii=False,
+            )
 
         registry.save()
 
         return {
             "indexed_files": indexed_count,
-            "total_chunks": len(all_chunks),
+            "total_chunks": len(chunk_records),
+            "errors": errors,
             "embedding_dim": len(all_embeddings[0]) if all_embeddings else 0,
         }
 
@@ -146,7 +185,9 @@ class RAGService:
 
         doc_list = []
         for doc in documents:
-            chunk_count = sum(1 for c in chunks if Path(c.get("source_path", "")).name == doc["name"])
+            chunk_count = sum(
+                1 for c in chunks if Path(c.get("source_path", "")).name == doc["name"]
+            )
             doc_list.append({"name": doc["name"], "path": doc["path"], "chunks": chunk_count})
 
         return {
@@ -177,7 +218,7 @@ class RAGService:
 
         return chunks, bm25, vector_store
 
-    def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    def search(self, query: str, top_k: int = 5, rerank: bool = True) -> List[Dict[str, Any]]:
         """Run hybrid retrieval (FAISS + BM25) and Cross-Encoder reranking."""
         chunks, bm25, vector_store = self._load_search_context()
         expanded_query = self.expander.expand(query)
@@ -202,7 +243,11 @@ class RAGService:
                 chunk_copy["hybrid_score"] = float(hybrid_score)
                 candidate_chunks.append(chunk_copy)
 
-        ranked = self.reranker.rerank(query=query, chunks=candidate_chunks, top_k=top_k)
+        ranked = (
+            self.reranker.rerank(query=query, chunks=candidate_chunks, top_k=top_k)
+            if rerank
+            else candidate_chunks[:top_k]
+        )
         return ranked
 
     # -------------------------------------------------------------------------
@@ -236,7 +281,9 @@ class RAGService:
             "chunks": formatted_chunks,
         }
 
-    def ask_stream(self, question: str, top_k: int = 5) -> Tuple[List[str], List[Dict[str, Any]], Iterator[str]]:
+    def ask_stream(
+        self, question: str, top_k: int = 5
+    ) -> Tuple[List[str], List[Dict[str, Any]], Iterator[str]]:
         """Perform RAG search and stream answer tokens."""
         ranked = self.search(question, top_k=top_k)
         context = "\n\n".join(chunk["text"] for chunk in ranked)
@@ -282,7 +329,11 @@ class RAGService:
             except Exception:
                 pass
 
-        chunk_size = f"{os.path.getsize(self.chunks_path) / 1024:.2f} KB" if self.chunks_path.exists() else "0 KB"
+        chunk_size = (
+            f"{os.path.getsize(self.chunks_path) / 1024:.2f} KB"
+            if self.chunks_path.exists()
+            else "0 KB"
+        )
 
         return {
             "workspace": str(self.workspace.resolve()),
@@ -309,7 +360,9 @@ class RAGService:
         scores, indices = vector_store.search(query_embedding, top_k=20)
         faiss_ms = (time.perf_counter() - t0) * 1000
 
-        faiss_results = [(int(idx), float(score)) for score, idx in zip(scores[0], indices[0]) if idx != -1]
+        faiss_results = [
+            (int(idx), float(score)) for score, idx in zip(scores[0], indices[0]) if idx != -1
+        ]
 
         t0 = time.perf_counter()
         bm25_results = bm25.search(expanded_query, top_k=20)
