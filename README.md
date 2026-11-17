@@ -186,6 +186,21 @@ Measured 2026-11-09 with `HF_HUB_OFFLINE=1 python scripts/measure_latency.py`, s
 
 These numbers were produced by [`scripts/measure_latency.py`](scripts/measure_latency.py), which loads all components once and runs two sequential queries in the same process. `knowledge evaluate` spawns a fresh subprocess per query so both runs appear cold at the OS level and the per-query latencies shown above (473 ms / 51 ms) are both cold.
 
+### Try the fictional practice corpus
+
+[40 examples with eight source documents](examples/evaluation/README.md) cover
+policy versions, support SLAs, incident response, deployment, pricing and numerical
+reasoning. Each answerable question includes an expected answer and exact source
+passages; eight questions test unsupported requests. Run real retrieval in an
+isolated workspace without Ollama:
+
+```bash
+OMP_NUM_THREADS=1 python -m knowledge.evaluation.examples --index --output reports/examples-retrieval.json
+```
+
+Use `--mode standard` or `--mode agentic` once Ollama is running. These are practice
+examples, not independently validated research measurements.
+
 ### AgenticRAG evaluation status (audited 2026-11-17)
 
 The 120 authored questions exist (62 dev, 58 held_out), but the previously
