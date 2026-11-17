@@ -23,10 +23,14 @@ from knowledge.agentic.schemas import (
 )
 from knowledge.agentic.state import AgenticGraphState
 from knowledge.agentic.tools import FindTool, OpenTool, SearchTool, SummarizeTool
+from knowledge.agentic.tracer import AgentBudget, ExecutionTrace, ExecutionTracer
 
 __all__ = [
     "AgenticController",
     "AgenticGraphState",
+    "AgentBudget",
+    "ExecutionTrace",
+    "ExecutionTracer",
     "EvidenceRecord",
     "EvidenceStore",
     "SearchTool",
