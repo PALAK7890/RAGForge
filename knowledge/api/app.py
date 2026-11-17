@@ -2,6 +2,7 @@
 FastAPI application for RAGForge.
 """
 
+import asyncio
 from typing import Any, Dict, Iterator
 
 from fastapi import FastAPI, HTTPException, Query
@@ -11,6 +12,9 @@ from fastapi.responses import StreamingResponse
 from knowledge.api.schemas import (
     AgentAskRequest,
     AgentAskResponse,
+    AgenticAskRequest,
+    AgenticAskResponse,
+    AgenticCitation,
     AskRequest,
     AskResponse,
     BenchmarkRequest,
@@ -280,3 +284,93 @@ def agent_stream(
         }) + "\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+# -----------------------------------------------------------------------------
+# Version 2: Research-Grade AgenticRAG Endpoints (Microsoft AgenticRAG)
+# -----------------------------------------------------------------------------
+
+@app.post("/v2/agentic-ask", response_model=AgenticAskResponse)
+async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
+    """
+    Execute the research-grade AgenticRAG controller using SEARCH, FIND, OPEN, and SUMMARIZE.
+    Executed in a worker thread to prevent blocking the async FastAPI event loop.
+    """
+    try:
+        from knowledge.agentic.controller import AgenticController
+
+        controller = AgenticController()
+        # Non-blocking execution
+        result = await asyncio.to_thread(controller.run, payload.question, max_steps=payload.max_steps)
+
+        citations_models = [
+            AgenticCitation(
+                evidence_id=c.get("evidence_id", ""),
+                label=c.get("label", ""),
+                document_id=c.get("document_id", ""),
+                source_path=c.get("source_path", ""),
+                page_number=c.get("page_number"),
+                char_start=c.get("char_start"),
+                char_end=c.get("char_end"),
+                snippet=c.get("snippet", ""),
+            )
+            for c in result.get("citations", [])
+        ]
+
+        return AgenticAskResponse(
+            question=result["question"],
+            answer=result["answer"],
+            abstained=result["abstained"],
+            sufficiency=result["sufficiency"],
+            sufficiency_reason=result["sufficiency_reason"],
+            steps=result["steps"],
+            tool_history=result["tool_history"],
+            discovered_docs=result["discovered_docs"],
+            citations=citations_models,
+            citation_report=result["citation_report"],
+            latencies=result["latencies"],
+            evidence_count=result["evidence_count"],
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AgenticRAG controller failed: {str(e)}") from e
+
+
+@app.get("/v2/agentic-stream/{query}")
+async def agentic_stream_v2(
+    query: str,
+    max_steps: int = Query(default=5, ge=1, le=15, description="Maximum agent retrieval steps"),
+) -> StreamingResponse:
+    """
+    Stream granular AgenticRAG tool execution events and final answer via Server-Sent Events (SSE).
+    """
+    import json as _json
+    from knowledge.agentic.controller import AgenticController
+
+    async def sse_generator() -> Iterator[str]:
+        controller = AgenticController()
+
+        yield _json.dumps({"event": "start", "query": query, "max_steps": max_steps}) + "\n"
+
+        # Run controller asynchronously
+        result = await asyncio.to_thread(controller.run, query, max_steps=max_steps)
+
+        for step_record in result.get("tool_history", []):
+            yield _json.dumps({
+                "event": "tool_executed",
+                "step": step_record.get("step"),
+                "tool": step_record.get("tool"),
+                "results": step_record.get("results_count", 0),
+                "duration_ms": round(step_record.get("duration_ms", 0.0), 2),
+            }) + "\n"
+
+        yield _json.dumps({
+            "event": "complete",
+            "sufficiency": result.get("sufficiency"),
+            "abstained": result.get("abstained"),
+            "evidence_count": result.get("evidence_count"),
+            "answer": result.get("answer"),
+            "citations": result.get("citations", [])[:5],
+            "citation_integrity": result.get("citation_report", {}).get("citation_integrity", 1.0),
+        }) + "\n"
+
+    return StreamingResponse(sse_generator(), media_type="text/event-stream")

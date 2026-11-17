@@ -692,6 +692,80 @@ def agent_ask_cmd(
             console.print(f"  {stage:<12}: {lat:.2f} ms")
 
 
+@app.command("agentic-ask")
+def agentic_ask_cmd(
+    question: str,
+    max_steps: int = typer.Option(5, "--max-steps", "-s", help="Maximum agent retrieval steps (budget)"),
+    show_trace: bool = typer.Option(False, "--show-trace", "-t", help="Display granular tool execution trace table"),
+    output_json: bool = typer.Option(False, "--output-json", "-j", help="Output raw response and citations as JSON"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed step messages"),
+) -> None:
+    """Answer questions using Microsoft AgenticRAG multi-tool navigation (SEARCH, FIND, OPEN, SUMMARIZE)."""
+    import json as _json
+    from rich.table import Table
+    from knowledge.agentic.controller import AgenticController
+
+    if not output_json:
+        console.print(f"\n[bold cyan]AgenticRAG Query:[/bold cyan] {question}")
+        console.print(f"[dim]Executing AgenticRAG controller (max_steps={max_steps})...[/dim]\n")
+
+    controller = AgenticController()
+    result = controller.run(question, max_steps=max_steps)
+
+    if output_json:
+        console.print(_json.dumps(result, indent=2, default=str))
+        return
+
+    # Status summary
+    if result["abstained"]:
+        console.print("[bold yellow]Status: Grounded Abstention[/bold yellow]")
+        console.print(f"[dim]Reason: {result['sufficiency_reason']}[/dim]\n")
+    else:
+        console.print(f"[bold green]Status: {result['sufficiency'].title()}[/bold green] ({result['steps']} steps, {result['evidence_count']} verified passages)")
+
+    # Execution Trace Table
+    if show_trace or verbose:
+        table = Table(title="AgenticRAG Execution Trace", show_header=True, header_style="bold magenta")
+        table.add_column("Step", style="dim", width=6)
+        table.add_column("Tool", style="bold cyan", width=12)
+        table.add_column("Action / Query", width=40)
+        table.add_column("Results", justify="right", width=10)
+        table.add_column("Latency", justify="right", width=12)
+
+        for item in result["tool_history"]:
+            step_str = str(item.get("step", "-"))
+            tool_str = item.get("tool", "")
+            inputs = item.get("inputs", {})
+            action_desc = str(inputs.get("queries") or inputs.get("expression") or inputs.get("document_id") or "")
+            if len(action_desc) > 38:
+                action_desc = action_desc[:35] + "..."
+            results_str = str(item.get("results_count", 0))
+            duration = f"{item.get('duration_ms', 0):.1f} ms"
+            table.add_row(step_str, tool_str, action_desc, results_str, duration)
+
+        console.print(table)
+        console.print()
+
+    # Answer Block
+    console.print("[bold green]Answer[/bold green]\n")
+    console.print(result["answer"])
+
+    # Citations Block
+    citations = result.get("citations", [])
+    if citations:
+        console.print("\n[bold cyan]Verified Citations & Provenance[/bold cyan]\n")
+        for cite in citations[:5]:
+            label = cite.get("label", "")
+            snippet = cite.get("snippet", "")
+            console.print(f"• [bold]{label}[/bold] [dim]{snippet[:100]}...[/dim]")
+
+    # Citation Integrity
+    cite_report = result.get("citation_report", {})
+    if cite_report.get("total_cited", 0) > 0:
+        integrity_pct = cite_report.get("citation_integrity", 1.0) * 100
+        console.print(f"\n[dim]Citation Integrity: {integrity_pct:.1f}% ({cite_report.get('verified_count', 0)}/{cite_report.get('total_cited', 0)} verified)[/dim]")
+
+
 @app.command("generate-synthetic-data")
 def generate_synthetic_data_cmd(
     num_pairs: int = typer.Option(20, "--num-pairs", "-n", help="Number of query-document pairs to generate"),

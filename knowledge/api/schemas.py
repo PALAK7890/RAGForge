@@ -2,7 +2,7 @@
 Pydantic schemas for the RAGForge REST API.
 """
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -78,6 +78,40 @@ class AgentAskResponse(BaseModel):
     rewrites: int
     sources: List[str]
     latencies: Dict[str, float]
+
+
+class AgenticAskRequest(BaseModel):
+    """Research-grade AgenticRAG query payload."""
+    question: str = Field(description="User question to resolve through agentic navigation")
+    max_steps: int = Field(default=5, ge=1, le=15, description="Maximum agent retrieval steps")
+
+
+class AgenticCitation(BaseModel):
+    """Citation provenance for an AgenticRAG claim."""
+    evidence_id: str
+    label: str
+    document_id: str
+    source_path: str
+    page_number: Optional[int] = None
+    char_start: Optional[int] = None
+    char_end: Optional[int] = None
+    snippet: str
+
+
+class AgenticAskResponse(BaseModel):
+    """Structured response from the research AgenticRAG controller."""
+    question: str
+    answer: str
+    abstained: bool
+    sufficiency: str
+    sufficiency_reason: str
+    steps: int
+    tool_history: List[Dict[str, Any]]
+    discovered_docs: List[str]
+    citations: List[AgenticCitation]
+    citation_report: Dict[str, Any]
+    latencies: Dict[str, float]
+    evidence_count: int
 
 
 class StatsResponse(BaseModel):
