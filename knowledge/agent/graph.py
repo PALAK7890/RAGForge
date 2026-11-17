@@ -66,6 +66,7 @@ def run_agent_workflow(question: str, max_retries: Optional[int] = None) -> Dict
     if max_retries is None:
         max_retries = AppConfig().max_retrieval_attempts
     initial_state: AgentState = {
+        "error": None,
         "original_query": question,
         "current_query": question,
         "query_type": "factual",
@@ -84,6 +85,7 @@ def run_agent_workflow(question: str, max_retries: Optional[int] = None) -> Dict
     final_state = graph.invoke(initial_state)
 
     return {
+        "error": final_state.get("error"),
         "question": question,
         "answer": final_state["answer"],
         "query_type": final_state["query_type"],

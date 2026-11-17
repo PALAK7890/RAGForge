@@ -109,7 +109,9 @@ def ask(payload: AskRequest) -> Any:
     """Answer questions from indexed documents, with optional streaming token support."""
     try:
         if payload.stream:
-            sources, chunks, token_stream = service.ask_stream(payload.question, top_k=payload.top_k)
+            sources, chunks, token_stream = service.ask_stream(
+                payload.question, top_k=payload.top_k
+            )
 
             def event_generator() -> Iterator[str]:
                 for token in token_stream:
@@ -138,6 +140,7 @@ def agent_ask(payload: AgentAskRequest) -> AgentAskResponse:
         # Import dynamically or fallback if agent module not yet initialized
         try:
             from knowledge.agent.graph import run_agent_workflow
+
             result = run_agent_workflow(payload.question, max_retries=payload.max_retries)
             return AgentAskResponse(**result)
         except ImportError:
@@ -191,6 +194,7 @@ def run_evaluation(payload: EvaluateRequest) -> Dict[str, Any]:
 def record_feedback(payload: FeedbackRequest) -> FeedbackResponse:
     """Record user relevance judgment for active learning."""
     from knowledge.feedback.store import FeedbackStore
+
     store = FeedbackStore()
     res = store.record_feedback(
         query=payload.query,
@@ -259,29 +263,56 @@ def agent_stream(
 
         attempt = 1
         while True:
-            yield _json.dumps({"event": "start", "attempt": attempt, "query": state["current_query"]}) + "\n"
+            yield (
+                _json.dumps({"event": "start", "attempt": attempt, "query": state["current_query"]})
+                + "\n"
+            )
 
             state = _retrieve(state)
-            yield _json.dumps({"event": "retrieved", "attempt": attempt, "chunks": len(state["retrieved_chunks"])}) + "\n"
+            yield (
+                _json.dumps(
+                    {
+                        "event": "retrieved",
+                        "attempt": attempt,
+                        "chunks": len(state["retrieved_chunks"]),
+                    }
+                )
+                + "\n"
+            )
 
             state = _grade(state)
-            yield _json.dumps({"event": "graded", "attempt": attempt, "sufficiency": state["sufficiency"]}) + "\n"
+            yield (
+                _json.dumps(
+                    {"event": "graded", "attempt": attempt, "sufficiency": state["sufficiency"]}
+                )
+                + "\n"
+            )
 
             if state["sufficiency"] == "sufficient" or state["rewrite_count"] >= max_retries:
                 break
 
             state = _rewrite(state)
             attempt += 1
-            yield _json.dumps({"event": "rewriting", "attempt": attempt, "query": state["current_query"]}) + "\n"
+            yield (
+                _json.dumps(
+                    {"event": "rewriting", "attempt": attempt, "query": state["current_query"]}
+                )
+                + "\n"
+            )
 
         state = _generate(state)
-        yield _json.dumps({
-            "event": "answer",
-            "sufficiency": state["sufficiency"],
-            "rewrites": state["rewrite_count"],
-            "sources": state["sources"],
-            "text": state["answer"],
-        }) + "\n"
+        yield (
+            _json.dumps(
+                {
+                    "event": "answer",
+                    "sufficiency": state["sufficiency"],
+                    "rewrites": state["rewrite_count"],
+                    "sources": state["sources"],
+                    "text": state["answer"],
+                }
+            )
+            + "\n"
+        )
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -289,6 +320,7 @@ def agent_stream(
 # -----------------------------------------------------------------------------
 # Version 2: Research-Grade AgenticRAG Endpoints (Microsoft AgenticRAG)
 # -----------------------------------------------------------------------------
+
 
 @app.post("/v2/agentic-ask", response_model=AgenticAskResponse)
 async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
@@ -301,7 +333,9 @@ async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
 
         controller = AgenticController()
         # Non-blocking execution
-        result = await asyncio.to_thread(controller.run, payload.question, max_steps=payload.max_steps)
+        result = await asyncio.to_thread(
+            controller.run, payload.question, max_steps=payload.max_steps
+        )
 
         citations_models = [
             AgenticCitation(
@@ -330,9 +364,12 @@ async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
             citation_report=result["citation_report"],
             latencies=result["latencies"],
             evidence_count=result["evidence_count"],
+            error=result.get("error"),
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AgenticRAG controller failed: {str(e)}") from e
+        raise HTTPException(
+            status_code=500, detail=f"AgenticRAG controller failed: {str(e)}"
+        ) from e
 
 
 @app.get("/v2/agentic-stream/{query}")
@@ -344,33 +381,62 @@ async def agentic_stream_v2(
     Stream granular AgenticRAG tool execution events and final answer via Server-Sent Events (SSE).
     """
     import json as _json
+
     from knowledge.agentic.controller import AgenticController
 
-    async def sse_generator() -> Iterator[str]:
-        controller = AgenticController()
+    async def sse_generator():
+        loop = asyncio.get_running_loop()
+        events = asyncio.Queue()
 
-        yield _json.dumps({"event": "start", "query": query, "max_steps": max_steps}) + "\n"
-
-        # Run controller asynchronously
-        result = await asyncio.to_thread(controller.run, query, max_steps=max_steps)
-
-        for step_record in result.get("tool_history", []):
-            yield _json.dumps({
+        def publish(record):
+            # Do not stream query inputs, snippets, or document content in progress events.
+            event = {
                 "event": "tool_executed",
-                "step": step_record.get("step"),
-                "tool": step_record.get("tool"),
-                "results": step_record.get("results_count", 0),
-                "duration_ms": round(step_record.get("duration_ms", 0.0), 2),
-            }) + "\n"
+                "step": record.get("step"),
+                "tool": record.get("tool"),
+                "results": record.get("results_count", 0),
+                "duration_ms": round(record.get("duration_ms", 0.0), 2),
+            }
+            loop.call_soon_threadsafe(events.put_nowait, event)
 
-        yield _json.dumps({
-            "event": "complete",
-            "sufficiency": result.get("sufficiency"),
-            "abstained": result.get("abstained"),
-            "evidence_count": result.get("evidence_count"),
-            "answer": result.get("answer"),
-            "citations": result.get("citations", [])[:5],
-            "citation_integrity": result.get("citation_report", {}).get("citation_integrity", 1.0),
-        }) + "\n"
+        controller = AgenticController(on_tool_event=publish)
+
+        async def execute():
+            try:
+                result = await asyncio.to_thread(controller.run, query, max_steps=max_steps)
+                await events.put(
+                    {
+                        "event": "complete",
+                        "sufficiency": result.get("sufficiency"),
+                        "abstained": result.get("abstained"),
+                        "evidence_count": result.get("evidence_count"),
+                        "answer": result.get("answer"),
+                        "error": result.get("error"),
+                        "citations": result.get("citations", [])[:5],
+                        "citation_integrity": result.get("citation_report", {}).get(
+                            "citation_integrity"
+                        ),
+                    }
+                )
+            except Exception as exc:
+                await events.put({"event": "error", "message": str(exc)})
+            finally:
+                await events.put(None)
+
+        yield (
+            "data: "
+            + _json.dumps({"event": "start", "query": query, "max_steps": max_steps})
+            + "\n\n"
+        )
+        task = asyncio.create_task(execute())
+        try:
+            while True:
+                event = await events.get()
+                if event is None:
+                    break
+                yield "data: " + _json.dumps(event) + "\n\n"
+        finally:
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
 
     return StreamingResponse(sse_generator(), media_type="text/event-stream")

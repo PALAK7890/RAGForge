@@ -4,7 +4,7 @@ Ensures every citation in generated answers references verified, indexed documen
 """
 
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 from knowledge.agentic.schemas import EvidenceRecord
 
@@ -19,7 +19,9 @@ class CitationValidator:
         self.records = evidence_records or []
         self._doc_names: Set[str] = {r.document_id.lower() for r in self.records if r.document_id}
         self._evidence_ids: Set[str] = {r.evidence_id for r in self.records}
-        self._source_paths: Set[str] = {r.source_path.lower() for r in self.records if r.source_path}
+        self._source_paths: Set[str] = {
+            r.source_path.lower() for r in self.records if r.source_path
+        }
 
     def extract_citations(self, text: str) -> List[Dict[str, Any]]:
         """
@@ -51,13 +53,15 @@ class CitationValidator:
             # Base document or evidence token
             base_token = re.split(r",\s*p|,\s*chars", content, flags=re.IGNORECASE)[0].strip()
 
-            citations.append({
-                "raw": f"[{content}]",
-                "token": base_token,
-                "page": page,
-                "char_start": char_start,
-                "char_end": char_end,
-            })
+            citations.append(
+                {
+                    "raw": f"[{content}]",
+                    "token": base_token,
+                    "page": page,
+                    "char_start": char_start,
+                    "char_end": char_end,
+                }
+            )
 
         return citations
 
@@ -85,43 +89,50 @@ class CitationValidator:
             token_lower = cite["token"].lower()
             matched_record = None
 
-            # Check evidence_id match
-            if cite["token"] in self._evidence_ids:
-                matched_record = next(r for r in self.records if r.evidence_id == cite["token"])
-
-            # Check document_id match
-            if not matched_record:
-                for r in self.records:
-                    if r.document_id and (token_lower in r.document_id.lower() or r.document_id.lower() in token_lower):
-                        matched_record = r
-                        break
-
-            # Check source_path match
-            if not matched_record:
-                for r in self.records:
-                    if r.source_path and token_lower in r.source_path.lower():
-                        matched_record = r
-                        break
+            # A reference must resolve exactly, including every claimed location.
+            evidence_token = re.sub(r"^evidence:\s*", "", cite["token"], flags=re.I)
+            for record in self.records:
+                identity = (
+                    evidence_token == record.evidence_id
+                    or token_lower == record.document_id.lower()
+                    or token_lower == record.source_path.lower()
+                )
+                page_ok = cite["page"] is None or cite["page"] == record.page_number
+                span_ok = cite["char_start"] is None or (
+                    record.char_start is not None
+                    and record.char_end is not None
+                    and record.char_start
+                    <= cite["char_start"]
+                    < cite["char_end"]
+                    <= record.char_end
+                )
+                if identity and page_ok and span_ok:
+                    matched_record = record
+                    break
 
             if matched_record:
                 # Verify page number if specified
                 page_valid = True
                 if cite["page"] is not None and matched_record.page_number is not None:
-                    page_valid = (cite["page"] == matched_record.page_number)
+                    page_valid = cite["page"] == matched_record.page_number
 
-                verified.append({
-                    "citation": cite["raw"],
-                    "document_id": matched_record.document_id,
-                    "source_path": matched_record.source_path,
-                    "evidence_id": matched_record.evidence_id,
-                    "page_match": page_valid,
-                })
+                verified.append(
+                    {
+                        "citation": cite["raw"],
+                        "document_id": matched_record.document_id,
+                        "source_path": matched_record.source_path,
+                        "evidence_id": matched_record.evidence_id,
+                        "page_match": page_valid,
+                    }
+                )
             else:
-                hallucinated.append({
-                    "citation": cite["raw"],
-                    "unresolved_token": cite["token"],
-                    "reason": "Referenced document or evidence ID not found in retrieved records.",
-                })
+                hallucinated.append(
+                    {
+                        "citation": cite["raw"],
+                        "unresolved_token": cite["token"],
+                        "reason": "Referenced document or evidence ID not found in retrieved records.",
+                    }
+                )
 
         total = len(extracted)
         valid_count = len(verified)
