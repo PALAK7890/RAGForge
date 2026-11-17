@@ -5,10 +5,14 @@ Three-System Comparative Evaluation Framework:
 - System C: Research-Inspired AgenticRAG (Microsoft AgenticRAG)
 """
 
+import hashlib
 import json
+import platform
+import subprocess
 import time
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from knowledge.agent.graph import run_agent_workflow
 from knowledge.agentic.controller import AgenticController
@@ -30,18 +34,21 @@ class SystemComparator:
         try:
             res = self.service.ask(question, top_k=5)
             latency = (time.perf_counter() - t0) * 1000
-            retrieved_docs = list(dict.fromkeys(Path(c["source_path"]).name for c in res.get("chunks", [])))
+            retrieved_docs = list(
+                dict.fromkeys(Path(c["source_path"]).name for c in res.get("chunks", []))
+            )
             return {
                 "answer": res.get("answer", ""),
                 "retrieved_docs": retrieved_docs,
                 "latency_ms": latency,
                 "steps": 1,
-                "abstained": False,
+                "abstained": self.is_abstention(res.get("answer", "")),
                 "citations": [f"[{d}]" for d in retrieved_docs],
             }
         except Exception as e:
             return {
-                "answer": f"Error: {str(e)}",
+                "error": str(e),
+                "answer": "",
                 "retrieved_docs": [],
                 "latency_ms": (time.perf_counter() - t0) * 1000,
                 "steps": 1,
@@ -57,16 +64,18 @@ class SystemComparator:
             latency = (time.perf_counter() - t0) * 1000
             sources = res.get("sources", [])
             return {
+                "error": res.get("error"),
                 "answer": res.get("answer", ""),
                 "retrieved_docs": sources,
                 "latency_ms": latency,
                 "steps": res.get("rewrites", 0) + 1,
-                "abstained": False,
+                "abstained": self.is_abstention(res.get("answer", "")),
                 "citations": [f"[{s}]" for s in sources],
             }
         except Exception as e:
             return {
-                "answer": f"Error: {str(e)}",
+                "error": str(e),
+                "answer": "",
                 "retrieved_docs": [],
                 "latency_ms": (time.perf_counter() - t0) * 1000,
                 "steps": 1,
@@ -81,6 +90,7 @@ class SystemComparator:
             res = self.agentic_controller.run(question, max_steps=max_steps)
             latency = (time.perf_counter() - t0) * 1000
             return {
+                "error": res.get("error"),
                 "answer": res.get("answer", ""),
                 "retrieved_docs": res.get("discovered_docs", []),
                 "latency_ms": latency,
@@ -91,54 +101,78 @@ class SystemComparator:
             }
         except Exception as e:
             return {
-                "answer": f"Error: {str(e)}",
+                "error": str(e),
+                "answer": "",
                 "retrieved_docs": [],
                 "latency_ms": (time.perf_counter() - t0) * 1000,
                 "steps": 1,
                 "abstained": True,
                 "citations": [],
-                "citation_integrity": 1.0,
+                "citation_integrity": None,
             }
 
-    def score_single(
-        self,
-        item: Dict[str, Any],
-        system_output: Dict[str, Any],
-    ) -> Dict[str, float]:
-        """Compute objective retrieval and generation scores for one question."""
-        expected_docs = [d.lower() for d in item.get("expected_documents", [])]
-        retrieved_docs = [d.lower() for d in system_output.get("retrieved_docs", [])]
-        gold_keywords = [k.lower() for k in item.get("gold_keywords", [])]
-        answer_lower = system_output.get("answer", "").lower()
-        is_unanswerable = item.get("is_unanswerable", False)
-        abstained = system_output.get("abstained", False)
+    @staticmethod
+    def is_abstention(answer: str) -> bool:
+        return any(
+            phrase in answer.lower()
+            for phrase in (
+                "cannot answer",
+                "could not find the answer",
+                "insufficient evidence",
+                "not enough information",
+            )
+        )
 
-        # 1. Retrieval Hit Rate: Did any expected document get retrieved?
-        if expected_docs:
-            doc_hit = 1.0 if any(any(ed in rd for rd in retrieved_docs) for ed in expected_docs) else 0.0
-        else:
-            doc_hit = 1.0 if is_unanswerable and abstained else 0.0
-
-        # 2. Keyword Recall: What proportion of gold keywords are in the answer?
-        if gold_keywords and not is_unanswerable:
-            kw_hits = sum(1 for kw in gold_keywords if kw in answer_lower)
-            kw_recall = kw_hits / len(gold_keywords)
-        else:
-            kw_recall = 1.0 if (is_unanswerable and abstained) else 0.0
-
-        # 3. Abstention Correctness
-        if is_unanswerable:
-            abstention_score = 1.0 if (abstained or "cannot answer" in answer_lower or "insufficient" in answer_lower) else 0.0
-        else:
-            abstention_score = 1.0 if not abstained else 0.0
-
+    def score_single(self, item, system_output):
+        """Document-level proxies; keyword presence does not measure answer correctness."""
+        expected = {Path(d).name.lower() for d in item.get("expected_documents", [])}
+        retrieved = list(
+            dict.fromkeys(Path(d).name.lower() for d in system_output.get("retrieved_docs", []))
+        )
+        keywords = [k.lower() for k in item.get("gold_keywords", [])]
+        answer = system_output.get("answer", "").lower()
+        unanswerable = item.get("is_unanswerable", False)
+        # Infrastructure failures must never earn abstention or retrieval credit.
+        failed = bool(system_output.get("error")) or answer.startswith("failed to generate answer:")
+        abstained = system_output.get("abstained", False) or self.is_abstention(answer)
+        hits = [int(doc in expected) for doc in retrieved] if not failed else [0] * len(retrieved)
+        relevant = sum(hits)
         return {
-            "retrieval_hit": doc_hit,
-            "keyword_recall": kw_recall,
-            "abstention_correctness": abstention_score,
+            "retrieval_hit": float(bool(relevant)) if expected else None,
+            "document_recall": relevant / len(expected) if expected else None,
+            "document_precision": relevant / len(retrieved)
+            if retrieved and expected
+            else (0.0 if expected else None),
+            "document_mrr": next((1 / (i + 1) for i, hit in enumerate(hits) if hit), 0.0)
+            if expected
+            else None,
+            "keyword_recall": (
+                sum(k in answer for k in keywords) / len(keywords)
+                if keywords and not unanswerable and not failed
+                else (0.0 if not unanswerable else None)
+            ),
+            "abstention_correctness": float(not failed and abstained == unanswerable),
+            "error": float(failed),
             "latency_ms": system_output.get("latency_ms", 0.0),
             "steps": float(system_output.get("steps", 1)),
         }
+
+    def validate_corpus(self, data):
+        """Refuse a comparison when annotated source files are absent from the index."""
+        with self.service.chunks_path.open(encoding="utf-8") as handle:
+            index = json.load(handle)
+        available = {Path(c["source_path"]).name.lower() for c in index["chunks"]}
+        missing = sorted(
+            {
+                d
+                for item in data
+                for d in item.get("expected_documents", [])
+                if Path(d).name.lower() not in available
+            }
+        )
+        if missing:
+            raise ValueError("Benchmark sources missing from index: " + ", ".join(missing))
+        return hashlib.sha256(self.service.chunks_path.read_bytes()).hexdigest()
 
     def run_benchmark(
         self,
@@ -156,63 +190,63 @@ class SystemComparator:
         if max_samples:
             data = data[:max_samples]
 
-        metrics = {
-            "Baseline_A_StandardRAG": {"hits": [], "keywords": [], "abstentions": [], "latencies": [], "steps": []},
-            "Baseline_B_SelfCorrecting": {"hits": [], "keywords": [], "abstentions": [], "latencies": [], "steps": []},
-            "System_C_AgenticRAG": {"hits": [], "keywords": [], "abstentions": [], "latencies": [], "steps": []},
+        if not data:
+            raise ValueError("No benchmark questions selected")
+        corpus_hash = self.validate_corpus(data)
+        records = []
+        systems = {
+            "Baseline_A_StandardRAG": self.evaluate_baseline_a,
+            "Baseline_B_SelfCorrecting": self.evaluate_baseline_b,
+            "System_C_AgenticRAG": self.evaluate_system_c,
         }
-
-        print(f"\n--- Running 3-System Benchmark on {len(data)} questions ---")
-
-        for idx, item in enumerate(data, 1):
-            q = item["question"]
-            print(f"[{idx}/{len(data)}] Evaluating: {q[:60]}...")
-
-            # Run Baseline A
-            out_a = self.evaluate_baseline_a(q)
-            sc_a = self.score_single(item, out_a)
-            metrics["Baseline_A_StandardRAG"]["hits"].append(sc_a["retrieval_hit"])
-            metrics["Baseline_A_StandardRAG"]["keywords"].append(sc_a["keyword_recall"])
-            metrics["Baseline_A_StandardRAG"]["abstentions"].append(sc_a["abstention_correctness"])
-            metrics["Baseline_A_StandardRAG"]["latencies"].append(sc_a["latency_ms"])
-            metrics["Baseline_A_StandardRAG"]["steps"].append(sc_a["steps"])
-
-            # Run Baseline B
-            out_b = self.evaluate_baseline_b(q)
-            sc_b = self.score_single(item, out_b)
-            metrics["Baseline_B_SelfCorrecting"]["hits"].append(sc_b["retrieval_hit"])
-            metrics["Baseline_B_SelfCorrecting"]["keywords"].append(sc_b["keyword_recall"])
-            metrics["Baseline_B_SelfCorrecting"]["abstentions"].append(sc_b["abstention_correctness"])
-            metrics["Baseline_B_SelfCorrecting"]["latencies"].append(sc_b["latency_ms"])
-            metrics["Baseline_B_SelfCorrecting"]["steps"].append(sc_b["steps"])
-
-            # Run System C
-            out_c = self.evaluate_system_c(q)
-            sc_c = self.score_single(item, out_c)
-            metrics["System_C_AgenticRAG"]["hits"].append(sc_c["retrieval_hit"])
-            metrics["System_C_AgenticRAG"]["keywords"].append(sc_c["keyword_recall"])
-            metrics["System_C_AgenticRAG"]["abstentions"].append(sc_c["abstention_correctness"])
-            metrics["System_C_AgenticRAG"]["latencies"].append(sc_c["latency_ms"])
-            metrics["System_C_AgenticRAG"]["steps"].append(sc_c["steps"])
-
+        for item in data:
+            for name, evaluate in systems.items():
+                output = evaluate(item["question"])
+                records.append(
+                    {
+                        "id": item["id"],
+                        "category": item.get("category"),
+                        "system": name,
+                        "output": output,
+                        "scores": self.score_single(item, output),
+                    }
+                )
         summary = {}
-        for sys_name, m in metrics.items():
-            n = len(m["hits"])
-            summary[sys_name] = {
-                "queries_evaluated": n,
-                "retrieval_hit_rate": round(sum(m["hits"]) / n, 4) if n else 0.0,
-                "keyword_recall": round(sum(m["keywords"]) / n, 4) if n else 0.0,
-                "abstention_accuracy": round(sum(m["abstentions"]) / n, 4) if n else 0.0,
-                "average_latency_ms": round(sum(m["latencies"]) / n, 2) if n else 0.0,
-                "average_steps": round(sum(m["steps"]) / n, 2) if n else 0.0,
-            }
-
-        return summary
+        for name in systems:
+            rows = [r["scores"] for r in records if r["system"] == name]
+            summary[name] = {"queries_evaluated": len(rows)}
+            for key in rows[0]:
+                values = [row[key] for row in rows if row[key] is not None]
+                summary[name][key] = sum(values) / len(values) if values else None
+        return {
+            "metadata": {
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "dataset_sha256": hashlib.sha256(Path(dataset_path).read_bytes()).hexdigest(),
+                "chunks_sha256": corpus_hash,
+                "split": split,
+                "max_samples": max_samples,
+                "python": platform.python_version(),
+                "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+                "limitations": "Document-level retrieval proxies; no correctness, faithfulness or citation support scoring.",
+            },
+            "summary": summary,
+            "records": records,
+        }
 
 
 if __name__ == "__main__":
-    comparator = SystemComparator()
-    # Run a representative sample of 10 items for fast CLI verification
-    results = comparator.run_benchmark(max_samples=10)
-    print("\nBenchmark Summary Results:")
-    print(json.dumps(results, indent=2))
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dataset", default="knowledge/evaluation/enterprise_benchmark.json")
+    parser.add_argument("--split", choices=["dev", "held_out"])
+    parser.add_argument("--max-samples", type=int)
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+    if args.max_samples is not None and args.max_samples <= 0:
+        parser.error("--max-samples must be positive")
+    results = SystemComparator().run_benchmark(args.dataset, args.max_samples, args.split)
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
+    print(json.dumps(results["summary"], indent=2))

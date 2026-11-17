@@ -1,12 +1,12 @@
 """
 Generates the 120-question research evaluation benchmark for AgenticRAG.
-Divided into 8 categories across dev (60 questions) and held_out (60 questions) splits.
+Divided into 8 categories across dev (62 questions) and held_out (58 questions) splits.
 """
 
 import json
 from pathlib import Path
 
-def generate_benchmark() -> None:
+def generate_benchmark(output_path=None) -> None:
     questions = []
 
     # 1. FACTUAL RETRIEVAL (20 questions: 10 dev, 10 held_out)
@@ -257,7 +257,7 @@ def generate_benchmark() -> None:
             "is_unanswerable": True,
         })
 
-    out_path = Path("/Users/PalakNst/Desktop/cli_ai/knowledge/evaluation/enterprise_benchmark.json")
+    out_path = Path(output_path) if output_path else Path(__file__).with_name("enterprise_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(questions, f, indent=2)
 
