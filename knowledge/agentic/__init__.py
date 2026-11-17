@@ -3,6 +3,7 @@ AgenticRAG package: Research-driven agentic retrieval for enterprise knowledge b
 Implements SEARCH, FIND, OPEN, and SUMMARIZE tools, evidence management, and agent controller.
 """
 
+from knowledge.agentic.controller import AgenticController
 from knowledge.agentic.evidence_store import EvidenceStore
 from knowledge.agentic.schemas import (
     ChunkView,
@@ -19,9 +20,12 @@ from knowledge.agentic.schemas import (
     SummaryResult,
     ToolError,
 )
+from knowledge.agentic.state import AgenticGraphState
 from knowledge.agentic.tools import FindTool, OpenTool, SearchTool, SummarizeTool
 
 __all__ = [
+    "AgenticController",
+    "AgenticGraphState",
     "EvidenceRecord",
     "EvidenceStore",
     "SearchTool",
