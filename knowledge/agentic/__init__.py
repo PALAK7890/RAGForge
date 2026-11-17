@@ -3,6 +3,7 @@ AgenticRAG package: Research-driven agentic retrieval for enterprise knowledge b
 Implements SEARCH, FIND, OPEN, and SUMMARIZE tools, evidence management, and agent controller.
 """
 
+from knowledge.agentic.citations import CitationValidator
 from knowledge.agentic.controller import AgenticController
 from knowledge.agentic.evidence_store import EvidenceStore
 from knowledge.agentic.schemas import (
