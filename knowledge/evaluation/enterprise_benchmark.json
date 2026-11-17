@@ -1,0 +1,1705 @@
+[
+  {
+    "id": "fact_001",
+    "question": "What vector index algorithm is utilized by RAGForge for dense inner-product similarity search?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "FAISS",
+      "FlatIP"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_002",
+    "question": "What neural reranker model is employed for second-stage cross-attention scoring?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "ms-marco-MiniLM-L-6-v2",
+      "CrossEncoder"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_003",
+    "question": "What default loss function is utilized by BiEncoderTrainer for contrastive domain adaptation?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "MultipleNegativesRankingLoss"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_004",
+    "question": "What is the primary sparse lexical retrieval algorithm integrated in RAGForge?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md",
+      "readme.md"
+    ],
+    "gold_keywords": [
+      "BM25",
+      "BM25Okapi"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_005",
+    "question": "What default port does the RAGForge FastAPI server listen on?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md",
+      "main.py"
+    ],
+    "gold_keywords": [
+      "8000"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_006",
+    "question": "What embedding model family is used for semantic dense embeddings in RAGForge?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "SentenceTransformers",
+      "all-MiniLM-L6-v2"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_007",
+    "question": "What parameter governs the relative contribution of dense versus sparse search in RRF?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "dense_weight"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_008",
+    "question": "What format are intermediate chunks and metadata serialized to in the index directory?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "chunks.json"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_009",
+    "question": "What default smoothing constant k is used in the reciprocal rank fusion formula?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "hybrid.py",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "60"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_010",
+    "question": "What local inference engine powers language model generation in RAGForge?",
+    "category": "factual",
+    "split": "dev",
+    "expected_documents": [
+      "readme.md",
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "Ollama"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_011",
+    "question": "What is the purpose of the DocumentRegistry class during document indexing?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "SHA-1",
+      "hash",
+      "incremental"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_012",
+    "question": "What chunking strategies are supported by RAGForge text chunkers?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "Recursive",
+      "Sentence",
+      "Fixed-size"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_013",
+    "question": "What metric evaluates the reciprocal rank of the first relevant document retrieved?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "MRR",
+      "Mean Reciprocal Rank"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_014",
+    "question": "How does RAGForge ensure deterministic tie-breaking during hybrid rank fusion?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md",
+      "hybrid.py"
+    ],
+    "gold_keywords": [
+      "chunk_id"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_015",
+    "question": "What structured log file stores user relevance judgments in RAGForge?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "feedback.json"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_016",
+    "question": "What HTTP streaming standard is used by RAGForge for agent progress updates?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "Server-Sent Events",
+      "SSE"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_017",
+    "question": "What library is used by RAGForge to build state graph agentic workflows?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "architecture.md",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "LangGraph"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_018",
+    "question": "What is the maximum token sequence limit for the ms-marco-MiniLM-L-6-v2 reranker?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "512"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_019",
+    "question": "What loss function is used for CrossEncoder binary classification tuning?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "binary cross-entropy",
+      "BCE"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "fact_020",
+    "question": "What statistical method does the autotune engine use to validate candidate improvements?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "paired bootstrap"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_021",
+    "question": "What exact Python class name implements recursive character chunking?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "RecursiveChunker"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_022",
+    "question": "Which specific CLI command initiates hyperparameter sweep tuning?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "main.py"
+    ],
+    "gold_keywords": [
+      "autotune"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_023",
+    "question": "What exact module houses the reciprocal_rank_fusion algorithm?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "knowledge.retrievers.hybrid"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_024",
+    "question": "What specific Pydantic schema represents an indexed document record?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "schemas.py"
+    ],
+    "gold_keywords": [
+      "DocumentRecord"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_025",
+    "question": "What exact function name builds and compiles the LangGraph state machine?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "graph.py"
+    ],
+    "gold_keywords": [
+      "build_agent_graph"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_026",
+    "question": "What specific environment variable enables offline operation without HuggingFace calls?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "HF_HUB_OFFLINE"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_027",
+    "question": "What CLI option sets the maximum retrieval rewrite attempts in agent-ask?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "main.py"
+    ],
+    "gold_keywords": [
+      "--max-retries"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_028",
+    "question": "What exact class represents vector index storage in FAISS?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "FAISSStore"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_029",
+    "question": "What exact method name embeds multiple documents simultaneously in SentenceTransformerEmbedding?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "embed_documents"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_030",
+    "question": "What exact endpoint returns workspace statistics in the REST API?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "app.py"
+    ],
+    "gold_keywords": [
+      "/stats"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_031",
+    "question": "What specific CLI command benchmarks stage-by-stage latency?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "main.py"
+    ],
+    "gold_keywords": [
+      "benchmark"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_032",
+    "question": "What exact class routes incoming files to appropriate loaders?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "LoaderRouter"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_033",
+    "question": "What exact method loads the FAISS index from disk in FAISSStore?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "load"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_034",
+    "question": "What exact method in BM25Retriever constructs the inverted index from text corpus?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "build"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "kw_035",
+    "question": "What CLI flag specifies the minimum feedback sample size for reranker tuning?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_documents": [
+      "main.py"
+    ],
+    "gold_keywords": [
+      "--min-samples"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_036",
+    "question": "How does the document ingestion process in RAGForge enable the autotune evaluator to compare chunks across different chunk sizes?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "character offsets",
+      "char_start",
+      "char_end",
+      "immutable source text"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_037",
+    "question": "Why does the cross-encoder stage only process a top candidate pool rather than the full corpus indexed by FAISS?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "O(N) forward passes",
+      "bi-encoder narrows",
+      "latency"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_038",
+    "question": "How does the self-correcting agent determine whether to terminate retrieval when an LLM fails to output a numeric iteration count?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "AgentState",
+      "hard integer cap",
+      "conditional routing edge"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_039",
+    "question": "Why does reciprocal rank fusion avoid the score distribution mismatch between FAISS cosine similarities and BM25 scores?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "incompatible distributions",
+      "ordinal positions",
+      "unbounded BM25"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_040",
+    "question": "How does the offline candidate pooling in the autotune runner prevent repeated index rebuilds during query parameter sweeps?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "retrieves top-50 pool once",
+      "in-memory array sorting",
+      "two-tier"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_041",
+    "question": "What happens to span-level evaluation when a document loader normalizes whitespace or strips line breaks before chunking?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "str.find fails",
+      "char_start=None",
+      "document-level hit detection"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_042",
+    "question": "How does the LLM-as-a-judge module evaluate answer quality differently from traditional retrieval metrics like MRR?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "faithfulness",
+      "relevance",
+      "hallucination",
+      "retrieval vs generation"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_043",
+    "question": "Why does the feedback tuning mechanism require an explicit manual trigger rather than retraining online after every user rating?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "catastrophic forgetting",
+      "accidental clicks",
+      "minimum sample threshold"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_044",
+    "question": "How does the agent controller handle situations where the retrieved context is graded as insufficient by the sufficiency grader?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "graph.py",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "rewrite_query",
+      "retrieve again",
+      "max_retries cap"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_045",
+    "question": "Why are in-batch random negatives insufficient for teaching the cross-encoder to distinguish fine-grained passage differences?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "easy to distinguish",
+      "coarse domain vocabulary",
+      "hard negative mining"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_046",
+    "question": "How does RAGForge's incremental indexing determine whether an existing file needs re-indexing?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "DocumentRegistry",
+      "SHA-1 hash",
+      "UNCHANGED"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_047",
+    "question": "Why does paired bootstrap significance testing outperform Student's t-test for evaluating information retrieval improvements?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "bimodal distribution",
+      "bounded [0, 1]",
+      "no normality assumption"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_048",
+    "question": "How does the Server-Sent Events architecture in FastAPI avoid the stateful overhead associated with WebSockets for RAG queries?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "unidirectional push",
+      "plain HTTP",
+      "auto-reconnection"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_049",
+    "question": "Why does RRF fusion fail to distinguish high-confidence outlier documents with 0.99 similarity from marginal matches?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "discards score magnitudes",
+      "ordinal rank only",
+      "position 1"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_050",
+    "question": "How does the judge fallback score of 1.0 affect aggregate benchmark evaluations when local model timeouts occur?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "inflates faithfulness",
+      "silent error",
+      "appears to agree"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_051",
+    "question": "Why does the autotune neighborhood priority heuristic risk getting trapped in local parameter minima?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "assumes metric smoothness",
+      "baseline local minimum",
+      "exhausts budget"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_052",
+    "question": "How does the synthetic evaluation generator verify whether source passage text changed after dataset generation?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "SHA-1 hash of extracted text",
+      "char_start",
+      "detects stale labels"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_053",
+    "question": "What prevents the cross-encoder reranker from offloading inference to an available GPU in the current implementation?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "no device argument",
+      "CrossEncoder(model_name)",
+      "defaults to CPU"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_054",
+    "question": "Why does binary cross-entropy fine-tuning fail when users submit only positive ratings in the relevance feedback loop?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "only one class",
+      "no negative examples",
+      "trivial model"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "mh_055",
+    "question": "How does the autotune runner ensure atomicity when saving rebuilt FAISS index caches to disk?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "temp-dir rename",
+      "avoids partial writes"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_056",
+    "question": "Compare the strengths and weaknesses of dense vector search versus sparse lexical search in hybrid retrieval.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md",
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "semantic meaning vs exact keywords",
+      "out-of-vocabulary",
+      "FAISS vs BM25"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_057",
+    "question": "Compare the latency and computational complexity of bi-encoder retrieval versus cross-encoder reranking.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "pre-computed embeddings",
+      "O(N) cross-attention",
+      ">80% latency"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_058",
+    "question": "Compare the architectural role of standard single-shot RAG with self-correcting agentic RAG.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "fixed top-k vs iterative rewriting",
+      "sufficiency grading",
+      "LangGraph"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_059",
+    "question": "Compare Server-Sent Events (SSE) and WebSockets for streaming agentic RAG query progress to clients.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "unidirectional vs bidirectional",
+      "HTTP compatibility",
+      "stateful overhead"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_060",
+    "question": "Compare character offset tracking with chunk ID matching for tracking ground truth evaluation spans.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "immutable source text vs unstable chunk IDs",
+      "survives re-chunking"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_061",
+    "question": "Compare the trade-offs of in-batch random negatives versus hard negative mining for embedding model fine-tuning.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "faster data prep vs discriminative signal",
+      "second retrieval pass"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_062",
+    "question": "Compare the design of flat parameter grid search versus two-tier indexed parameter budgeting in autotune.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "54 index builds vs 8 budget builds",
+      "offline candidate pooling"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_063",
+    "question": "Compare Student's t-test with paired bootstrap resampling for evaluating retrieval metric significance.",
+    "category": "comparative",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "parametric normality assumption vs non-parametric empirical CI"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_064",
+    "question": "Compare the role of SEARCH tool versus FIND tool in Microsoft AgenticRAG architecture.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "corpus-wide discovery vs intra-document keyword location"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_065",
+    "question": "Compare the role of FIND tool versus OPEN tool in document navigation.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "identifying match locations vs inspecting contiguous sections/pages"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_066",
+    "question": "Compare extractive evidence summarization versus abstractive LLM summarization in context compression.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md",
+      "tools.py"
+    ],
+    "gold_keywords": [
+      "deterministic speed vs synthesis capability",
+      "token budget"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_067",
+    "question": "Compare RAGForge's default 2-question smoke test with enterprise benchmark evaluation sets.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md",
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "pipeline verification vs statistical power",
+      "BRIGHT",
+      "FinanceBench"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_068",
+    "question": "Compare recursive character chunking with sentence-boundary chunking on structured technical text.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "paragraph-sentence hierarchy vs linguistic sentence models"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_069",
+    "question": "Compare the fallback behavior of LLMJudge versus deterministic rule-based evaluation.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "1.0 fallback inflates scores vs strict error propagation"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "comp_070",
+    "question": "Compare the index caching strategy in autotune with the trial score persistence across sweep interruptions.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "index caches survive vs trial results lost mid-sweep"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_071",
+    "question": "What is the default chunk size and chunk overlap configured in RAGForge's default config.yaml?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "config.yaml",
+      "main.py"
+    ],
+    "gold_keywords": [
+      "500",
+      "100"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_072",
+    "question": "What is the default top_k number of chunks retrieved by RAGForge during standard search?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "config.yaml",
+      "service.py"
+    ],
+    "gold_keywords": [
+      "5"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_073",
+    "question": "What is the minimum sample count required before tune-reranker will execute fine-tuning?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "main.py",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "5"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_074",
+    "question": "What is the default maximum number of retrieval rewrite attempts in the self-correcting agent?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "graph.py",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "2",
+      "3"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_075",
+    "question": "What percentage of total retrieval latency does the cross-encoder reranker typically account for on large candidate pools?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      ">80%"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_076",
+    "question": "How many bootstrap resampling iterations does the autotune composite scorer run to establish confidence intervals?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "1000",
+      "1,000"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_077",
+    "question": "What is the maximum token context limit for the ms-marco-MiniLM-L-6-v2 cross-encoder model?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "512"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_078",
+    "question": "What was the warm-model single-process retrieval latency measured in RAGForge on 2026-11-09?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_documents": [
+      "README.md",
+      "measure_latency.py"
+    ],
+    "gold_keywords": [
+      "43.6 ms"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_079",
+    "question": "What was the cold single-process retrieval latency including model load measured on 2026-11-09?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "README.md"
+    ],
+    "gold_keywords": [
+      "1563.5 ms"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_080",
+    "question": "What Recall@1 did Microsoft's AgenticRAG achieve on the BRIGHT long-context benchmark?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "49.6%"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_081",
+    "question": "What was the absolute percentage point improvement of AgenticRAG over baseline models on the BRIGHT benchmark?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "+21.8"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_082",
+    "question": "What factuality score did AgenticRAG achieve on the WixQA customer support benchmark?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "0.96"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_083",
+    "question": "What answer correctness percentage did AgenticRAG reach on FinanceBench?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "92%"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_084",
+    "question": "How many percentage points was AgenticRAG's FinanceBench score from human oracle performance?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "2",
+      "2.0"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "num_085",
+    "question": "What performance multiplier did Microsoft researchers isolate from switching to agentic tool use in their ablation study?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "5.9x",
+      "5.9"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_086",
+    "question": "In docs/design_decisions.md, what is described as the key known limitation of the document chunker character offset locator?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "str.find",
+      "char_start=None",
+      "whitespace normalization"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_087",
+    "question": "In docs/architecture.md, what are the primary stages shown in the retrieval pipeline diagram?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "Dense Retrieval",
+      "Sparse Retrieval",
+      "RRF",
+      "Cross-Encoder"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_088",
+    "question": "In docs/design_decisions.md under Section 3, what code reference is given for the CrossEncoder model initialization?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "CrossEncoderReranker.__init__",
+      "CrossEncoder(model_name)"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_089",
+    "question": "In docs/design_decisions.md Section 6, what static fallback score is returned when JSON parsing fails in LLMJudge?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "1.0",
+      "LLMJudge.score_faithfulness"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_090",
+    "question": "In docs/design_decisions.md Section 4, what architectural remedy is proposed for blocking CPU calls inside async FastAPI routes?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "run_in_executor",
+      "asyncio"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_091",
+    "question": "In docs/design_decisions.md Section 5, how does the sufficiency grader handle polite preambles like 'partially yes' from small local LLMs?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "interprets as no",
+      "redundant rewrite cycle"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_092",
+    "question": "In docs/design_decisions.md Section 9, what happens to trial results if an autotune run is interrupted after 40 completed trials?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "lost",
+      "not checkpointed mid-sweep",
+      "restarts from scratch"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_093",
+    "question": "In docs/design_decisions.md Section 10, why are evaluation queries not guaranteed to be strictly independent and identically distributed?",
+    "category": "document_navigation",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "adjacent chunks",
+      "correlated performance",
+      "narrows CI"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_094",
+    "question": "In docs/research/agenticrag-paper-analysis.md, what are the four core tools specified by the Microsoft research team?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "SEARCH",
+      "FIND",
+      "OPEN",
+      "SUMMARIZE"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_095",
+    "question": "In docs/research/agenticrag-paper-analysis.md, which benchmark measures performance on financial reports like 10-K and 10-Q filings?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "FinanceBench"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_096",
+    "question": "In docs/research/agenticrag-paper-analysis.md Section 3, how does the FIND tool differ functionally from SEARCH?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "intra-document substring matching",
+      "no global vector search"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_097",
+    "question": "In docs/research/agenticrag-paper-analysis.md, what is the reported limitation regarding multi-step agent reasoning latency?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "agenticrag-paper-analysis.md"
+    ],
+    "gold_keywords": [
+      "multiple LLM reasoning steps",
+      "token overhead"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_098",
+    "question": "In docs/design_decisions.md Section 8, why does the synthetic evaluation generator store character offsets and text hashes rather than full text?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "double file size",
+      "noisy diffs",
+      "re-extract on demand"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_099",
+    "question": "In docs/design_decisions.md Section 11, what is the documented failure mode of models trained only with in-batch random negatives?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "cannot discriminate closely related chunks",
+      "within same section"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "nav_100",
+    "question": "In docs/design_decisions.md Section 12, what risk is cited if user relevance judgments are applied for online model retraining on every click?",
+    "category": "document_navigation",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "catastrophic forgetting",
+      "accidental clicks",
+      "transient errors"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_101",
+    "question": "How does RAGForge optimize retrieval latency?",
+    "category": "ambiguous",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md",
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "two-stage retrieval",
+      "candidate pooling",
+      "caching"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_102",
+    "question": "Explain the role of weights in RAGForge ranking.",
+    "category": "ambiguous",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md",
+      "hybrid.py"
+    ],
+    "gold_keywords": [
+      "dense_weight",
+      "RRF",
+      "reciprocal rank"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_103",
+    "question": "What parameters can be tuned in RAGForge?",
+    "category": "ambiguous",
+    "split": "dev",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "chunk size",
+      "overlap",
+      "top-k",
+      "dense_weight",
+      "RRF k"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_104",
+    "question": "How does RAGForge handle document updates?",
+    "category": "ambiguous",
+    "split": "dev",
+    "expected_documents": [
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "DocumentRegistry",
+      "incremental indexing",
+      "SHA-1"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_105",
+    "question": "What makes RAGForge inspectable?",
+    "category": "ambiguous",
+    "split": "dev",
+    "expected_documents": [
+      "README.md",
+      "architecture.md"
+    ],
+    "gold_keywords": [
+      "modular stages",
+      "char offsets",
+      "benchmarks",
+      "traces"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_106",
+    "question": "How is quality measured in RAGForge pipelines?",
+    "category": "ambiguous",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "MRR",
+      "Accuracy@K",
+      "Precision",
+      "Recall",
+      "LLM judge"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_107",
+    "question": "What happens when context is incomplete during generation?",
+    "category": "ambiguous",
+    "split": "held_out",
+    "expected_documents": [
+      "graph.py",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "rewrite query",
+      "retry cap",
+      "abstention"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_108",
+    "question": "How does RAGForge support external frontends?",
+    "category": "ambiguous",
+    "split": "held_out",
+    "expected_documents": [
+      "app.py",
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "FastAPI",
+      "REST",
+      "SSE streaming"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_109",
+    "question": "What are the primary failure points of RAGForge reranking?",
+    "category": "ambiguous",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "CPU only",
+      "512 token limit",
+      "high latency"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "amb_110",
+    "question": "How does active learning work in the system?",
+    "category": "ambiguous",
+    "split": "held_out",
+    "expected_documents": [
+      "design_decisions.md"
+    ],
+    "gold_keywords": [
+      "feedback records",
+      "min-samples",
+      "tune-reranker"
+    ],
+    "is_unanswerable": false
+  },
+  {
+    "id": "unans_111",
+    "question": "What is the AWS Bedrock pricing model configured in RAGForge for Claude 3.5 Sonnet?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "not configured",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_112",
+    "question": "Which PostgreSQL connection pool size is specified in database_config.yaml?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no postgresql",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_113",
+    "question": "What was Microsoft's quarterly revenue from Xbox Game Pass in Q3 2021 according to the index?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "not found",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_114",
+    "question": "What is the secret AES-256 encryption key used for securing SQLite customer sessions?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no secret key",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_115",
+    "question": "How many Kubernetes pods are deployed across the RAGForge production cluster?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no kubernetes",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_116",
+    "question": "What is the Snowflake warehouse cluster size used for daily vector exports in RAGForge?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no snowflake",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_117",
+    "question": "Which Redis caching layer port is designated for session management in production?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no redis",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_118",
+    "question": "What is the Kafka topic partition count configured for document ingestion streaming?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no kafka",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_119",
+    "question": "What was Apple's total iPhone sales volume in mainland China during fiscal year 2018?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "not indexed",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  },
+  {
+    "id": "unans_120",
+    "question": "What is the OAuth2 client secret for Google Workspace SSO integration in RAGForge?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_documents": [],
+    "gold_keywords": [
+      "abstain",
+      "no oauth secret",
+      "unanswerable"
+    ],
+    "is_unanswerable": true
+  }
+]
