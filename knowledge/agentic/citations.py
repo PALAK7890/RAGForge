@@ -1,6 +1,6 @@
 """
-Citation validation, claim-to-evidence alignment, and hallucination detection engine.
-Ensures every citation in generated answers references verified, indexed document passages.
+Citation identity and location validation against retrieved evidence.
+This checks reference integrity, not whether a passage supports a claim.
 """
 
 import re
@@ -11,8 +11,7 @@ from knowledge.agentic.schemas import EvidenceRecord
 
 class CitationValidator:
     """
-    Validates citation integrity, extracts in-text references, and checks
-    alignment between claims and underlying retrieved evidence records.
+    Extracts in-text references and validates their identities and locations.
     """
 
     def __init__(self, evidence_records: Optional[List[EvidenceRecord]] = None) -> None:
@@ -42,16 +41,18 @@ class CitationValidator:
             if content.startswith("http") or content.lower().startswith("note:"):
                 continue
 
-            # Parse document name and optional page / offsets
-            page_match = re.search(r",\s*p(?:age|\.)\s*(\d+)", content, re.IGNORECASE)
-            page = int(page_match.group(1)) if page_match else None
-
-            span_match = re.search(r",\s*chars\s*(\d+)\s*-\s*(\d+)", content, re.IGNORECASE)
-            char_start = int(span_match.group(1)) if span_match else None
-            char_end = int(span_match.group(2)) if span_match else None
-
-            # Base document or evidence token
-            base_token = re.split(r",\s*p|,\s*chars", content, flags=re.IGNORECASE)[0].strip()
+            # Consume the entire location suffix. Malformed locations must not
+            # silently become a valid document-only reference.
+            match = re.fullmatch(
+                r"(?P<token>.+?)(?:,\s*p(?:age|\.)\s*(?P<page>\d+))?"
+                r"(?:,\s*chars\s*(?P<start>\d+)\s*-\s*(?P<end>\d+))?",
+                content,
+                re.IGNORECASE,
+            )
+            base_token = match["token"].strip() if match else content
+            page = int(match["page"]) if match and match["page"] else None
+            char_start = int(match["start"]) if match and match["start"] else None
+            char_end = int(match["end"]) if match and match["end"] else None
 
             citations.append(
                 {

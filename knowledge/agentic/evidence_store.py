@@ -148,10 +148,10 @@ class EvidenceStore:
         )
 
         for r in sorted_records:
-            header = f"--- [Evidence: {r.evidence_id} | Document: {r.document_id}"
+            header = f"Source: [{r.document_id}"
             if r.page_number is not None:
-                header += f" | Page: {r.page_number}"
-            header += " ---"
+                header += f", p.{r.page_number}"
+            header += "]"
 
             block = f"{header}\n{r.text}\n"
             if current_chars + len(block) > char_budget:

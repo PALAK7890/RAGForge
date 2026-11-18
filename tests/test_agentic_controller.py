@@ -15,6 +15,7 @@ from knowledge.agentic.schemas import (
     SearchResult,
 )
 from knowledge.agentic.state import AgenticGraphState
+from knowledge.llms.ollama_llm import OllamaLLM
 
 
 def test_plan_and_route_comparative_decomposition():
@@ -148,3 +149,24 @@ def test_agentic_controller_grounded_abstention():
     assert res["abstained"] is True
     assert "cannot answer" in res["answer"].lower()
     assert res["citations"] == []
+
+
+@pytest.mark.parametrize("page,label", [(None, "[policy.md]"), (3, "[policy.md, p.3]")])
+def test_generation_receives_copyable_source_labels_without_nested_prompt(monkeypatch, page, label):
+    search = MagicMock()
+    search.execute.return_value = SearchResult(
+        queries_used=["How long?"],
+        evidence=[EvidenceRecord(document_id="policy.md", page_number=page, text="Retain for 30 days.")],
+        total_found=1,
+        latency_ms=0,
+    )
+    chat = MagicMock(return_value={"message": {"content": f"Retain for 30 days {label}."}})
+    monkeypatch.setattr("knowledge.llms.ollama_llm.ollama.chat", chat)
+    result = AgenticController(search_tool=search, llm=OllamaLLM()).run("How long?", max_steps=1)
+    prompt = chat.call_args.kwargs["messages"][0]["content"]
+    assert f"Source: {label}\nRetain for 30 days." in prompt
+    assert prompt.count("Question:") == 1
+    assert "[DocumentName" not in prompt
+    assert "Evidence:" not in prompt
+    assert result["citation_report"]["verified_count"] == 1
+    assert result["citation_report"]["unverified_count"] == 0

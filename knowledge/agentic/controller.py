@@ -327,21 +327,8 @@ class AgenticController:
 
         context = store.format_context_for_prompt(max_tokens=3000)
 
-        prompt = f"""You are a research-grade enterprise assistant. Answer the user's question accurately using ONLY the provided evidence.
-
-For every claim, cite the source document in brackets using the exact format: [DocumentName] or [DocumentName, p.X].
-If the evidence does not contain sufficient facts to answer completely, explicitly state what is missing.
-
-Question:
-{state["question"]}
-
-Evidence:
-{context}
-
-Answer:"""
-
         try:
-            raw_gen = self.llm.generate(state["question"], prompt)
+            raw_gen = self.llm.generate(state["question"], context)
             raw_answer = str(raw_gen).strip() if raw_gen is not None else ""
         except Exception as e:
             state["error"] = f"Generation failed: {e}"
