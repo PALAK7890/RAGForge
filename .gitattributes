@@ -1,0 +1,3 @@
+# Frozen generated corpus fixtures retain a final paragraph separator.
+# Preserve their recorded hashes; other whitespace checks still apply.
+examples/benchmark_v2/corpus/*.md whitespace=-blank-at-eof
