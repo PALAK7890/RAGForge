@@ -49,3 +49,10 @@ Ollama was unreachable, including an availability check outside the restricted e
 The development and evaluation document families are disjoint, but their public synthetic questions were authored together. Draft retrieval/integrity checks occurred during construction; the committed snapshot was frozen before the recorded run. This is not an independently reviewed or blind benchmark, and its high scores do not establish production robustness or reproduce the paper.
 
 Full regression verification: **239 passed, 6 warnings**. New checks cover source drift, split isolation, genuine multi-document labels, exact passage ranking, alternative evidence, failed-generation credit, run-bound review scores, adapter configuration, and deterministic fixture regeneration. Targeted lint and whitespace checks passed.
+
+## Subsequent full generation run
+
+Ollama later became available. All 120 questions were run through the three systems.
+See [the complete generation report](benchmark-v2-full-generation.md) for actual outputs, automatic scores,
+execution failures and remaining semantic-review gaps. Earlier blocked-run artifacts
+remain historical records.

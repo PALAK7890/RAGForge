@@ -183,3 +183,10 @@ output file is used.
 See [the measured retrieval report](../../docs/research/benchmark-v2-results.md)
 for verified results and blockers. A high score on this finite synthetic corpus
 does not demonstrate production robustness.
+
+## Subsequent full generation run
+
+Ollama later became available. All 120 questions were run through the three systems.
+See [the complete generation report](../../docs/research/benchmark-v2-full-generation.md) for actual outputs, automatic scores,
+execution failures and remaining semantic-review gaps. Earlier blocked-run artifacts
+remain historical records.
