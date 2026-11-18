@@ -31,9 +31,10 @@ named equipment. The corpus includes obsolete/current policy pairs and Markdown
 tables. Every multi-hop question requires evidence from at least two documents.
 Numerical questions include worked calculations in their reference annotations.
 
-Both families were authored and frozen before model evaluation. They share broad
-category concepts but not source documents or organisation-specific investigation
-chains. All files and labels are public; `held_out` is a reserved evaluation label,
+Both families share broad category concepts but not source documents or
+organisation-specific investigation chains. Draft retrieval and integrity checks
+occurred during construction; the versioned snapshot was committed before the
+recorded run. All files and labels are public; `held_out` is a reserved evaluation label,
 not a blind external test. This initial audit evaluates both splits and therefore
 exposes their failures. Any subsequent tuning on evaluation failures invalidates
 that reservation; create a new version for a fresh final evaluation.

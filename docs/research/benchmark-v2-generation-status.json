@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "created_at": "2026-11-18T04:37:02.965641+00:00",
+    "dataset_sha256": "063220fddd293760999b63fb1bdd365013863ee3bbc444dce729bd1572e7f167",
+    "corpus": {
+      "dev_routing.md": {
+        "sha256": "0abf000333c030859b2da9e7b0a895e607ec1d3cbb66444ae84e06436cf59e7e",
+        "split": "dev"
+      },
+      "dev_contracts.md": {
+        "sha256": "e9081aba8554504b79d80961b2dfdd4001f4968d3869013e361340f3fe1ca6d4",
+        "split": "dev"
+      },
+      "dev_parts.md": {
+        "sha256": "a42cf2adceeda8ed0bfb6604ef05789b82ec023966717b4275745f4a8fa7c1ca",
+        "split": "dev"
+      },
+      "dev_shipping.md": {
+        "sha256": "e7f29baa57bda67eda0bbf3de538a98cf0fbad29278e2fe4a433fa75ff3b000e",
+        "split": "dev"
+      },
+      "dev_safety_2024.md": {
+        "sha256": "2ad481c25e40777b28abcf99c9de975858e4309186b4f76db54b17531ebb3edb",
+        "split": "dev"
+      },
+      "dev_safety_2026.md": {
+        "sha256": "73f4ccf838b061b50a994337815cc3063837c759ab71313807f559eb1e200a47",
+        "split": "dev"
+      },
+      "dev_finance.md": {
+        "sha256": "2f85f4e4bf1450d1b2b56da3b2911a0d5a74bf86d1a3ef314ec39b29a0abca32",
+        "split": "dev"
+      },
+      "dev_records.md": {
+        "sha256": "ce5236e68a42443d0b2478dc6ce0ec460191e11b48329c1f8e70dd43db7cf8cc",
+        "split": "dev"
+      },
+      "dev_operations.md": {
+        "sha256": "b976a848d7110723d028a1d444a15344424b9f781fc808db97f349f0a8a45ca2",
+        "split": "dev"
+      },
+      "dev_training.md": {
+        "sha256": "89af1dcdd8d32a09859b0020af2f2189aaea022033c05a6335a8f3bdc1c27af7",
+        "split": "dev"
+      },
+      "dev_proposal.md": {
+        "sha256": "215a931523b5e5fd0893da5d4263e2d5fdd7f76da25db8265ef20acaa2ee8bde",
+        "split": "dev"
+      },
+      "dev_warehouse.md": {
+        "sha256": "db0080a6265f52d4f8fe227943a2483c3d1293bf1e63aeb46503b9316b04712b",
+        "split": "dev"
+      },
+      "held_out_asset_map.md": {
+        "sha256": "d58626e9e0b06a722094ddf0ded08445addea812494d1bb95b9303012425bdd7",
+        "split": "held_out"
+      },
+      "held_out_grants.md": {
+        "sha256": "d0db1d9e22fe42b990491bc49f0e402d7aab0df41a4226aa81ec88a158992668",
+        "split": "held_out"
+      },
+      "held_out_detectors.md": {
+        "sha256": "6d7e45ed75bddc53e230362e04b0a1d71562ea25be0d6773f221521b7ee4d144",
+        "split": "held_out"
+      },
+      "held_out_vendor_register.md": {
+        "sha256": "18bac2478c790fa48d98861ca73b2d2deb3029a6746ddfd04884dd066af1e8bf",
+        "split": "held_out"
+      },
+      "held_out_access_2023.md": {
+        "sha256": "7a78bdf580320d8ca022fecf25bb42fb72a3e73e07592c818aceeffb70848fb0",
+        "split": "held_out"
+      },
+      "held_out_access_2026.md": {
+        "sha256": "a7a64ca408a77c6758169d363311ab49bb2d221d8e6d4a31cf3f2c7cd9580e5d",
+        "split": "held_out"
+      },
+      "held_out_archive.md": {
+        "sha256": "1aaf3e271a75f16f882653d4d0e246c5cd5c469ae54bce2900cea6a43e002d04",
+        "split": "held_out"
+      },
+      "held_out_maintenance.md": {
+        "sha256": "238b29570c9ff04d262d3e3f10c04153b5f181bdfba681b28e65f8947c503c62",
+        "split": "held_out"
+      },
+      "held_out_capacity.md": {
+        "sha256": "6c4efad126de84bd791b109f6cff304907dc10e5b7f1ba1d5504c644f9e0e1e0",
+        "split": "held_out"
+      },
+      "held_out_network.md": {
+        "sha256": "12ea6670004b95fb3361bbe8e4ac567f21dcad2d38ef7cda36b46702e1092991",
+        "split": "held_out"
+      },
+      "held_out_draft.md": {
+        "sha256": "4dd05f3ab23b18b658b0d42758ba625960600947db8a16030b202db137468ccb",
+        "split": "held_out"
+      },
+      "held_out_guidecamera.md": {
+        "sha256": "602e6137618a57e17a7a7ce6ff3e54990bf3897f88bbf768cb00dbb0c78b3dbc",
+        "split": "held_out"
+      }
+    },
+    "split": "held_out",
+    "question_ids": [
+      "v2_063",
+      "v2_064",
+      "v2_065",
+      "v2_066",
+      "v2_067",
+      "v2_068",
+      "v2_069",
+      "v2_070",
+      "v2_071",
+      "v2_072",
+      "v2_073",
+      "v2_074",
+      "v2_075",
+      "v2_076",
+      "v2_077",
+      "v2_078",
+      "v2_079",
+      "v2_080",
+      "v2_081",
+      "v2_082",
+      "v2_083",
+      "v2_084",
+      "v2_085",
+      "v2_086",
+      "v2_087",
+      "v2_088",
+      "v2_089",
+      "v2_090",
+      "v2_091",
+      "v2_092",
+      "v2_093",
+      "v2_094",
+      "v2_095",
+      "v2_096",
+      "v2_097",
+      "v2_098",
+      "v2_099",
+      "v2_100",
+      "v2_101",
+      "v2_102",
+      "v2_103",
+      "v2_104",
+      "v2_105",
+      "v2_106",
+      "v2_107",
+      "v2_108",
+      "v2_109",
+      "v2_110",
+      "v2_111",
+      "v2_112",
+      "v2_113",
+      "v2_114",
+      "v2_115",
+      "v2_116",
+      "v2_117",
+      "v2_118",
+      "v2_119",
+      "v2_120"
+    ],
+    "systems": [
+      "standard",
+      "self_correcting",
+      "agentic"
+    ],
+    "k": 5,
+    "model": "llama3.2",
+    "generation_options": {
+      "temperature": 0,
+      "seed": 17,
+      "num_ctx": 8192,
+      "num_predict": 1024
+    },
+    "max_steps": 5,
+    "max_retries": 2,
+    "python": "3.13.7",
+    "packages": {
+      "sentence-transformers": "5.6.1",
+      "faiss-cpu": "1.14.3",
+      "ollama": "0.6.2",
+      "langgraph": "1.2.11"
+    },
+    "commit": "e05fa93e9e2762a7f213c746631d1c2dbc16e62a",
+    "working_tree_dirty": false,
+    "run_id": "9cfb25565a88a17a277e"
+  },
+  "status": "blocked",
+  "records": [],
+  "summary": {},
+  "by_category": {},
+  "blocker": "Ollama unavailable: ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download"
+}
