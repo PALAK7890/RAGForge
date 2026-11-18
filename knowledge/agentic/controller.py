@@ -343,6 +343,30 @@ class AgenticController:
 
         # Validate citation integrity
         citation_report = store.validate_citations(raw_answer)
+        refusal = "I could not find the answer in the indexed documents."
+        needs_citations = bool(raw_answer) and raw_answer != refusal
+        # One bounded repair; never manufacture references by appending sources
+        # to claims the model did not attribute.
+        if not state.get("error") and needs_citations and (
+            not citation_report["total_cited"] or citation_report["unverified_count"]
+        ):
+            try:
+                repaired = self.llm.generate(
+                    f"{state['question']}\n\n"
+                    f"Draft answer:\n{raw_answer}\n\n"
+                    "Rewrite the draft using only the supplied evidence. Cite each factual "
+                    "claim with an exact Source label from the context. Remove unsupported "
+                    "claims and invented locations. Return only the corrected answer.",
+                    context,
+                )
+                repaired = str(repaired or "").strip()
+                checked = store.validate_citations(repaired)
+                if repaired == refusal or (checked["total_cited"] and not checked["unverified_count"]):
+                    raw_answer, citation_report = repaired, checked
+            except Exception as exc:
+                state["error"] = f"Citation correction failed: {exc}"
+            citation_report["repair_attempted"] = True
+        citation_report["missing_citations"] = bool(raw_answer) and raw_answer != refusal and not citation_report["total_cited"]
         citations = store.generate_citations()
 
         state["abstained"] = False

@@ -33,16 +33,22 @@ Rather than treating RAG as an opaque black box, RAGForge emphasizes retrieval q
 
 ### Architectural Capability Comparison
 
-| Capability | Standard RAG | Existing Self-Correcting RAG | AgenticRAG (Microsoft) |
+| Capability | Standard RAG | Existing Self-Correcting RAG | Local AgenticRAG prototype |
 |:---|:---:|:---:|:---:|
 | **Single-pass retrieval** | Yes | Optional | Optional |
-| **Query rewriting** | No | Yes | Yes |
+| **Query rewriting** | No | LLM rewrite | Heuristic relaxed search |
 | **Tool-directed retrieval** | No | Limited | **Yes** |
 | **Document navigation** | No | No | **Yes** |
 | **Multi-step evidence gathering** | No | Limited | **Yes** |
 | **Evidence tracking** | Basic | Basic | **Advanced (`EvidenceStore`)** |
-| **Citation verification** | Basic | Basic | **Advanced (`CitationValidator`)** |
-| **Grounded abstention** | No *(hallucinates)* | Weak | **Yes (100% on unanswerable)** |
+| **Citation verification** | Benchmark reference checks | Benchmark reference checks | Identity/location checks; one correction attempt |
+| **Grounded abstention** | Prompt instructed | Prompt instructed | Empty-evidence refusal plus prompt instruction |
+
+Citation checks do not establish that a source supports a claim. Refusal quality
+requires answer review; no system is guaranteed to abstain correctly. See the
+[recorded 360-case run](docs/research/benchmark-v2-full-generation.md) for measured
+results and limitations. A failed citation correction remains visible in the
+answer's citation report; the controller does not silently append sources.
 
 ---
 

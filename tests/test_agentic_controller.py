@@ -170,3 +170,44 @@ def test_generation_receives_copyable_source_labels_without_nested_prompt(monkey
     assert "Evidence:" not in prompt
     assert result["citation_report"]["verified_count"] == 1
     assert result["citation_report"]["unverified_count"] == 0
+
+
+@pytest.mark.parametrize("draft", ["Retain for 30 days.", "Retain for 30 days [policy.md, p.1]."])
+def test_missing_or_invented_citations_get_one_grounded_correction(draft):
+    llm = MagicMock()
+    llm.generate.side_effect = [draft, "Retain for 30 days [policy.md]."]
+    controller = AgenticController(llm=llm)
+    result = controller.synthesize_answer({
+        "question": "How long?", "latencies": {},
+        "evidence_store_data": {"e": EvidenceRecord(evidence_id="e", document_id="policy.md", text="Retain for 30 days.").model_dump()},
+    })
+    assert result["answer"] == "Retain for 30 days [policy.md]."
+    assert llm.generate.call_count == 2
+    assert result["citation_report"]["repair_attempted"] is True
+    assert result["citation_report"]["missing_citations"] is False
+
+
+@pytest.mark.parametrize("repair", ["Retain for 30 days.", "Retain for 30 days [fake.md].", RuntimeError("offline")])
+def test_failed_correction_retains_answer_and_reports_failure_without_looping(repair):
+    llm = MagicMock()
+    llm.generate.side_effect = ["Retain for 30 days.", repair]
+    result = AgenticController(llm=llm).synthesize_answer({
+        "question": "How long?", "latencies": {},
+        "evidence_store_data": {"e": EvidenceRecord(evidence_id="e", document_id="policy.md", text="Retain for 30 days.").model_dump()},
+    })
+    assert result["answer"] == "Retain for 30 days."
+    assert llm.generate.call_count == 2
+    assert result["citation_report"]["missing_citations"] is True
+    if isinstance(repair, Exception):
+        assert "Citation correction failed" in result["error"]
+
+
+def test_plain_refusal_does_not_trigger_citation_correction():
+    llm = MagicMock()
+    llm.generate.return_value = "I could not find the answer in the indexed documents."
+    result = AgenticController(llm=llm).synthesize_answer({
+        "question": "How long?", "latencies": {},
+        "evidence_store_data": {"e": EvidenceRecord(evidence_id="e", document_id="policy.md", text="Unrelated fact.").model_dump()},
+    })
+    assert llm.generate.call_count == 1
+    assert result["citation_report"]["missing_citations"] is False
