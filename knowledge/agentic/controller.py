@@ -35,6 +35,7 @@ class AgenticController:
         llm: Optional[OllamaLLM] = None,
         on_tool_event: Optional[Callable[[Dict[str, Any]], None]] = None,
     ) -> None:
+        self.top_k = 5
         self.on_tool_event = on_tool_event
         self.search_tool = search_tool or SearchTool()
         self.find_tool = find_tool or FindTool()
@@ -83,7 +84,7 @@ class AgenticController:
         state["sub_questions"] = sub_questions
         state["current_action"] = {
             "tool": "search",
-            "args": {"queries": initial_queries, "top_k": 5},
+            "args": {"queries": initial_queries, "top_k": self.top_k},
         }
         state["latencies"]["plan"] = (time.perf_counter() - t0) * 1000
         return state
@@ -210,7 +211,7 @@ class AgenticController:
                 relaxed_q = re.sub(r"[^\w\s]", "", state["question"]).strip()
                 state["current_action"] = {
                     "tool": "search",
-                    "args": {"queries": [relaxed_q, f"{relaxed_q} overview"], "top_k": 5},
+                    "args": {"queries": [relaxed_q, f"{relaxed_q} overview"], "top_k": self.top_k},
                 }
                 state["sufficiency"] = "pending"
                 state["sufficiency_reason"] = (
@@ -437,4 +438,5 @@ Answer:"""
             "citation_report": final_state["citation_report"],
             "latencies": final_state["latencies"],
             "evidence_count": len(final_state["evidence_store_data"]),
+            "evidence_records": list(final_state["evidence_store_data"].values()),
         }

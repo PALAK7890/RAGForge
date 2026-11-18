@@ -39,11 +39,11 @@ def route_query(state: AgentState) -> AgentState:
     return state
 
 
-def retrieve_context(state: AgentState) -> AgentState:
+def retrieve_context(state: AgentState, rag_service=None) -> AgentState:
     """Execute hybrid retrieval + cross-encoder reranking."""
     t0 = time.perf_counter()
     try:
-        chunks = service.search(query=state["current_query"], top_k=state["top_k"])
+        chunks = (rag_service or service).search(query=state["current_query"], top_k=state["top_k"])
     except Exception as exc:
         state["error"] = f"Retrieval failed: {exc}"
         chunks = []
@@ -53,7 +53,7 @@ def retrieve_context(state: AgentState) -> AgentState:
     return state
 
 
-def grade_sufficiency(state: AgentState) -> AgentState:
+def grade_sufficiency(state: AgentState, llm_client=None) -> AgentState:
     """Use the local LLM to grade if the retrieved context is sufficient."""
     t0 = time.perf_counter()
     chunks = state.get("retrieved_chunks", [])
@@ -73,7 +73,7 @@ Context:
 Respond with only one word: SUFFICIENT or INSUFFICIENT."""
 
     try:
-        verdict = llm.generate(state["current_query"], prompt).strip().upper()
+        verdict = (llm_client or llm).generate(state["current_query"], prompt).strip().upper()
         if "INSUFFICIENT" in verdict:
             state["sufficiency"] = "insufficient"
             state["sufficiency_reason"] = "Retrieved chunks do not contain enough facts to answer."
@@ -89,7 +89,7 @@ Respond with only one word: SUFFICIENT or INSUFFICIENT."""
     return state
 
 
-def rewrite_query(state: AgentState) -> AgentState:
+def rewrite_query(state: AgentState, llm_client=None) -> AgentState:
     """Rewrite query to improve semantic retrieval on the next iteration."""
     t0 = time.perf_counter()
     state["rewrite_count"] += 1
@@ -99,7 +99,7 @@ Formulate a better, more specific keyword search query to find the relevant docu
 Output ONLY the rewritten query with no explanation."""
 
     try:
-        new_q = llm.generate(state["original_query"], prompt).strip().strip('"')
+        new_q = (llm_client or llm).generate(state["original_query"], prompt).strip().strip('"')
         if new_q and len(new_q) > 3:
             state["current_query"] = new_q
     except Exception:
@@ -110,7 +110,7 @@ Output ONLY the rewritten query with no explanation."""
     return state
 
 
-def generate_answer(state: AgentState) -> AgentState:
+def generate_answer(state: AgentState, llm_client=None) -> AgentState:
     """Synthesize the final answer using retrieved context."""
     t0 = time.perf_counter()
     chunks = state.get("retrieved_chunks", [])
@@ -122,12 +122,16 @@ def generate_answer(state: AgentState) -> AgentState:
         return state
 
     context = "\n\n".join(c["text"] for c in chunks)
+    if llm_client is not None:
+        context = "Cite factual claims using [filename].\n\n" + "\n\n".join(
+            f"[{Path(c['source_path']).name}] {c['text']}" for c in chunks
+        )
     prefix = ""
     if state["sufficiency"] == "insufficient":
         prefix = "[Note: Context may be incomplete despite query reformulation.]\n\n"
 
     try:
-        raw_answer = llm.generate(state["original_query"], context)
+        raw_answer = (llm_client or llm).generate(state["original_query"], context)
         state["answer"] = f"{prefix}{raw_answer}"
     except Exception as e:
         state["error"] = f"Generation failed: {e}"

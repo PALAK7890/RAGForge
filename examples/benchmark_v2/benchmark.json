@@ -1,0 +1,2923 @@
+{
+  "version": "2.0.0",
+  "synthetic": true,
+  "documents": {
+    "dev_routing.md": {
+      "sha256": "0abf000333c030859b2da9e7b0a895e607ec1d3cbb66444ae84e06436cf59e7e",
+      "split": "dev"
+    },
+    "dev_contracts.md": {
+      "sha256": "e9081aba8554504b79d80961b2dfdd4001f4968d3869013e361340f3fe1ca6d4",
+      "split": "dev"
+    },
+    "dev_parts.md": {
+      "sha256": "a42cf2adceeda8ed0bfb6604ef05789b82ec023966717b4275745f4a8fa7c1ca",
+      "split": "dev"
+    },
+    "dev_shipping.md": {
+      "sha256": "e7f29baa57bda67eda0bbf3de538a98cf0fbad29278e2fe4a433fa75ff3b000e",
+      "split": "dev"
+    },
+    "dev_safety_2024.md": {
+      "sha256": "2ad481c25e40777b28abcf99c9de975858e4309186b4f76db54b17531ebb3edb",
+      "split": "dev"
+    },
+    "dev_safety_2026.md": {
+      "sha256": "73f4ccf838b061b50a994337815cc3063837c759ab71313807f559eb1e200a47",
+      "split": "dev"
+    },
+    "dev_finance.md": {
+      "sha256": "2f85f4e4bf1450d1b2b56da3b2911a0d5a74bf86d1a3ef314ec39b29a0abca32",
+      "split": "dev"
+    },
+    "dev_records.md": {
+      "sha256": "ce5236e68a42443d0b2478dc6ce0ec460191e11b48329c1f8e70dd43db7cf8cc",
+      "split": "dev"
+    },
+    "dev_operations.md": {
+      "sha256": "b976a848d7110723d028a1d444a15344424b9f781fc808db97f349f0a8a45ca2",
+      "split": "dev"
+    },
+    "dev_training.md": {
+      "sha256": "89af1dcdd8d32a09859b0020af2f2189aaea022033c05a6335a8f3bdc1c27af7",
+      "split": "dev"
+    },
+    "dev_proposal.md": {
+      "sha256": "215a931523b5e5fd0893da5d4263e2d5fdd7f76da25db8265ef20acaa2ee8bde",
+      "split": "dev"
+    },
+    "dev_warehouse.md": {
+      "sha256": "db0080a6265f52d4f8fe227943a2483c3d1293bf1e63aeb46503b9316b04712b",
+      "split": "dev"
+    },
+    "held_out_asset_map.md": {
+      "sha256": "d58626e9e0b06a722094ddf0ded08445addea812494d1bb95b9303012425bdd7",
+      "split": "held_out"
+    },
+    "held_out_grants.md": {
+      "sha256": "d0db1d9e22fe42b990491bc49f0e402d7aab0df41a4226aa81ec88a158992668",
+      "split": "held_out"
+    },
+    "held_out_detectors.md": {
+      "sha256": "6d7e45ed75bddc53e230362e04b0a1d71562ea25be0d6773f221521b7ee4d144",
+      "split": "held_out"
+    },
+    "held_out_vendor_register.md": {
+      "sha256": "18bac2478c790fa48d98861ca73b2d2deb3029a6746ddfd04884dd066af1e8bf",
+      "split": "held_out"
+    },
+    "held_out_access_2023.md": {
+      "sha256": "7a78bdf580320d8ca022fecf25bb42fb72a3e73e07592c818aceeffb70848fb0",
+      "split": "held_out"
+    },
+    "held_out_access_2026.md": {
+      "sha256": "a7a64ca408a77c6758169d363311ab49bb2d221d8e6d4a31cf3f2c7cd9580e5d",
+      "split": "held_out"
+    },
+    "held_out_archive.md": {
+      "sha256": "1aaf3e271a75f16f882653d4d0e246c5cd5c469ae54bce2900cea6a43e002d04",
+      "split": "held_out"
+    },
+    "held_out_maintenance.md": {
+      "sha256": "238b29570c9ff04d262d3e3f10c04153b5f181bdfba681b28e65f8947c503c62",
+      "split": "held_out"
+    },
+    "held_out_capacity.md": {
+      "sha256": "6c4efad126de84bd791b109f6cff304907dc10e5b7f1ba1d5504c644f9e0e1e0",
+      "split": "held_out"
+    },
+    "held_out_network.md": {
+      "sha256": "12ea6670004b95fb3361bbe8e4ac567f21dcad2d38ef7cda36b46702e1092991",
+      "split": "held_out"
+    },
+    "held_out_draft.md": {
+      "sha256": "4dd05f3ab23b18b658b0d42758ba625960600947db8a16030b202db137468ccb",
+      "split": "held_out"
+    },
+    "held_out_guidecamera.md": {
+      "sha256": "602e6137618a57e17a7a7ce6ff3e54990bf3897f88bbf768cb00dbb0c78b3dbc",
+      "split": "held_out"
+    }
+  },
+  "passages": {
+    "dev.route_unit": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "The unit ORBIT-17 is an inspection rover operated by Aster Robotics. Its support contract code is SC-COPPER, not SC-SILVER.",
+      "char_start": 58,
+      "char_end": 181
+    },
+    "dev.route_owner": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "ORBIT-17 belongs to the Field Autonomy group. The accountable incident owner for Field Autonomy is the duty coordinator.",
+      "char_start": 183,
+      "char_end": 303
+    },
+    "dev.route_page": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "To reach the Field Autonomy duty coordinator, use paging route field-auto-primary. The register intentionally omits personal phone numbers.",
+      "char_start": 305,
+      "char_end": 444
+    },
+    "dev.route_rule": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "Contract codes identify service entitlements; asset nicknames and purchase prices do not determine the support response window.",
+      "char_start": 446,
+      "char_end": 573
+    },
+    "dev.route_diag": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "Diagnostics for ORBIT-17 must be captured before a motor controller is reset. Capture the controller event log and the battery telemetry bundle.",
+      "char_start": 575,
+      "char_end": 719
+    },
+    "dev.route_secondary": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "The rover ORBIT-71 is a different asset assigned to Warehouse Automation. It uses contract SC-SILVER and paging route warehouse-ops.",
+      "char_start": 721,
+      "char_end": 853
+    },
+    "dev.route_scope": {
+      "document": "dev_routing.md",
+      "split": "dev",
+      "quote": "This register covers operational ownership only. Scheduling, replacement parts and commercial discounts require their respective control documents.",
+      "char_start": 855,
+      "char_end": 1002
+    },
+    "dev.contract_copper": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "SC-COPPER provides a critical-incident acknowledgement target of 25 minutes and a scheduled preventive visit every 6 weeks.",
+      "char_start": 50,
+      "char_end": 173
+    },
+    "dev.contract_silver": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "SC-SILVER provides a critical-incident acknowledgement target of 90 minutes and a preventive visit every 12 weeks.",
+      "char_start": 175,
+      "char_end": 289
+    },
+    "dev.contract_hours": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "SC-COPPER support operates around the clock. SC-SILVER support operates Monday through Friday from 08:00 to 18:00 UTC, excluding holidays.",
+      "char_start": 291,
+      "char_end": 429
+    },
+    "dev.contract_restoration": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "Neither SC-COPPER nor SC-SILVER promises a restoration deadline. An acknowledgement records receipt; it does not mean the rover is repaired.",
+      "char_start": 431,
+      "char_end": 571
+    },
+    "dev.contract_charge": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "Contract coverage excludes consumable batteries. Replacement batteries require a separately approved parts order.",
+      "char_start": 573,
+      "char_end": 686
+    },
+    "dev.contract_expiry": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "Active contract entitlements override catalog descriptions for the specific asset. Expired contract proposals are not authority for current entitlements.",
+      "char_start": 688,
+      "char_end": 841
+    },
+    "dev.contract_scope": {
+      "document": "dev_contracts.md",
+      "split": "dev",
+      "quote": "This matrix specifies support response and visit schedules. It contains no payroll, customer profitability or individual contact records.",
+      "char_start": 843,
+      "char_end": 980
+    },
+    "dev.part_code": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "The approved replacement battery for ORBIT-17 is pack BP-42. Pack BP-24 fits ORBIT-71 and must not be fitted to ORBIT-17.",
+      "char_start": 42,
+      "char_end": 163
+    },
+    "dev.part_price": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "BP-42 has a list price of EUR 480 per pack. Each pack contains 8 cells and is shipped with a reusable protective case.",
+      "char_start": 165,
+      "char_end": 283
+    },
+    "dev.part_discount": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "Orders of at least 10 BP-42 packs receive a 15% discount on the pack price. Freight is EUR 35 per order and is not discounted.",
+      "char_start": 285,
+      "char_end": 411
+    },
+    "dev.part_stock": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "The catalog stock ledger lists 36 BP-42 packs available on 4 February 2026. This is a dated stock count, not a promise of future availability.",
+      "char_start": 413,
+      "char_end": 555
+    },
+    "dev.part_safety": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "Battery packs may be installed only after the rover has been isolated from charging equipment. The protective case is not an electrical isolation device.",
+      "char_start": 557,
+      "char_end": 710
+    },
+    "dev.part_warranty": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "Unopened BP-42 packs have a 12-month warranty from dispatch. Installing a pack does not extend the original dispatch-based warranty.",
+      "char_start": 712,
+      "char_end": 844
+    },
+    "dev.part_scope": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "Prices exclude tax. No applicable tax rate is specified, so a tax-inclusive total cannot be derived from this catalog.",
+      "char_start": 846,
+      "char_end": 964
+    },
+    "dev.ship_class": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "BP-42 battery packs use transport class DG-9. DG-9 shipments require a signed dangerous-goods declaration.",
+      "char_start": 55,
+      "char_end": 161
+    },
+    "dev.ship_route": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "DG-9 shipments leave the East depot on Tuesdays and Thursdays. Ordinary replacement wheels may leave on any working day.",
+      "char_start": 163,
+      "char_end": 283
+    },
+    "dev.ship_lead": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "After approval, domestic DG-9 orders require 3 working days for preparation before the next eligible dispatch day.",
+      "char_start": 285,
+      "char_end": 399
+    },
+    "dev.ship_label": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "Each DG-9 shipping case must show the pack model, dispatch date and handling orientation. Customer account passwords must never appear on the label.",
+      "char_start": 401,
+      "char_end": 549
+    },
+    "dev.ship_contact": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "The dispatch queue owner is Logistics Control. Finance approval and signed transport paperwork are independent gates before release.",
+      "char_start": 551,
+      "char_end": 683
+    },
+    "dev.ship_proof": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "Proof of dispatch is the carrier acceptance scan. Printing a label alone does not establish that a pack has left the depot.",
+      "char_start": 685,
+      "char_end": 808
+    },
+    "dev.ship_scope": {
+      "document": "dev_shipping.md",
+      "split": "dev",
+      "quote": "International customs duties and country-specific transport exceptions are outside this domestic instruction.",
+      "char_start": 810,
+      "char_end": 919
+    },
+    "dev.old_status": {
+      "document": "dev_safety_2024.md",
+      "split": "dev",
+      "quote": "The 2024 workshop safety edition expired on 31 December 2025. It is retained for historical audits and does not govern work in 2026.",
+      "char_start": 64,
+      "char_end": 196
+    },
+    "dev.old_check": {
+      "document": "dev_safety_2024.md",
+      "split": "dev",
+      "quote": "Under the 2024 edition, a rover returning from outdoor service required an insulation check every 120 operating hours.",
+      "char_start": 198,
+      "char_end": 316
+    },
+    "dev.old_sign": {
+      "document": "dev_safety_2024.md",
+      "split": "dev",
+      "quote": "The 2024 edition allowed the shift supervisor alone to authorize a return to service.",
+      "char_start": 318,
+      "char_end": 403
+    },
+    "dev.old_temp": {
+      "document": "dev_safety_2024.md",
+      "split": "dev",
+      "quote": "The 2024 charging-room temperature ceiling was 32 degrees Celsius.",
+      "char_start": 405,
+      "char_end": 471
+    },
+    "dev.old_archive": {
+      "document": "dev_safety_2024.md",
+      "split": "dev",
+      "quote": "Historical inspection sheets record the edition used at the time. Do not silently replace a historical threshold with a newer threshold in audit records.",
+      "char_start": 473,
+      "char_end": 626
+    },
+    "dev.old_examples": {
+      "document": "dev_safety_2024.md",
+      "split": "dev",
+      "quote": "An audit of a November 2025 repair must use the rules effective in November 2025, even if the audit itself happens the following year.",
+      "char_start": 628,
+      "char_end": 762
+    },
+    "dev.new_check": {
+      "document": "dev_safety_2026.md",
+      "split": "dev",
+      "quote": "From 1 January 2026, a rover returning from outdoor service requires an insulation check every 80 operating hours.",
+      "char_start": 75,
+      "char_end": 189
+    },
+    "dev.new_sign": {
+      "document": "dev_safety_2026.md",
+      "split": "dev",
+      "quote": "Return to service requires two approvals: the shift supervisor and a certified electrical inspector. Neither approval alone is sufficient.",
+      "char_start": 191,
+      "char_end": 329
+    },
+    "dev.new_temp": {
+      "document": "dev_safety_2026.md",
+      "split": "dev",
+      "quote": "Charging must pause when the room temperature exceeds 28 degrees Celsius. Work may resume only after the room has cooled to 26 degrees Celsius or below.",
+      "char_start": 331,
+      "char_end": 483
+    },
+    "dev.new_fail": {
+      "document": "dev_safety_2026.md",
+      "split": "dev",
+      "quote": "A failed insulation check requires quarantine in Bay Q2 and a new inspection after repair. Resetting the inspection timer does not clear a failed result.",
+      "char_start": 485,
+      "char_end": 638
+    },
+    "dev.new_scope": {
+      "document": "dev_safety_2026.md",
+      "split": "dev",
+      "quote": "These rules govern all Aster workshop shifts from their effective date. They replace the 2024 edition, including its single-approver exception.",
+      "char_start": 640,
+      "char_end": 783
+    },
+    "dev.new_records": {
+      "document": "dev_safety_2026.md",
+      "split": "dev",
+      "quote": "The inspection ledger must record the asset ID, operating-hour counter, result and both approvers. Photographs supplement but do not replace those fields.",
+      "char_start": 785,
+      "char_end": 939
+    },
+    "dev.fin_revenue": {
+      "document": "dev_finance.md",
+      "split": "dev",
+      "quote": "Fiscal 2025 revenue was EUR 3.6 million, compared with EUR 3.0 million in fiscal 2024. These are recognized revenues, not order bookings.",
+      "char_start": 55,
+      "char_end": 192
+    },
+    "dev.fin_profit": {
+      "document": "dev_finance.md",
+      "split": "dev",
+      "quote": "Fiscal 2025 operating costs were EUR 2.7 million and operating profit was EUR 0.9 million. Finance charges are excluded from operating profit.",
+      "char_start": 194,
+      "char_end": 336
+    },
+    "dev.fin_segments": {
+      "document": "dev_finance.md",
+      "split": "dev",
+      "quote": "Service contracts produced EUR 2.16 million of fiscal 2025 revenue. Hardware sales produced the remaining EUR 1.44 million.",
+      "char_start": 338,
+      "char_end": 461
+    },
+    "dev.fin_orders": {
+      "document": "dev_finance.md",
+      "split": "dev",
+      "quote": "The fiscal 2025 year-end order backlog was EUR 1.1 million. Backlog is not included in recognized revenue until delivery criteria are met.",
+      "char_start": 463,
+      "char_end": 601
+    },
+    "dev.fin_currency": {
+      "document": "dev_finance.md",
+      "split": "dev",
+      "quote": "All monetary figures in these accounts are in euros. No foreign exchange rates or geographic revenue breakdowns are included.",
+      "char_start": 603,
+      "char_end": 728
+    },
+    "dev.fin_audit": {
+      "document": "dev_finance.md",
+      "split": "dev",
+      "quote": "These fictional management accounts are unaudited. Figures are provided as a calculation exercise and should not be interpreted as an investment recommendation.",
+      "char_start": 730,
+      "char_end": 890
+    },
+    "dev.ret_telemetry": {
+      "document": "dev_records.md",
+      "split": "dev",
+      "quote": "Routine rover telemetry is retained for 45 days after collection. Incident-linked telemetry is retained for 18 months after incident closure.",
+      "char_start": 50,
+      "char_end": 191
+    },
+    "dev.ret_invoices": {
+      "document": "dev_records.md",
+      "split": "dev",
+      "quote": "Supplier invoices are retained for 7 years after the end of the relevant fiscal year. Unapproved draft purchase requests are retained for 60 days.",
+      "char_start": 193,
+      "char_end": 339
+    },
+    "dev.ret_access": {
+      "document": "dev_records.md",
+      "split": "dev",
+      "quote": "Temporary export links expire after 48 hours. Expiry of a link does not delete the retained underlying record.",
+      "char_start": 341,
+      "char_end": 451
+    },
+    "dev.ret_owner": {
+      "document": "dev_records.md",
+      "split": "dev",
+      "quote": "Records Operations owns the retention schedule. A legal hold suspends deletion until Legal explicitly releases the hold.",
+      "char_start": 453,
+      "char_end": 573
+    },
+    "dev.ret_priority": {
+      "document": "dev_records.md",
+      "split": "dev",
+      "quote": "Where an incident tag and a routine telemetry tag both apply, the incident-linked retention period takes precedence.",
+      "char_start": 575,
+      "char_end": 691
+    },
+    "dev.ret_scope": {
+      "document": "dev_records.md",
+      "split": "dev",
+      "quote": "The schedule does not contain biometric retention rules, encryption secrets or employee benefit records. Those subjects must not be inferred from telemetry durations.",
+      "char_start": 693,
+      "char_end": 859
+    },
+    "dev.ops_flag": {
+      "document": "dev_operations.md",
+      "split": "dev",
+      "quote": "Feature switch ROVER_SAFE_PATH defaults to enabled in production. Its documented values are enabled and disabled, not numeric levels.",
+      "char_start": 44,
+      "char_end": 177
+    },
+    "dev.ops_probe": {
+      "document": "dev_operations.md",
+      "split": "dev",
+      "quote": "The rover gateway readiness probe is GET /ready/rover. GET /health/rover reports process liveness and must not be substituted for readiness.",
+      "char_start": 179,
+      "char_end": 319
+    },
+    "dev.ops_canary": {
+      "document": "dev_operations.md",
+      "split": "dev",
+      "quote": "A release begins with 4 rovers in the canary cohort and an observation window of 35 minutes.",
+      "char_start": 321,
+      "char_end": 413
+    },
+    "dev.ops_abort": {
+      "document": "dev_operations.md",
+      "split": "dev",
+      "quote": "Stop rollout when command rejection exceeds 1.5% for 4 consecutive minutes. A single transient sample does not satisfy this stopping condition.",
+      "char_start": 415,
+      "char_end": 558
+    },
+    "dev.ops_rollback": {
+      "document": "dev_operations.md",
+      "split": "dev",
+      "quote": "Rollback restores the preceding firmware image. It does not undo calibration changes stored on the motor controller.",
+      "char_start": 560,
+      "char_end": 676
+    },
+    "dev.ops_review": {
+      "document": "dev_operations.md",
+      "split": "dev",
+      "quote": "After rollback, retain the failed-image identifier and observation logs. The release engineer records the result before scheduling a new canary.",
+      "char_start": 678,
+      "char_end": 822
+    },
+    "dev.train_pack": {
+      "document": "dev_training.md",
+      "split": "dev",
+      "quote": "BP-42 handling requires certification BAT-L2. General mechanical induction alone does not authorize battery-pack handling.",
+      "char_start": 59,
+      "char_end": 181
+    },
+    "dev.train_valid": {
+      "document": "dev_training.md",
+      "split": "dev",
+      "quote": "BAT-L2 certification remains valid for 9 months from assessment. A failed reassessment immediately suspends pack-handling access.",
+      "char_start": 183,
+      "char_end": 312
+    },
+    "dev.train_exam": {
+      "document": "dev_training.md",
+      "split": "dev",
+      "quote": "The BAT-L2 assessment contains 24 questions; a candidate must answer at least 21 correctly to pass.",
+      "char_start": 314,
+      "char_end": 413
+    },
+    "dev.train_booking": {
+      "document": "dev_training.md",
+      "split": "dev",
+      "quote": "Assessment bookings close 5 working days before the session. Supervisors may request a later session but cannot waive the assessment.",
+      "char_start": 415,
+      "char_end": 548
+    },
+    "dev.train_register": {
+      "document": "dev_training.md",
+      "split": "dev",
+      "quote": "The competence register records certificate code and expiry date, not personal exam answers. Access checks must use the certificate expiry, not the booking date.",
+      "char_start": 550,
+      "char_end": 711
+    },
+    "dev.train_scope": {
+      "document": "dev_training.md",
+      "split": "dev",
+      "quote": "The training schedule is separate from product warranty and support entitlements. A long support contract does not extend a technician certificate.",
+      "char_start": 713,
+      "char_end": 860
+    },
+    "dev.distract_proposal": {
+      "document": "dev_proposal.md",
+      "split": "dev",
+      "quote": "This rejected draft proposed SC-COPPER acknowledgement in 10 minutes and BP-42 packs at EUR 400. Neither proposal was approved or made effective.",
+      "char_start": 63,
+      "char_end": 208
+    },
+    "dev.distract_proposal2": {
+      "document": "dev_proposal.md",
+      "split": "dev",
+      "quote": "The draft requested a 25% bulk-order discount. Procurement declined that request and instructed staff to use the approved parts catalog.",
+      "char_start": 210,
+      "char_end": 346
+    },
+    "dev.distract_proposal3": {
+      "document": "dev_proposal.md",
+      "split": "dev",
+      "quote": "This document is a deliberately obsolete distractor. An exact product-name match does not make its commercial terms authoritative.",
+      "char_start": 348,
+      "char_end": 478
+    },
+    "dev.distract_warehouse": {
+      "document": "dev_warehouse.md",
+      "split": "dev",
+      "quote": "Warehouse trolley ORBIT-170 is not rover ORBIT-17. The trolley uses cell cartridge BP-420 and does not accept rover pack BP-42.",
+      "char_start": 51,
+      "char_end": 178
+    },
+    "dev.distract_warehouse2": {
+      "document": "dev_warehouse.md",
+      "split": "dev",
+      "quote": "BP-420 cartridges are priced at EUR 75 and have no relationship to the BP-42 rover-pack price or discount.",
+      "char_start": 180,
+      "char_end": 286
+    },
+    "dev.distract_warehouse3": {
+      "document": "dev_warehouse.md",
+      "split": "dev",
+      "quote": "Warehouse staff retain trolley route logs for 10 days. That period is not a retention rule for rover telemetry.",
+      "char_start": 288,
+      "char_end": 399
+    },
+    "held_out.map_instrument": {
+      "document": "held_out_asset_map.md",
+      "split": "held_out",
+      "quote": "The instrument LUMEN-8 is assigned to programme NIGHTGLASS. Its detector assembly is model CCD-K7.",
+      "char_start": 53,
+      "char_end": 151
+    },
+    "held_out.map_programme": {
+      "document": "held_out_asset_map.md",
+      "split": "held_out",
+      "quote": "Programme NIGHTGLASS is funded by grant GR-204. The programme lead is the observing coordinator, not the facilities manager.",
+      "char_start": 153,
+      "char_end": 277
+    },
+    "held_out.map_room": {
+      "document": "held_out_asset_map.md",
+      "split": "held_out",
+      "quote": "LUMEN-8 is installed in dome D3. The visually similar guide camera LUMEN-80 is installed in dome D1 and is not part of NIGHTGLASS.",
+      "char_start": 279,
+      "char_end": 409
+    },
+    "held_out.map_schedule": {
+      "document": "held_out_asset_map.md",
+      "split": "held_out",
+      "quote": "NIGHTGLASS observing blocks start at 22:30 UTC. Clock times in this register use UTC throughout the year without daylight-saving adjustments.",
+      "char_start": 411,
+      "char_end": 552
+    },
+    "held_out.map_scope": {
+      "document": "held_out_asset_map.md",
+      "split": "held_out",
+      "quote": "This register links instruments, programmes and locations. It does not specify grant purchase limits or detector procurement procedures.",
+      "char_start": 554,
+      "char_end": 690
+    },
+    "held_out.map_tracking": {
+      "document": "held_out_asset_map.md",
+      "split": "held_out",
+      "quote": "Staff must record the exact instrument suffix in fault reports. Dropping the zero from LUMEN-80 can send a guide-camera issue to the wrong instrument team.",
+      "char_start": 692,
+      "char_end": 847
+    },
+    "held_out.grant_limit": {
+      "document": "held_out_grants.md",
+      "split": "held_out",
+      "quote": "Grant GR-204 requires two written quotations for any single equipment purchase above GBP 2500. Splitting one purchase into invoices does not remove this requirement.",
+      "char_start": 58,
+      "char_end": 223
+    },
+    "held_out.grant_quota": {
+      "document": "held_out_grants.md",
+      "split": "held_out",
+      "quote": "GR-204 allocates 160 observing hours per quarter. Unused hours expire at quarter end and cannot be carried forward.",
+      "char_start": 225,
+      "char_end": 340
+    },
+    "held_out.grant_window": {
+      "document": "held_out_grants.md",
+      "split": "held_out",
+      "quote": "GR-204 eligible expenditure must be incurred between 1 April 2026 and 31 March 2027. Purchase authorization alone is not evidence that expenditure was incurred.",
+      "char_start": 342,
+      "char_end": 502
+    },
+    "held_out.grant_sign": {
+      "document": "held_out_grants.md",
+      "split": "held_out",
+      "quote": "The research finance officer must approve GR-204 equipment purchases. Approval by the observing coordinator alone is insufficient.",
+      "char_start": 504,
+      "char_end": 634
+    },
+    "held_out.grant_scope": {
+      "document": "held_out_grants.md",
+      "split": "held_out",
+      "quote": "Grant GR-811 belongs to the solar-monitoring programme and has different conditions. GR-204 limits must not be copied into a GR-811 approval record.",
+      "char_start": 636,
+      "char_end": 784
+    },
+    "held_out.grant_mirror": {
+      "document": "held_out_grants.md",
+      "split": "held_out",
+      "quote": "For GR-204, the current instrument allocation is 160 observing hours in each quarter; unused allocation expires at that quarter end.",
+      "char_start": 786,
+      "char_end": 918
+    },
+    "held_out.detector_vendor": {
+      "document": "held_out_detectors.md",
+      "split": "held_out",
+      "quote": "The sole approved supplier of CCD-K7 detector assemblies is Meridian Optics. The approved procurement route is a sealed purchase order to that supplier.",
+      "char_start": 51,
+      "char_end": 203
+    },
+    "held_out.detector_price": {
+      "document": "held_out_detectors.md",
+      "split": "held_out",
+      "quote": "One CCD-K7 assembly costs GBP 3200 before tax and freight. The procurement sheet does not state a tax rate or a freight charge.",
+      "char_start": 205,
+      "char_end": 332
+    },
+    "held_out.detector_lead": {
+      "document": "held_out_detectors.md",
+      "split": "held_out",
+      "quote": "CCD-K7 quoted manufacturing lead time is 7 weeks from supplier order acceptance. Delivery transit time is additional and is not specified.",
+      "char_start": 334,
+      "char_end": 472
+    },
+    "held_out.detector_maintenance": {
+      "document": "held_out_detectors.md",
+      "split": "held_out",
+      "quote": "A CCD-K7 assembly requires a calibration exposure sequence every 30 nights of use. Calendar months are not a substitute for counting nights of use.",
+      "char_start": 474,
+      "char_end": 621
+    },
+    "held_out.detector_warranty": {
+      "document": "held_out_detectors.md",
+      "split": "held_out",
+      "quote": "The CCD-K7 warranty is 18 months from acceptance testing. Accidental damage is excluded; routine calibration remains the observatory responsibility.",
+      "char_start": 623,
+      "char_end": 771
+    },
+    "held_out.detector_alternate": {
+      "document": "held_out_detectors.md",
+      "split": "held_out",
+      "quote": "CCD-K70 assemblies are an incompatible product and are not approved replacements for CCD-K7. Similar naming is not a substitution authorization.",
+      "char_start": 773,
+      "char_end": 917
+    },
+    "held_out.vendor_deposit": {
+      "document": "held_out_vendor_register.md",
+      "split": "held_out",
+      "quote": "Meridian Optics requires a 30% deposit when accepting a CCD-K7 order. The balance is payable after acceptance testing.",
+      "char_start": 63,
+      "char_end": 181
+    },
+    "held_out.vendor_dispatch": {
+      "document": "held_out_vendor_register.md",
+      "split": "held_out",
+      "quote": "Meridian Optics dispatches detector assemblies from its North quay laboratory. The South quay site handles mirrors only.",
+      "char_start": 183,
+      "char_end": 303
+    },
+    "held_out.vendor_payment": {
+      "document": "held_out_vendor_register.md",
+      "split": "held_out",
+      "quote": "Supplier bank details are withheld from this public testing corpus. Staff must obtain verified details through the finance system.",
+      "char_start": 305,
+      "char_end": 435
+    },
+    "held_out.vendor_reference": {
+      "document": "held_out_vendor_register.md",
+      "split": "held_out",
+      "quote": "Purchase orders must include the instrument model and grant code. A delivery address alone is not enough to identify the funding authorization.",
+      "char_start": 437,
+      "char_end": 580
+    },
+    "held_out.vendor_scope": {
+      "document": "held_out_vendor_register.md",
+      "split": "held_out",
+      "quote": "A supplier deposit is part of the assembly price, not a surcharge. The register does not override grant quotation thresholds or approval roles.",
+      "char_start": 582,
+      "char_end": 725
+    },
+    "held_out.vendor_change": {
+      "document": "held_out_vendor_register.md",
+      "split": "held_out",
+      "quote": "A request to change supplier payment details must be independently verified by the research finance officer before any payment is released.",
+      "char_start": 727,
+      "char_end": 866
+    },
+    "held_out.access_old": {
+      "document": "held_out_access_2023.md",
+      "split": "held_out",
+      "quote": "The 2023 visitor rules permitted unescorted dome access after a 20-minute induction. This edition ceased to apply on 30 June 2026.",
+      "char_start": 67,
+      "char_end": 197
+    },
+    "held_out.access_old_hours": {
+      "document": "held_out_access_2023.md",
+      "split": "held_out",
+      "quote": "Under the 2023 rules, visitor badges remained valid for 72 hours from issue. Audit records for historical visits must retain the original issue time.",
+      "char_start": 199,
+      "char_end": 348
+    },
+    "held_out.access_old_weather": {
+      "document": "held_out_access_2023.md",
+      "split": "held_out",
+      "quote": "The 2023 edition closed external observing platforms at sustained wind speeds above 45 km/h.",
+      "char_start": 350,
+      "char_end": 442
+    },
+    "held_out.access_old_authority": {
+      "document": "held_out_access_2023.md",
+      "split": "held_out",
+      "quote": "This retired edition is stored for incident reconstruction. It must not be used to authorize a new visit after its expiry date.",
+      "char_start": 444,
+      "char_end": 571
+    },
+    "held_out.access_old_book": {
+      "document": "held_out_access_2023.md",
+      "split": "held_out",
+      "quote": "The historical visitor book records the host and visit date. It contains no current emergency permissions.",
+      "char_start": 573,
+      "char_end": 679
+    },
+    "held_out.access_new": {
+      "document": "held_out_access_2026.md",
+      "split": "held_out",
+      "quote": "From 1 July 2026, all visitors in domes must be accompanied by an accredited host. Completing an induction does not waive the escort requirement.",
+      "char_start": 60,
+      "char_end": 205
+    },
+    "held_out.access_new_hours": {
+      "document": "held_out_access_2026.md",
+      "split": "held_out",
+      "quote": "Visitor badges issued under the July 2026 rules expire 12 hours after issue. A host cannot extend a badge by writing a new expiry on it.",
+      "char_start": 207,
+      "char_end": 343
+    },
+    "held_out.access_new_weather": {
+      "document": "held_out_access_2026.md",
+      "split": "held_out",
+      "quote": "External observing platforms close when sustained wind exceeds 35 km/h. A weather closure takes precedence over a previously approved visitor booking.",
+      "char_start": 345,
+      "char_end": 495
+    },
+    "held_out.access_new_after": {
+      "document": "held_out_access_2026.md",
+      "split": "held_out",
+      "quote": "After a weather closure, the facilities controller must authorize reopening. A visitor host is not authorized to reopen the platform.",
+      "char_start": 497,
+      "char_end": 630
+    },
+    "held_out.access_new_scope": {
+      "document": "held_out_access_2026.md",
+      "split": "held_out",
+      "quote": "These rules supersede the 2023 edition for visits from 1 July 2026. They do not change the historical record of visits completed before that date.",
+      "char_start": 632,
+      "char_end": 778
+    },
+    "held_out.access_new_record": {
+      "document": "held_out_access_2026.md",
+      "split": "held_out",
+      "quote": "Hosts record visitor entry and exit in the live register. Badge issue time and visitor arrival time are separate fields and must not be conflated.",
+      "char_start": 780,
+      "char_end": 926
+    },
+    "held_out.arc_raw": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "Raw spectrograph frames are retained for 120 days after acquisition. Calibrated science products are retained for 6 years after publication.",
+      "char_start": 62,
+      "char_end": 202
+    },
+    "held_out.arc_embargo": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "NIGHTGLASS calibrated products carry an embargo of 9 months after acquisition. Embargo expiry controls public access, not the retention clock.",
+      "char_start": 204,
+      "char_end": 346
+    },
+    "held_out.arc_code": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "Archive collection identifier NG-CAL-6Y selects calibrated NIGHTGLASS products. NG-RAW-120D selects the raw-frame collection.",
+      "char_start": 348,
+      "char_end": 473
+    },
+    "held_out.arc_checksum": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "The archive verifies SHA-256 checksums when accepting an upload. A matching checksum detects byte changes but does not prove scientific correctness.",
+      "char_start": 475,
+      "char_end": 623
+    },
+    "held_out.arc_process": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "To retrieve an embargoed product, first authenticate the researcher, then verify programme membership, then issue a time-limited download link.",
+      "char_start": 625,
+      "char_end": 768
+    },
+    "held_out.arc_membership": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "Embargoed NIGHTGLASS products may be accessed by members of programme NIGHTGLASS. Funding-agency staff do not automatically inherit programme membership.",
+      "char_start": 770,
+      "char_end": 923
+    },
+    "held_out.arc_scope": {
+      "document": "held_out_archive.md",
+      "split": "held_out",
+      "quote": "The archive specification describes retention and access only. It contains no scientific discovery dates or undisclosed observational results.",
+      "char_start": 925,
+      "char_end": 1067
+    },
+    "held_out.maint_fault": {
+      "document": "held_out_maintenance.md",
+      "split": "held_out",
+      "quote": "Fault FLT-208 concerns the coolant pump for LUMEN-8. It requires a coolant isolation check before any pump restart.",
+      "char_start": 70,
+      "char_end": 185
+    },
+    "held_out.maint_fluid": {
+      "document": "held_out_maintenance.md",
+      "split": "held_out",
+      "quote": "The LUMEN-8 coolant loop holds 24 litres when full. After draining 6 litres, refill the loop to its full level before the isolation test.",
+      "char_start": 187,
+      "char_end": 324
+    },
+    "held_out.maint_lock": {
+      "document": "held_out_maintenance.md",
+      "split": "held_out",
+      "quote": "A failed coolant isolation check requires lockout under tag COOL-LOCK. Only a certified cooling technician may release COOL-LOCK after a passing retest.",
+      "char_start": 326,
+      "char_end": 478
+    },
+    "held_out.maint_interval": {
+      "document": "held_out_maintenance.md",
+      "split": "held_out",
+      "quote": "Dome D3 shutter seals are inspected every 45 days. The detector calibration interval is controlled by the detector procurement sheet, not by this shutter schedule.",
+      "char_start": 480,
+      "char_end": 643
+    },
+    "held_out.maint_queue": {
+      "document": "held_out_maintenance.md",
+      "split": "held_out",
+      "quote": "Routine maintenance requests enter queue OBS-MAINT. A coolant leak during observing is escalated immediately to the duty facilities controller.",
+      "char_start": 645,
+      "char_end": 788
+    },
+    "held_out.maint_scope": {
+      "document": "held_out_maintenance.md",
+      "split": "held_out",
+      "quote": "The maintenance log does not list pump serial numbers or spare-part shelf counts. Technicians must consult the asset store for those details.",
+      "char_start": 790,
+      "char_end": 931
+    },
+    "held_out.cap_hours": {
+      "document": "held_out_capacity.md",
+      "split": "held_out",
+      "quote": "During quarter Q2, usable observing capacity was 240 hours and executed observations used 180 hours. Weather losses are already excluded from usable capacity.",
+      "char_start": 64,
+      "char_end": 222
+    },
+    "held_out.cap_spend": {
+      "document": "held_out_capacity.md",
+      "split": "held_out",
+      "quote": "The Q2 instrument budget was GBP 48000 and recorded instrument expenditure was GBP 36000. Unspent budget is not an authorization to bypass grant controls.",
+      "char_start": 224,
+      "char_end": 378
+    },
+    "held_out.cap_energy": {
+      "document": "held_out_capacity.md",
+      "split": "held_out",
+      "quote": "Dome D3 consumed 1500 kWh in April and 1800 kWh in May. These figures cover the dome supply, not only the LUMEN-8 detector.",
+      "char_start": 380,
+      "char_end": 503
+    },
+    "held_out.cap_nights": {
+      "document": "held_out_capacity.md",
+      "split": "held_out",
+      "quote": "Q2 included 30 scheduled observing nights and 6 were cancelled. A partially completed night still counts as a scheduled night in this statement.",
+      "char_start": 505,
+      "char_end": 649
+    },
+    "held_out.cap_scope": {
+      "document": "held_out_capacity.md",
+      "split": "held_out",
+      "quote": "This fictional statement excludes electricity unit prices, staffing costs and visitor revenue. Those quantities cannot be recovered from energy or hour totals.",
+      "char_start": 651,
+      "char_end": 810
+    },
+    "held_out.cap_method": {
+      "document": "held_out_capacity.md",
+      "split": "held_out",
+      "quote": "Executed hours count time actually spent observing. Requested hours and scheduled hours are separate planning measures and are not reported here.",
+      "char_start": 812,
+      "char_end": 957
+    },
+    "held_out.net_port": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "The telescope telemetry collector listens on TCP port 7443. Port 7444 is reserved for a maintenance console, not the collector.",
+      "char_start": 62,
+      "char_end": 189
+    },
+    "held_out.net_token": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "Setting OBS_LINK_TTL_SECONDS has value 900. It controls archive download-link lifetime in seconds and does not set scientific data retention.",
+      "char_start": 191,
+      "char_end": 332
+    },
+    "held_out.net_retry": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "Telemetry clients wait 12 seconds before the first retry, then 24 seconds before the second retry. No additional retries are permitted by this profile.",
+      "char_start": 334,
+      "char_end": 485
+    },
+    "held_out.net_probe": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "The telemetry readiness endpoint is /observe/ready. A successful TCP connection alone is not a readiness assertion.",
+      "char_start": 487,
+      "char_end": 602
+    },
+    "held_out.net_window": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "The collector accepts a maximum of 80 frames in one upload batch. Larger uploads must be divided without changing individual frame checksums.",
+      "char_start": 604,
+      "char_end": 745
+    },
+    "held_out.net_scope": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "This configuration note includes public setting names only. Authentication tokens, host certificates and signing keys are deliberately absent.",
+      "char_start": 747,
+      "char_end": 889
+    },
+    "held_out.held_draft": {
+      "document": "held_out_draft.md",
+      "split": "held_out",
+      "quote": "This unapproved bid requested 300 quarterly hours for NIGHTGLASS and detector assemblies at GBP 2800. Neither value is an approved grant or procurement term.",
+      "char_start": 60,
+      "char_end": 217
+    },
+    "held_out.held_draft2": {
+      "document": "held_out_draft.md",
+      "split": "held_out",
+      "quote": "The bid proposed waiving written quotations and allowing unescorted visitors after dark. These proposals did not become operational rules.",
+      "char_start": 219,
+      "char_end": 357
+    },
+    "held_out.held_draft3": {
+      "document": "held_out_draft.md",
+      "split": "held_out",
+      "quote": "The bid is retained as a search distractor; approved registers and dated effective rules take precedence.",
+      "char_start": 359,
+      "char_end": 464
+    },
+    "held_out.held_guide": {
+      "document": "held_out_guidecamera.md",
+      "split": "held_out",
+      "quote": "LUMEN-80 is a guide camera in dome D1. Its detector model is CMOS-J2, not CCD-K7, and its programme is DAYFINDER.",
+      "char_start": 49,
+      "char_end": 162
+    },
+    "held_out.held_guide2": {
+      "document": "held_out_guidecamera.md",
+      "split": "held_out",
+      "quote": "DAYFINDER uses grant GR-811. Its allocated hours are not the NIGHTGLASS allocation, and this sheet does not disclose GR-811 purchase limits.",
+      "char_start": 164,
+      "char_end": 304
+    },
+    "held_out.held_guide3": {
+      "document": "held_out_guidecamera.md",
+      "split": "held_out",
+      "quote": "The guide-camera store retains preview thumbnails for 14 days. Thumbnails are not the raw spectrograph frames governed by the scientific archive.",
+      "char_start": 306,
+      "char_end": 451
+    },
+    "dev.part_table": {
+      "document": "dev_parts.md",
+      "split": "dev",
+      "quote": "| Approved pack | Cells per pack | Case included |\n| --- | --- | --- |\n| BP-42 | 8 | reusable |\n| BP-24 | 6 | reusable |",
+      "char_start": 966,
+      "char_end": 1086
+    },
+    "held_out.net_table": {
+      "document": "held_out_network.md",
+      "split": "held_out",
+      "quote": "| Public setting | Value | Unit |\n| --- | --- | --- |\n| OBS_LINK_TTL_SECONDS | 900 | seconds |\n| collector listener | 7443 | TCP port |\n| upload limit | 80 | frames |",
+      "char_start": 891,
+      "char_end": 1057
+    }
+  },
+  "questions": [
+    {
+      "id": "v2_001",
+      "split": "dev",
+      "category": "factual",
+      "question": "Which team owns ORBIT-17, and which role is accountable for its incidents?",
+      "expected_answer": "Field Autonomy owns it; the duty coordinator is accountable.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_owner"
+        ]
+      ]
+    },
+    {
+      "id": "v2_002",
+      "split": "dev",
+      "category": "factual",
+      "question": "How frequently does SC-COPPER include a preventive visit?",
+      "expected_answer": "Every 6 weeks.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.contract_copper"
+        ]
+      ]
+    },
+    {
+      "id": "v2_003",
+      "split": "dev",
+      "category": "factual",
+      "question": "What is the stated warranty period for unopened BP-42 packs?",
+      "expected_answer": "12 months from dispatch.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_warranty"
+        ]
+      ]
+    },
+    {
+      "id": "v2_004",
+      "split": "dev",
+      "category": "factual",
+      "question": "Which depot dispatches DG-9 shipments?",
+      "expected_answer": "The East depot.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ship_route"
+        ]
+      ]
+    },
+    {
+      "id": "v2_005",
+      "split": "dev",
+      "category": "factual",
+      "question": "Where must a rover go after a failed insulation check?",
+      "expected_answer": "Bay Q2 for quarantine, followed by a new inspection after repair.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.new_fail"
+        ]
+      ]
+    },
+    {
+      "id": "v2_006",
+      "split": "dev",
+      "category": "factual",
+      "question": "Who can release a legal hold on Aster records?",
+      "expected_answer": "Legal must explicitly release the hold.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ret_owner"
+        ]
+      ]
+    },
+    {
+      "id": "v2_007",
+      "split": "dev",
+      "category": "factual",
+      "question": "For how long does BAT-L2 remain valid after assessment?",
+      "expected_answer": "9 months, unless suspended by a failed reassessment.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.train_valid"
+        ]
+      ]
+    },
+    {
+      "id": "v2_008",
+      "split": "dev",
+      "category": "factual",
+      "question": "How many packs did the approved ledger list for BP-42 on 4 February 2026?",
+      "expected_answer": "36 packs; it is a dated count.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_stock"
+        ]
+      ]
+    },
+    {
+      "id": "v2_009",
+      "split": "dev",
+      "category": "factual",
+      "question": "What was the fiscal 2025 year-end order backlog?",
+      "expected_answer": "EUR 1.1 million.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.fin_orders"
+        ]
+      ]
+    },
+    {
+      "id": "v2_010",
+      "split": "dev",
+      "category": "factual",
+      "question": "Does printing a battery shipping label prove dispatch?",
+      "expected_answer": "No. The carrier acceptance scan is proof of dispatch.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ship_proof"
+        ]
+      ]
+    },
+    {
+      "id": "v2_011",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "Identify the production default for ROVER_SAFE_PATH.",
+      "expected_answer": "enabled",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ops_flag"
+        ]
+      ]
+    },
+    {
+      "id": "v2_012",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "Give the gateway readiness path, distinguishing it from liveness.",
+      "expected_answer": "GET /ready/rover is readiness; GET /health/rover is liveness.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ops_probe"
+        ]
+      ]
+    },
+    {
+      "id": "v2_013",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "Which paging route reaches the Field Autonomy duty coordinator?",
+      "expected_answer": "field-auto-primary",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_page"
+        ]
+      ]
+    },
+    {
+      "id": "v2_014",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "What certification code permits BP-42 handling?",
+      "expected_answer": "BAT-L2",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.train_pack"
+        ]
+      ]
+    },
+    {
+      "id": "v2_015",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "Name the exact replacement pack model approved for ORBIT-17.",
+      "expected_answer": "BP-42, not BP-24.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ]
+      ]
+    },
+    {
+      "id": "v2_016",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "What transport classification is assigned to BP-42?",
+      "expected_answer": "DG-9",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ship_class"
+        ]
+      ]
+    },
+    {
+      "id": "v2_017",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "Which service contract code belongs to ORBIT-17 rather than ORBIT-71?",
+      "expected_answer": "SC-COPPER",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_unit"
+        ]
+      ]
+    },
+    {
+      "id": "v2_018",
+      "split": "dev",
+      "category": "exact_keyword",
+      "question": "State the quarantine bay identifier used by the current safety rules.",
+      "expected_answer": "Q2",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.new_fail"
+        ]
+      ]
+    },
+    {
+      "id": "v2_019",
+      "split": "dev",
+      "category": "multihop",
+      "question": "What critical acknowledgement time applies to ORBIT-17 under its assigned contract?",
+      "expected_answer": "25 minutes: ORBIT-17 uses SC-COPPER.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_unit"
+        ],
+        [
+          "dev.contract_copper"
+        ]
+      ]
+    },
+    {
+      "id": "v2_020",
+      "split": "dev",
+      "category": "multihop",
+      "question": "Which certificate must a technician hold to handle the approved replacement battery for ORBIT-17?",
+      "expected_answer": "BAT-L2: its approved battery is BP-42.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.train_pack"
+        ]
+      ]
+    },
+    {
+      "id": "v2_021",
+      "split": "dev",
+      "category": "multihop",
+      "question": "Which signed transport document is needed for the replacement battery approved for ORBIT-17?",
+      "expected_answer": "A signed dangerous-goods declaration: ORBIT-17 uses BP-42, classified DG-9.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.ship_class"
+        ]
+      ]
+    },
+    {
+      "id": "v2_022",
+      "split": "dev",
+      "category": "multihop",
+      "question": "On what days can the approved ORBIT-17 replacement pack leave its designated depot?",
+      "expected_answer": "Tuesdays and Thursdays from the East depot: the pack is BP-42, class DG-9.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.ship_class"
+        ],
+        [
+          "dev.ship_route"
+        ]
+      ]
+    },
+    {
+      "id": "v2_023",
+      "split": "dev",
+      "category": "multihop",
+      "question": "Is the approved ORBIT-17 replacement battery automatically paid for by its support contract?",
+      "expected_answer": "No. It uses SC-COPPER, but contract coverage excludes consumable batteries and requires a separately approved parts order.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_unit"
+        ],
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.contract_charge"
+        ]
+      ]
+    },
+    {
+      "id": "v2_024",
+      "split": "dev",
+      "category": "multihop",
+      "question": "What acknowledgement target and visit interval apply to rover ORBIT-71?",
+      "expected_answer": "90 minutes and every 12 weeks: ORBIT-71 uses SC-SILVER.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_secondary"
+        ],
+        [
+          "dev.contract_silver"
+        ]
+      ]
+    },
+    {
+      "id": "v2_025",
+      "split": "dev",
+      "category": "multihop",
+      "question": "For ORBIT-17, does around-the-clock support imply a guaranteed repair deadline?",
+      "expected_answer": "No. Its SC-COPPER support operates around the clock but neither contract promises restoration.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_unit"
+        ],
+        [
+          "dev.contract_hours"
+        ],
+        [
+          "dev.contract_restoration"
+        ]
+      ]
+    },
+    {
+      "id": "v2_026",
+      "split": "dev",
+      "category": "multihop",
+      "question": "Which production asset battery requires a 9-month handling certificate, and what is that certificate called?",
+      "expected_answer": "ORBIT-17 uses BP-42; BP-42 handling needs BAT-L2, valid for 9 months.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.train_pack"
+        ],
+        [
+          "dev.train_valid"
+        ]
+      ]
+    },
+    {
+      "id": "v2_027",
+      "split": "dev",
+      "category": "multihop",
+      "question": "Why must the price for an ORBIT-17 replacement pack come from the approved catalog rather than the rejected proposal?",
+      "expected_answer": "The approved pack is BP-42 at EUR 480; the rejected EUR 400 offer never took effect.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.part_price"
+        ],
+        [
+          "dev.distract_proposal"
+        ]
+      ]
+    },
+    {
+      "id": "v2_028",
+      "split": "dev",
+      "category": "multihop",
+      "question": "What dispatch classification and preparation lead time apply to the approved replacement pack for ORBIT-17?",
+      "expected_answer": "It is DG-9; domestic DG-9 orders need 3 working days of preparation after approval before an eligible dispatch day.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.ship_class"
+        ],
+        [
+          "dev.ship_lead"
+        ]
+      ]
+    },
+    {
+      "id": "v2_029",
+      "split": "dev",
+      "category": "comparative",
+      "question": "How did the required insulation-check interval change from the archived rules to the 2026 rules?",
+      "expected_answer": "It shortened from 120 to 80 operating hours.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.old_check"
+        ],
+        [
+          "dev.new_check"
+        ]
+      ]
+    },
+    {
+      "id": "v2_030",
+      "split": "dev",
+      "category": "comparative",
+      "question": "Contrast the return-to-service approval requirements in the 2024 and 2026 safety editions.",
+      "expected_answer": "2024 allowed the shift supervisor alone; 2026 requires supervisor and certified electrical inspector.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.old_sign"
+        ],
+        [
+          "dev.new_sign"
+        ]
+      ]
+    },
+    {
+      "id": "v2_031",
+      "split": "dev",
+      "category": "comparative",
+      "question": "Contrast the 2024 charging temperature ceiling with the 2026 pause and resume thresholds.",
+      "expected_answer": "2024 ceiling: 32 Celsius. 2026: pause above 28 and resume only at 26 or below.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.old_temp"
+        ],
+        [
+          "dev.new_temp"
+        ]
+      ]
+    },
+    {
+      "id": "v2_032",
+      "split": "dev",
+      "category": "comparative",
+      "question": "Compare the acknowledgement targets of SC-COPPER and SC-SILVER.",
+      "expected_answer": "25 minutes for Copper and 90 minutes for Silver.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.contract_copper"
+        ],
+        [
+          "dev.contract_silver"
+        ]
+      ]
+    },
+    {
+      "id": "v2_033",
+      "split": "dev",
+      "category": "comparative",
+      "question": "How does retention differ for routine and incident-linked rover telemetry?",
+      "expected_answer": "Routine: 45 days after collection. Incident-linked: 18 months after closure.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ret_telemetry"
+        ]
+      ]
+    },
+    {
+      "id": "v2_034",
+      "split": "dev",
+      "category": "comparative",
+      "question": "How do BP-42 rover packs differ from similarly named warehouse BP-420 cartridges in model suitability and price?",
+      "expected_answer": "BP-42 costs EUR 480 for ORBIT-17; BP-420 is a EUR 75 trolley cartridge and is unrelated.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_code"
+        ],
+        [
+          "dev.part_price"
+        ],
+        [
+          "dev.distract_warehouse"
+        ],
+        [
+          "dev.distract_warehouse2"
+        ]
+      ]
+    },
+    {
+      "id": "v2_035",
+      "split": "dev",
+      "category": "comparative",
+      "question": "Compare the effective and rejected proposed bulk-discount percentages for BP-42.",
+      "expected_answer": "The approved discount is 15%; the proposed 25% discount was declined.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_discount"
+        ],
+        [
+          "dev.distract_proposal2"
+        ]
+      ]
+    },
+    {
+      "id": "v2_036",
+      "split": "dev",
+      "category": "comparative",
+      "question": "Differentiate firmware rollback from clearing a failed insulation check.",
+      "expected_answer": "Rollback restores the previous firmware but not calibration; a failed insulation check still needs quarantine and a passing post-repair inspection.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ops_rollback"
+        ],
+        [
+          "dev.new_fail"
+        ]
+      ]
+    },
+    {
+      "id": "v2_037",
+      "split": "dev",
+      "category": "numerical",
+      "question": "Calculate Aster revenue growth from fiscal 2024 to fiscal 2025.",
+      "expected_answer": "20%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.fin_revenue"
+        ]
+      ],
+      "calculation": "(3.6 - 3.0) / 3.0 * 100 = 20 percent"
+    },
+    {
+      "id": "v2_038",
+      "split": "dev",
+      "category": "numerical",
+      "question": "What fraction of fiscal 2025 recognized revenue came from service contracts?",
+      "expected_answer": "60%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.fin_revenue"
+        ],
+        [
+          "dev.fin_segments"
+        ]
+      ],
+      "calculation": "2.16 / 3.6 * 100 = 60 percent"
+    },
+    {
+      "id": "v2_039",
+      "split": "dev",
+      "category": "numerical",
+      "question": "Compute the fiscal 2025 operating profit margin on recognized revenue.",
+      "expected_answer": "25%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.fin_revenue"
+        ],
+        [
+          "dev.fin_profit"
+        ]
+      ],
+      "calculation": "0.9 / 3.6 * 100 = 25 percent"
+    },
+    {
+      "id": "v2_040",
+      "split": "dev",
+      "category": "numerical",
+      "question": "What is the pre-tax total including freight for 10 BP-42 packs under approved terms?",
+      "expected_answer": "EUR 4115.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_price"
+        ],
+        [
+          "dev.part_discount"
+        ]
+      ],
+      "calculation": "10 * 480 * (1 - 0.15) + 35 = 4115 EUR"
+    },
+    {
+      "id": "v2_041",
+      "split": "dev",
+      "category": "numerical",
+      "question": "What is the pre-tax total including freight for an order of 9 BP-42 packs?",
+      "expected_answer": "EUR 4355; the bulk discount does not apply.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_price"
+        ],
+        [
+          "dev.part_discount"
+        ]
+      ],
+      "calculation": "9 * 480 + 35 = 4355 EUR"
+    },
+    {
+      "id": "v2_042",
+      "split": "dev",
+      "category": "numerical",
+      "question": "What is the minimum BAT-L2 passing percentage?",
+      "expected_answer": "87.5%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.train_exam"
+        ]
+      ],
+      "calculation": "21 / 24 * 100 = 87.5 percent"
+    },
+    {
+      "id": "v2_043",
+      "split": "dev",
+      "category": "numerical",
+      "question": "By how many minutes is the SC-COPPER acknowledgement target faster than SC-SILVER?",
+      "expected_answer": "65 minutes.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.contract_copper"
+        ],
+        [
+          "dev.contract_silver"
+        ]
+      ],
+      "calculation": "90 - 25 = 65 minutes"
+    },
+    {
+      "id": "v2_044",
+      "split": "dev",
+      "category": "numerical",
+      "question": "How many cells are contained in a shipment of 12 BP-42 packs?",
+      "expected_answer": "96 cells.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_table"
+        ]
+      ],
+      "calculation": "12 * 8 = 96 cells"
+    },
+    {
+      "id": "v2_045",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "In the current workshop rules, what fields must appear in the inspection ledger?",
+      "expected_answer": "Asset ID, operating-hour counter, result and both approvers.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.new_records"
+        ]
+      ]
+    },
+    {
+      "id": "v2_046",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "Locate the rollout stopping condition and state both its magnitude and duration.",
+      "expected_answer": "Command rejection above 1.5% for 4 consecutive minutes.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ops_abort"
+        ]
+      ]
+    },
+    {
+      "id": "v2_047",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "Within the shipping instructions, what must a DG-9 case label show?",
+      "expected_answer": "Pack model, dispatch date and handling orientation; never customer passwords.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ship_label"
+        ]
+      ]
+    },
+    {
+      "id": "v2_048",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "In the competence register, which date controls an access check?",
+      "expected_answer": "Certificate expiry, not booking date.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.train_register"
+        ]
+      ]
+    },
+    {
+      "id": "v2_049",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "Under retention priority, which tag wins when telemetry is both routine and incident-linked?",
+      "expected_answer": "The incident-linked retention period takes precedence.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ret_priority"
+        ]
+      ]
+    },
+    {
+      "id": "v2_050",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "Find the distinction between dispatch preparation and dispatch weekday in the domestic shipment procedure.",
+      "expected_answer": "Preparation takes 3 working days after approval; dispatch then waits for the next eligible day.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ship_lead"
+        ]
+      ]
+    },
+    {
+      "id": "v2_051",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "Which diagnostic artifacts must be captured before resetting the ORBIT-17 motor controller?",
+      "expected_answer": "The controller event log and battery telemetry bundle.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.route_diag"
+        ]
+      ]
+    },
+    {
+      "id": "v2_052",
+      "split": "dev",
+      "category": "document_navigation",
+      "question": "In the archived rules, how should a November 2025 repair be audited in 2026?",
+      "expected_answer": "Use the rules effective in November 2025, not the current thresholds.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.old_examples"
+        ]
+      ]
+    },
+    {
+      "id": "v2_053",
+      "split": "dev",
+      "category": "ambiguous",
+      "question": "How long do we keep telemetry?",
+      "expected_answer": "Clarify whether it is routine or incident-linked: 45 days after collection versus 18 months after closure.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.ret_telemetry"
+        ]
+      ]
+    },
+    {
+      "id": "v2_054",
+      "split": "dev",
+      "category": "ambiguous",
+      "question": "How quickly will support acknowledge my rover incident?",
+      "expected_answer": "Ask which contract covers the rover: SC-COPPER is 25 minutes and SC-SILVER is 90 minutes.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.contract_copper"
+        ],
+        [
+          "dev.contract_silver"
+        ]
+      ]
+    },
+    {
+      "id": "v2_055",
+      "split": "dev",
+      "category": "ambiguous",
+      "question": "What is the battery price?",
+      "expected_answer": "Ask which model: approved BP-42 packs are EUR 480; warehouse BP-420 cartridges are EUR 75. Quantity affects the BP-42 discount.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.part_price"
+        ],
+        [
+          "dev.part_discount"
+        ],
+        [
+          "dev.distract_warehouse2"
+        ]
+      ]
+    },
+    {
+      "id": "v2_056",
+      "split": "dev",
+      "category": "ambiguous",
+      "question": "Which safety temperature limit should I apply?",
+      "expected_answer": "Clarify the date and pause/resume state: the 2024 ceiling was 32 Celsius; current charging pauses above 28 and resumes at 26 or below.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.old_temp"
+        ],
+        [
+          "dev.new_temp"
+        ],
+        [
+          "dev.old_status"
+        ]
+      ]
+    },
+    {
+      "id": "v2_057",
+      "split": "dev",
+      "category": "ambiguous",
+      "question": "Who signs a return to service?",
+      "expected_answer": "Ask which rules/date apply: the current edition requires supervisor plus certified electrical inspector, while the archived edition allowed the supervisor alone.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "dev.old_sign"
+        ],
+        [
+          "dev.new_sign"
+        ],
+        [
+          "dev.old_status"
+        ]
+      ]
+    },
+    {
+      "id": "v2_058",
+      "split": "dev",
+      "category": "unanswerable",
+      "question": "What is the tax-inclusive cost of one BP-42 pack delivered internationally?",
+      "expected_answer": "Cannot determine: applicable tax and international shipping costs are not specified.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_059",
+      "split": "dev",
+      "category": "unanswerable",
+      "question": "Give the personal mobile number of the Field Autonomy duty coordinator.",
+      "expected_answer": "No personal phone number is provided; use the internal paging route.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_060",
+      "split": "dev",
+      "category": "unanswerable",
+      "question": "What percentage of Aster revenue came from Japan in fiscal 2025?",
+      "expected_answer": "No geographic revenue breakdown is disclosed.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_061",
+      "split": "dev",
+      "category": "unanswerable",
+      "question": "What guaranteed repair completion time applies to SC-COPPER?",
+      "expected_answer": "No restoration deadline is promised; acknowledgement is not repair completion.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_062",
+      "split": "dev",
+      "category": "unanswerable",
+      "question": "What secret signing key is installed in the ORBIT-17 controller?",
+      "expected_answer": "No controller signing key is supplied in the corpus.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_063",
+      "split": "held_out",
+      "category": "factual",
+      "question": "At what UTC time do NIGHTGLASS observing blocks begin?",
+      "expected_answer": "22:30 UTC.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_schedule"
+        ]
+      ]
+    },
+    {
+      "id": "v2_064",
+      "split": "held_out",
+      "category": "factual",
+      "question": "Which dome houses LUMEN-8?",
+      "expected_answer": "Dome D3.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_room"
+        ]
+      ]
+    },
+    {
+      "id": "v2_065",
+      "split": "held_out",
+      "category": "factual",
+      "question": "From which event is the CCD-K7 manufacturing lead time measured?",
+      "expected_answer": "Supplier order acceptance; the lead time is 7 weeks and excludes transit.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.detector_lead"
+        ]
+      ]
+    },
+    {
+      "id": "v2_066",
+      "split": "held_out",
+      "category": "factual",
+      "question": "Who must approve equipment purchases charged to GR-204?",
+      "expected_answer": "The research finance officer.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.grant_sign"
+        ]
+      ]
+    },
+    {
+      "id": "v2_067",
+      "split": "held_out",
+      "category": "factual",
+      "question": "What happens to unused GR-204 observing hours at quarter end?",
+      "expected_answer": "They expire and cannot carry forward.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.grant_quota",
+          "held_out.grant_mirror"
+        ]
+      ]
+    },
+    {
+      "id": "v2_068",
+      "split": "held_out",
+      "category": "factual",
+      "question": "What is the embargo duration for calibrated NIGHTGLASS products?",
+      "expected_answer": "9 months after acquisition.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_embargo"
+        ]
+      ]
+    },
+    {
+      "id": "v2_069",
+      "split": "held_out",
+      "category": "factual",
+      "question": "Which role may reopen an external platform after weather closure?",
+      "expected_answer": "The facilities controller.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.access_new_after"
+        ]
+      ]
+    },
+    {
+      "id": "v2_070",
+      "split": "held_out",
+      "category": "factual",
+      "question": "What is the inspection interval for dome D3 shutter seals?",
+      "expected_answer": "Every 45 days.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_interval"
+        ]
+      ]
+    },
+    {
+      "id": "v2_071",
+      "split": "held_out",
+      "category": "factual",
+      "question": "Where are Meridian Optics detector assemblies dispatched from?",
+      "expected_answer": "Its North quay laboratory.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.vendor_dispatch"
+        ]
+      ]
+    },
+    {
+      "id": "v2_072",
+      "split": "held_out",
+      "category": "factual",
+      "question": "How long is the CCD-K7 warranty, and when does its clock start?",
+      "expected_answer": "18 months from acceptance testing.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.detector_warranty"
+        ]
+      ]
+    },
+    {
+      "id": "v2_073",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "Which archive selector identifies calibrated NIGHTGLASS products?",
+      "expected_answer": "NG-CAL-6Y",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_code"
+        ]
+      ]
+    },
+    {
+      "id": "v2_074",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "State the telemetry collector TCP port without substituting the maintenance-console port.",
+      "expected_answer": "7443, not 7444.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.net_port"
+        ]
+      ]
+    },
+    {
+      "id": "v2_075",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "What value is assigned to OBS_LINK_TTL_SECONDS?",
+      "expected_answer": "900 seconds.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.net_token",
+          "held_out.net_table"
+        ]
+      ]
+    },
+    {
+      "id": "v2_076",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "Which fault code concerns the LUMEN-8 coolant pump?",
+      "expected_answer": "FLT-208",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_fault"
+        ]
+      ]
+    },
+    {
+      "id": "v2_077",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "Name the lockout tag applied after a failed coolant isolation check.",
+      "expected_answer": "COOL-LOCK",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_lock"
+        ]
+      ]
+    },
+    {
+      "id": "v2_078",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "Which checksum algorithm is verified on archive upload?",
+      "expected_answer": "SHA-256",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_checksum"
+        ]
+      ]
+    },
+    {
+      "id": "v2_079",
+      "split": "held_out",
+      "category": "exact_keyword",
+      "question": "Give the queue identifier for routine observatory maintenance.",
+      "expected_answer": "OBS-MAINT",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_queue"
+        ]
+      ]
+    },
+    {
+      "id": "v2_080",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "For the programme using LUMEN-8, how many approved quarterly observing hours are available?",
+      "expected_answer": "160 hours: LUMEN-8 belongs to NIGHTGLASS, funded by GR-204.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.map_programme"
+        ],
+        [
+          "held_out.grant_quota",
+          "held_out.grant_mirror"
+        ]
+      ]
+    },
+    {
+      "id": "v2_081",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Does one replacement detector for LUMEN-8 cross its grant quotation threshold?",
+      "expected_answer": "Yes. LUMEN-8 uses CCD-K7 at GBP 3200 and NIGHTGLASS uses GR-204, which requires two quotations above GBP 2500.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.map_programme"
+        ],
+        [
+          "held_out.detector_price"
+        ],
+        [
+          "held_out.grant_limit"
+        ]
+      ]
+    },
+    {
+      "id": "v2_082",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Where will the approved supplier ship a replacement detector for LUMEN-8 from?",
+      "expected_answer": "Meridian Optics ships it from the North quay laboratory; LUMEN-8 uses CCD-K7.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.detector_vendor"
+        ],
+        [
+          "held_out.vendor_dispatch"
+        ]
+      ]
+    },
+    {
+      "id": "v2_083",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "After how many nights of use must the LUMEN-8 detector receive its calibration exposure sequence?",
+      "expected_answer": "Every 30 nights: its detector is CCD-K7.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.detector_maintenance"
+        ]
+      ]
+    },
+    {
+      "id": "v2_084",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Which programme membership is necessary to retrieve embargoed calibrated products from LUMEN-8 observing?",
+      "expected_answer": "NIGHTGLASS membership: the instrument belongs to NIGHTGLASS and the archive restricts its embargoed products to programme members.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.arc_membership"
+        ]
+      ]
+    },
+    {
+      "id": "v2_085",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Which seal-inspection interval applies to the dome containing LUMEN-8?",
+      "expected_answer": "45 days, because LUMEN-8 is in D3.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_room"
+        ],
+        [
+          "held_out.maint_interval"
+        ]
+      ]
+    },
+    {
+      "id": "v2_086",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Which detector model and supplier should procurement use for the instrument affected by FLT-208?",
+      "expected_answer": "FLT-208 affects LUMEN-8, which uses CCD-K7 supplied by Meridian Optics.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_fault"
+        ],
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.detector_vendor"
+        ]
+      ]
+    },
+    {
+      "id": "v2_087",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Does being the NIGHTGLASS observing coordinator authorize a GR-204 detector purchase without finance approval?",
+      "expected_answer": "No. NIGHTGLASS is funded by GR-204; its equipment purchases require research finance officer approval.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_programme"
+        ],
+        [
+          "held_out.grant_sign"
+        ]
+      ]
+    },
+    {
+      "id": "v2_088",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "For a LUMEN-8 detector order, when is the supplier balance payable?",
+      "expected_answer": "After acceptance testing: LUMEN-8 uses CCD-K7 and Meridian Optics requires the balance after that test.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.detector_vendor"
+        ],
+        [
+          "held_out.vendor_deposit"
+        ]
+      ]
+    },
+    {
+      "id": "v2_089",
+      "split": "held_out",
+      "category": "multihop",
+      "question": "Can a visitor host keep the LUMEN-8 external platform operating when sustained wind is 40 km/h in August 2026?",
+      "expected_answer": "No. LUMEN-8 is in D3; current rules close external platforms above 35 km/h and a booking does not override closure.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_room"
+        ],
+        [
+          "held_out.access_new_weather"
+        ]
+      ]
+    },
+    {
+      "id": "v2_090",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "What changed about visitor escort requirements between the retired and July 2026 editions?",
+      "expected_answer": "The retired edition allowed unescorted access after induction; the new edition always requires an accredited host.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.access_old"
+        ],
+        [
+          "held_out.access_new"
+        ]
+      ]
+    },
+    {
+      "id": "v2_091",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "Contrast badge lifetimes under the two visitor-access editions.",
+      "expected_answer": "72 hours under 2023 rules versus 12 hours under July 2026 rules.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.access_old_hours"
+        ],
+        [
+          "held_out.access_new_hours"
+        ]
+      ]
+    },
+    {
+      "id": "v2_092",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "How does the external platform wind threshold differ between the retired and current access rules?",
+      "expected_answer": "It fell from above 45 km/h to above 35 km/h.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.access_old_weather"
+        ],
+        [
+          "held_out.access_new_weather"
+        ]
+      ]
+    },
+    {
+      "id": "v2_093",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "Distinguish the archive retention clocks for raw frames and calibrated products.",
+      "expected_answer": "Raw frames: 120 days after acquisition; calibrated products: 6 years after publication.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_raw"
+        ]
+      ]
+    },
+    {
+      "id": "v2_094",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "Contrast the instruments LUMEN-8 and LUMEN-80 by detector and programme.",
+      "expected_answer": "LUMEN-8 uses CCD-K7 for NIGHTGLASS; LUMEN-80 uses CMOS-J2 for DAYFINDER.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.held_guide"
+        ]
+      ]
+    },
+    {
+      "id": "v2_095",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "How does the NIGHTGLASS expansion bid differ from approved terms for quarterly hours and detector price?",
+      "expected_answer": "The unapproved bid proposed 300 hours and GBP 2800; approved terms are 160 hours and GBP 3200.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.held_draft"
+        ],
+        [
+          "held_out.detector_price"
+        ],
+        [
+          "held_out.grant_quota",
+          "held_out.grant_mirror"
+        ]
+      ]
+    },
+    {
+      "id": "v2_096",
+      "split": "held_out",
+      "category": "comparative",
+      "question": "Are the archive embargo and calibrated-product retention durations measured from the same event?",
+      "expected_answer": "No. Embargo is 9 months after acquisition; calibrated retention is 6 years after publication.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_embargo"
+        ],
+        [
+          "held_out.arc_raw"
+        ]
+      ]
+    },
+    {
+      "id": "v2_097",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "What percentage of usable Q2 observing capacity was actually used?",
+      "expected_answer": "75%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.cap_hours"
+        ]
+      ],
+      "calculation": "180 / 240 * 100 = 75 percent"
+    },
+    {
+      "id": "v2_098",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "How much Q2 instrument budget remained unspent?",
+      "expected_answer": "GBP 12000.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.cap_spend"
+        ]
+      ],
+      "calculation": "48000 - 36000 = 12000 GBP"
+    },
+    {
+      "id": "v2_099",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "Calculate the percentage increase in D3 electricity use from April to May.",
+      "expected_answer": "20%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.cap_energy"
+        ]
+      ],
+      "calculation": "(1800 - 1500) / 1500 * 100 = 20 percent"
+    },
+    {
+      "id": "v2_100",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "What percentage of Q2 scheduled observing nights were cancelled?",
+      "expected_answer": "20%.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.cap_nights"
+        ]
+      ],
+      "calculation": "6 / 30 * 100 = 20 percent"
+    },
+    {
+      "id": "v2_101",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "How large is the required deposit for two CCD-K7 assemblies before tax and freight?",
+      "expected_answer": "GBP 1920.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.detector_price"
+        ],
+        [
+          "held_out.vendor_deposit"
+        ]
+      ],
+      "calculation": "2 * 3200 * 0.30 = 1920 GBP"
+    },
+    {
+      "id": "v2_102",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "How many litres must be added after the documented LUMEN-8 loop drain to restore the full level?",
+      "expected_answer": "6 litres.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_fluid"
+        ]
+      ],
+      "calculation": "24 - (24 - 6) = 6 litres"
+    },
+    {
+      "id": "v2_103",
+      "split": "held_out",
+      "category": "numerical",
+      "question": "Convert the configured archive download-link lifetime to minutes.",
+      "expected_answer": "15 minutes.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.net_token"
+        ]
+      ],
+      "calculation": "900 / 60 = 15 minutes"
+    },
+    {
+      "id": "v2_104",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "In the archive procedure, list the three access steps for an embargoed product in order.",
+      "expected_answer": "Authenticate the researcher, verify programme membership, issue a time-limited link.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_process"
+        ]
+      ]
+    },
+    {
+      "id": "v2_105",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "Under grant controls, can splitting one equipment purchase into invoices avoid the quotation requirement?",
+      "expected_answer": "No. Splitting does not remove the requirement.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.grant_limit"
+        ]
+      ]
+    },
+    {
+      "id": "v2_106",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "Find the step required before any restart for fault FLT-208.",
+      "expected_answer": "Perform a coolant isolation check.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_fault"
+        ]
+      ]
+    },
+    {
+      "id": "v2_107",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "What conditions and role are required to release COOL-LOCK?",
+      "expected_answer": "A certified cooling technician must obtain a passing retest before release.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.maint_lock"
+        ]
+      ]
+    },
+    {
+      "id": "v2_108",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "What must an order include in addition to its delivery address?",
+      "expected_answer": "Instrument model and grant code.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.vendor_reference"
+        ]
+      ]
+    },
+    {
+      "id": "v2_109",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "Locate the telemetry retry profile and give the waits in sequence.",
+      "expected_answer": "Wait 12 seconds before retry one and 24 before retry two; no further retries.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.net_retry"
+        ]
+      ]
+    },
+    {
+      "id": "v2_110",
+      "split": "held_out",
+      "category": "document_navigation",
+      "question": "Which supplier-payment change check must occur before funds are released?",
+      "expected_answer": "Independent verification by the research finance officer.",
+      "expected_behavior": "answer",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.vendor_change"
+        ]
+      ]
+    },
+    {
+      "id": "v2_111",
+      "split": "held_out",
+      "category": "ambiguous",
+      "question": "Can I enter the dome without an escort?",
+      "expected_answer": "Ask when the visit occurs: unescorted access after induction was allowed only under expired rules; current visits require an accredited host.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.access_old"
+        ],
+        [
+          "held_out.access_new"
+        ]
+      ]
+    },
+    {
+      "id": "v2_112",
+      "split": "held_out",
+      "category": "ambiguous",
+      "question": "How long is my archive data available?",
+      "expected_answer": "Clarify raw versus calibrated data and access versus retention: raw lasts 120 days after acquisition, calibrated lasts 6 years after publication, and NIGHTGLASS embargo is 9 months after acquisition.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.arc_raw"
+        ],
+        [
+          "held_out.arc_embargo"
+        ]
+      ]
+    },
+    {
+      "id": "v2_113",
+      "split": "held_out",
+      "category": "ambiguous",
+      "question": "Which instrument do you mean by LUMEN?",
+      "expected_answer": "Request the full identifier. LUMEN-8 is a NIGHTGLASS instrument with CCD-K7; LUMEN-80 is a DAYFINDER guide camera with CMOS-J2.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.map_instrument"
+        ],
+        [
+          "held_out.held_guide"
+        ]
+      ]
+    },
+    {
+      "id": "v2_114",
+      "split": "held_out",
+      "category": "ambiguous",
+      "question": "Is it safe to reopen the platform after the weather clears?",
+      "expected_answer": "Ask whether reopening has been authorized by the facilities controller; a host cannot reopen it solely because weather appears clear.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.access_new_after"
+        ]
+      ]
+    },
+    {
+      "id": "v2_115",
+      "split": "held_out",
+      "category": "ambiguous",
+      "question": "How long do I have to wait for the detector?",
+      "expected_answer": "Clarify whether manufacturing or full delivery is meant: CCD-K7 manufacturing takes 7 weeks after order acceptance, with unspecified transit time additional.",
+      "expected_behavior": "clarify",
+      "is_unanswerable": false,
+      "evidence_groups": [
+        [
+          "held_out.detector_lead"
+        ]
+      ]
+    },
+    {
+      "id": "v2_116",
+      "split": "held_out",
+      "category": "unanswerable",
+      "question": "What is the full landed price including tax and freight for a CCD-K7?",
+      "expected_answer": "Cannot compute it: the procurement sheet gives neither tax rate nor freight charge.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_117",
+      "split": "held_out",
+      "category": "unanswerable",
+      "question": "Provide the bank account number for a Meridian Optics deposit.",
+      "expected_answer": "Bank details are withheld; they must come from the finance system.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_118",
+      "split": "held_out",
+      "category": "unanswerable",
+      "question": "Which scientific object was first discovered by LUMEN-8 in Q2?",
+      "expected_answer": "No discovery results are provided in this corpus.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_119",
+      "split": "held_out",
+      "category": "unanswerable",
+      "question": "How much did the observatory pay for May electricity at dome D3?",
+      "expected_answer": "Consumption is given but electricity unit prices are absent.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    },
+    {
+      "id": "v2_120",
+      "split": "held_out",
+      "category": "unanswerable",
+      "question": "What are the GR-811 equipment-purchase approval limits?",
+      "expected_answer": "GR-811 has different conditions, but its purchase limits are not disclosed.",
+      "expected_behavior": "abstain",
+      "is_unanswerable": true,
+      "evidence_groups": []
+    }
+  ]
+}

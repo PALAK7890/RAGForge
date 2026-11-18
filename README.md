@@ -186,6 +186,23 @@ Measured 2026-11-09 with `HF_HUB_OFFLINE=1 python scripts/measure_latency.py`, s
 
 These numbers were produced by [`scripts/measure_latency.py`](scripts/measure_latency.py), which loads all components once and runs two sequential queries in the same process. `knowledge evaluate` spawns a fresh subprocess per query so both runs appear cold at the OS level and the per-query latencies shown above (473 ms / 51 ms) are both cold.
 
+### Benchmark v2: 120 questions with a supplied corpus
+
+[Benchmark v2](examples/benchmark_v2/README.md) adds 24 fictional source documents,
+120 questions in the original eight categories, exact supporting passages,
+alternative-evidence groups and separate development/evaluation document families.
+The runner scores passage coverage, ranking, errors and latency, and supports all
+three systems against one isolated index with explicit model settings. Human
+review supplies semantic correctness, faithfulness and citation-support scores.
+
+```bash
+OMP_NUM_THREADS=1 python -m knowledge.evaluation.benchmark_v2 --index --split dev --output reports/v2-dev.json
+```
+
+The original dataset and practice set remain available. See the
+[measured v2 results and limitations](docs/research/benchmark-v2-results.md);
+v2 scores do not validate the withdrawn original claims.
+
 ### Try the fictional practice corpus
 
 [40 examples with eight source documents](examples/evaluation/README.md) cover

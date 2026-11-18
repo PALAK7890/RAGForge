@@ -87,3 +87,10 @@ were produced or substituted with mocks.
 See `audit-report.md` for final regression results and remaining implementation
 limits. The original two-question and historical latency sections in README are
 historical claims, not new measurements from this audit.
+
+## New supplied-corpus benchmark
+
+Benchmark v2 is separate from this historical dataset. See
+[its data and scoring specification](../../examples/benchmark_v2/README.md) and
+[measured retrieval results](benchmark-v2-results.md). It does not reinstate the
+withdrawn comparison or ablation figures.
