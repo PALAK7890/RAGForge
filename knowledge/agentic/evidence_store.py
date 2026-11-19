@@ -2,10 +2,9 @@
 Evidence store managing accumulated retrieval evidence, deduplication, provenance, and citation verification.
 """
 
-import re
 from typing import Any, Dict, List, Optional
 
-from knowledge.agentic.schemas import EvidenceRecord, SourceReference
+from knowledge.agentic.schemas import EvidenceRecord
 
 
 class EvidenceStore:
@@ -45,7 +44,8 @@ class EvidenceStore:
         """Return records originating from a specific document name or ID."""
         doc_lower = document_id.lower()
         return [
-            r for r in self._records.values()
+            r
+            for r in self._records.values()
             if doc_lower in r.document_id.lower() or doc_lower in r.source_path.lower()
         ]
 
@@ -60,7 +60,7 @@ class EvidenceStore:
 
         for eid, record in self._records.items():
             # Identity key: chunk_id if present, else normalized text snippet
-            key = record.chunk_id if record.chunk_id else record.text.strip()[:100]
+            key = (record.source_path or record.document_id, record.chunk_id, record.text.strip())
 
             if key not in seen_keys:
                 seen_keys[key] = eid
@@ -70,7 +70,9 @@ class EvidenceStore:
 
                 # Compare scores: prioritize higher rerank_score, then hybrid_score
                 curr_score = (record.rerank_score or 0.0) + (record.hybrid_score or 0.0)
-                exist_score = (existing_record.rerank_score or 0.0) + (existing_record.hybrid_score or 0.0)
+                exist_score = (existing_record.rerank_score or 0.0) + (
+                    existing_record.hybrid_score or 0.0
+                )
 
                 if curr_score > exist_score:
                     # Replace existing with current
@@ -98,17 +100,19 @@ class EvidenceStore:
                 citation_label += f", chars {r.char_start}-{r.char_end}"
             citation_label += "]"
 
-            citations.append({
-                "evidence_id": r.evidence_id,
-                "label": citation_label,
-                "document_id": r.document_id,
-                "source_path": r.source_path,
-                "page_number": r.page_number,
-                "char_start": r.char_start,
-                "char_end": r.char_end,
-                "chunk_id": r.chunk_id,
-                "snippet": r.text[:200] + "..." if len(r.text) > 200 else r.text,
-            })
+            citations.append(
+                {
+                    "evidence_id": r.evidence_id,
+                    "label": citation_label,
+                    "document_id": r.document_id,
+                    "source_path": r.source_path,
+                    "page_number": r.page_number,
+                    "char_start": r.char_start,
+                    "char_end": r.char_end,
+                    "chunk_id": r.chunk_id,
+                    "snippet": r.text[:200] + "..." if len(r.text) > 200 else r.text,
+                }
+            )
         return citations
 
     def validate_citations(self, text: str) -> Dict[str, Any]:
@@ -116,38 +120,16 @@ class EvidenceStore:
         Verify whether in-text citation keys or document references in the generated answer
         correspond to real, retrieved evidence in the store.
         """
-        text = str(text or "")
-        valid_doc_names = {r.document_id.lower() for r in self._records.values() if r.document_id}
-        valid_evidence_ids = set(self._records.keys())
+        from knowledge.agentic.citations import CitationValidator
 
-        # Match patterns like [doc.pdf], [doc.pdf, p.1], [evidence:abc12345], [abc12345]
-        bracket_citations = re.findall(r"\[([^\]]+)\]", text)
-        verified_citations = []
-        unverified_citations = []
-
-        for cite in bracket_citations:
-            cite_clean = cite.strip()
-            # Check if citation refers to an evidence ID
-            if cite_clean in valid_evidence_ids:
-                verified_citations.append({"type": "evidence_id", "reference": cite_clean})
-                continue
-
-            # Check if citation refers to a document name
-            matched_doc = any(doc_name in cite_clean.lower() for doc_name in valid_doc_names)
-            if matched_doc:
-                verified_citations.append({"type": "document_name", "reference": cite_clean})
-            else:
-                unverified_citations.append({"type": "unknown", "reference": cite_clean})
-
+        report = CitationValidator(self.get_all()).validate(str(text or ""))
         return {
-            "total_cited": len(bracket_citations),
-            "verified_count": len(verified_citations),
-            "unverified_count": len(unverified_citations),
-            "verified": verified_citations,
-            "unverified": unverified_citations,
-            "citation_integrity": (
-                len(verified_citations) / len(bracket_citations) if bracket_citations else 1.0
-            ),
+            "total_cited": report["total_citations"],
+            "verified_count": report["valid_citations"],
+            "unverified_count": report["hallucinated_citations"],
+            "verified": report["verified_references"],
+            "unverified": report["hallucinated_references"],
+            "citation_integrity": report["citation_integrity"],
         }
 
     def format_context_for_prompt(self, max_tokens: int = 4000) -> str:
@@ -166,10 +148,10 @@ class EvidenceStore:
         )
 
         for r in sorted_records:
-            header = f"--- [Evidence: {r.evidence_id} | Document: {r.document_id}"
+            header = f"Source: [{r.document_id}"
             if r.page_number is not None:
-                header += f" | Page: {r.page_number}"
-            header += " ---"
+                header += f", p.{r.page_number}"
+            header += "]"
 
             block = f"{header}\n{r.text}\n"
             if current_chars + len(block) > char_budget:

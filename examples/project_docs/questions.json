@@ -1,0 +1,256 @@
+[
+  {
+    "id": "project_001",
+    "category": "factual",
+    "split": "dev",
+    "question": "How many questions, source documents and categories does benchmark v2 contain?",
+    "expected_answer": "120 questions, 24 Markdown source documents and eight categories.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "benchmark-guide.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "benchmark-guide.md",
+        "quote": "Version **2.0.0** preserves the original benchmark's 120-question category counts\nwhile replacing its missing-corpus assumptions with 24 supplied Markdown files.",
+        "char_start": 66,
+        "char_end": 227
+      },
+      {
+        "document": "benchmark-guide.md",
+        "quote": "| Factual retrieval | 10 | 10 | 20 |\n| Exact keyword | 8 | 7 | 15 |\n| Multi-hop | 10 | 10 | 20 |\n| Comparative | 8 | 7 | 15 |\n| Numerical | 8 | 7 | 15 |\n| Document navigation | 8 | 7 | 15 |\n| Ambiguous | 5 | 5 | 10 |\n| Unanswerable | 5 | 5 | 10 |",
+        "char_start": 715,
+        "char_end": 961
+      }
+    ]
+  },
+  {
+    "id": "project_002",
+    "category": "exact_keyword",
+    "split": "dev",
+    "question": "Which environment variable setting addresses the recorded native-library threading issue?",
+    "expected_answer": "OMP_NUM_THREADS=1.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "audit.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "audit.md",
+        "quote": "Real-model checks used `OMP_NUM_THREADS=1`: a native-library segmentation fault\n  occurred with the default thread setup",
+        "char_start": 4809,
+        "char_end": 4929
+      }
+    ]
+  },
+  {
+    "id": "project_003",
+    "category": "exact_keyword",
+    "split": "dev",
+    "question": "What exact embedding model and reranker does the v2 comparison use?",
+    "expected_answer": "all-MiniLM-L6-v2 and cross-encoder/ms-marco-MiniLM-L-6-v2.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "benchmark-guide.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "benchmark-guide.md",
+        "quote": "Embedding is `all-MiniLM-L6-v2`; reranker is\n`cross-encoder/ms-marco-MiniLM-L-6-v2`.",
+        "char_start": 4947,
+        "char_end": 5031
+      }
+    ]
+  },
+  {
+    "id": "project_004",
+    "category": "multihop",
+    "split": "dev",
+    "question": "After a successful 360-case run, can we claim SUMMARIZE is automatically scheduled or that answers are semantically correct?",
+    "expected_answer": "No. The architecture says SUMMARIZE is separately callable and unscheduled. The completed report leaves semantic correctness, faithfulness and citation-support review unfilled.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "architecture.md",
+      "generation-results.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "architecture.md",
+        "quote": "SUMMARIZE is separately callable and is not scheduled by this graph.",
+        "char_start": 4905,
+        "char_end": 4973
+      },
+      {
+        "document": "generation-results.md",
+        "quote": "None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null.",
+        "char_start": 2232,
+        "char_end": 2374
+      }
+    ]
+  },
+  {
+    "id": "project_005",
+    "category": "comparative",
+    "split": "dev",
+    "question": "Was Ollama still unavailable when the later full generation report was recorded, despite the earlier audit blocker?",
+    "expected_answer": "No. The audit recorded Ollama as unreachable; the later report completed 120 questions through three systems using local llama3.2. The old blocker is historical.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "audit.md",
+      "generation-results.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "audit.md",
+        "quote": "Ollama was unreachable both inside and outside the restricted environment.\nTherefore full answer-generation comparisons and ablations were not run.",
+        "char_start": 5220,
+        "char_end": 5367
+      },
+      {
+        "document": "generation-results.md",
+        "quote": "This run executed all **120 questions through three systems (360 cases)** using local Ollama `llama3.2`. It supersedes the earlier availability blocker for this later run; the old blocked-run artifact is retained as historical evidence.",
+        "char_start": 43,
+        "char_end": 279
+      }
+    ]
+  },
+  {
+    "id": "project_006",
+    "category": "numerical",
+    "split": "dev",
+    "question": "In the full generation report, how many AgenticRAG answers with bracket citations had no invalid reference?",
+    "expected_answer": "2: 39 cited answers minus 37 with at least one invalid reference. This does not establish semantic support.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "generation-results.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "generation-results.md",
+        "quote": "Of 39 AgenticRAG answers containing bracket citations, 37 contain at least one invalid reference; another 81 answers contain no bracket citations.",
+        "char_start": 6381,
+        "char_end": 6527
+      }
+    ]
+  },
+  {
+    "id": "project_007",
+    "category": "numerical",
+    "split": "dev",
+    "question": "Using the rounded mean latencies in the full report, how many seconds lower was AgenticRAG latency than Standard RAG, and is that a controlled speed claim?",
+    "expected_answer": "1.093 seconds (14.626 - 13.533). No: latency is descriptive for a sequential local run, not a controlled performance comparison.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "generation-results.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "generation-results.md",
+        "quote": "| Mean end-to-end latency (seconds) | 14.626 (n=120) | 24.875 (n=120) | 13.533 (n=120) |",
+        "char_start": 1047,
+        "char_end": 1135
+      },
+      {
+        "document": "generation-results.md",
+        "quote": "Latency is descriptive for this local sequential run, not a statistically controlled performance claim.",
+        "char_start": 2743,
+        "char_end": 2846
+      }
+    ]
+  },
+  {
+    "id": "project_008",
+    "category": "document_navigation",
+    "split": "dev",
+    "question": "In the benchmark review rubric, how should an uncited factual answer be scored for citation support, and when is null appropriate?",
+    "expected_answer": "Use 0 when a factual answer requiring citations omits them. Null is appropriate for a refusal with no factual claim needing support.",
+    "expected_behavior": "answer",
+    "expected_documents": [
+      "benchmark-guide.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "benchmark-guide.md",
+        "quote": "Use 0 for factual answers requiring citations that omit them; null is appropriate\n  for a refusal with no factual claim requiring support.",
+        "char_start": 9532,
+        "char_end": 9670
+      }
+    ]
+  },
+  {
+    "id": "project_009",
+    "category": "ambiguous",
+    "split": "dev",
+    "question": "What is the benchmark accuracy?",
+    "expected_answer": "Clarify which benchmark, system and metric. For the recorded full v2 run, passage recall is 98.18%, 96.89%, 98.18%; answer correctness remains unreviewed. Do not call retrieval recall answer accuracy.",
+    "expected_behavior": "clarify",
+    "expected_documents": [
+      "generation-results.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "generation-results.md",
+        "quote": "| Passage requirement recall@5 | 98.18% (n=110) | 96.89% (n=110) | 98.18% (n=110) |",
+        "char_start": 618,
+        "char_end": 701
+      },
+      {
+        "document": "generation-results.md",
+        "quote": "None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null.",
+        "char_start": 2232,
+        "char_end": 2374
+      }
+    ]
+  },
+  {
+    "id": "project_010",
+    "category": "ambiguous",
+    "split": "dev",
+    "question": "How many attempts does the agent get?",
+    "expected_answer": "Clarify which agent and which action. In benchmark v2, self-correcting RAG permits two rewrites and AgenticRAG has five tool steps; these are different budgets.",
+    "expected_behavior": "clarify",
+    "expected_documents": [
+      "benchmark-guide.md"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "benchmark-guide.md",
+        "quote": "Standard RAG retrieves once; self-correcting RAG permits two rewrites; AgenticRAG\nhas five tool steps.",
+        "char_start": 5311,
+        "char_end": 5413
+      }
+    ]
+  },
+  {
+    "id": "project_011",
+    "category": "unanswerable",
+    "split": "dev",
+    "question": "What is the independently human-reviewed answer-correctness percentage for the full 360-case experiment?",
+    "expected_answer": "Not available: semantic answer scores were not independently reviewed.",
+    "expected_behavior": "abstain",
+    "expected_documents": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "project_012",
+    "category": "unanswerable",
+    "split": "dev",
+    "question": "What monthly production hosting bill and uptime SLA does RAGForge guarantee?",
+    "expected_answer": "The selected documentation specifies neither a production hosting bill nor a guaranteed uptime SLA.",
+    "expected_behavior": "abstain",
+    "expected_documents": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  }
+]

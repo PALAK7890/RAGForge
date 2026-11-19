@@ -18,6 +18,10 @@ class OllamaLLM:
 
 Answer ONLY from the supplied context.
 
+When the context supplies bracketed source labels, cite each factual claim using
+the supporting source label exactly as supplied. Do not invent filenames, page
+numbers, or character offsets. Place citations next to the claims they support.
+
 If the answer is not present, reply:
 "I could not find the answer in the indexed documents."
 

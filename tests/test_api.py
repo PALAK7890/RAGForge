@@ -2,11 +2,26 @@
 Unit tests for the RAGForge REST API endpoints.
 """
 
+import pytest
 from fastapi.testclient import TestClient
 
 from knowledge.api.app import app
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def isolated_api_workspace(tmp_path, monkeypatch):
+    """Never run unit tests against a user's real corpus or load models implicitly."""
+    import importlib
+
+    from knowledge.api.service import RAGService
+
+    api_module = importlib.import_module("knowledge.api.app")
+    nodes = importlib.import_module("knowledge.agent.nodes")
+    service = RAGService(str(tmp_path / "workspace"))
+    monkeypatch.setattr(api_module, "service", service)
+    monkeypatch.setattr(nodes, "service", service)
 
 
 def test_health_check() -> None:
@@ -115,35 +130,40 @@ def test_agent_stream_endpoint() -> None:
 def test_agentic_ask_v2_endpoint(monkeypatch) -> None:
     """Verify /v2/agentic-ask endpoint processes queries and returns structured AgenticAskResponse."""
     from unittest.mock import MagicMock
+
     from knowledge.agentic.controller import AgenticController
 
-    mock_run = MagicMock(return_value={
-        "question": "What is RAGForge?",
-        "answer": "RAGForge is a modular RAG framework [readme.md].",
-        "abstained": False,
-        "sufficiency": "sufficient",
-        "sufficiency_reason": "Found facts in readme.md",
-        "steps": 2,
-        "tool_history": [
-            {"step": 1, "tool": "SEARCH", "results_count": 2, "duration_ms": 12.0},
-        ],
-        "discovered_docs": ["readme.md"],
-        "citations": [
-            {
-                "evidence_id": "ev_1",
-                "label": "[readme.md]",
-                "document_id": "readme.md",
-                "source_path": "/docs/readme.md",
-                "snippet": "RAGForge is a framework...",
-            }
-        ],
-        "citation_report": {"total_cited": 1, "verified_count": 1, "citation_integrity": 1.0},
-        "latencies": {"total": 45.0},
-        "evidence_count": 2,
-    })
+    mock_run = MagicMock(
+        return_value={
+            "question": "What is RAGForge?",
+            "answer": "RAGForge is a modular RAG framework [readme.md].",
+            "abstained": False,
+            "sufficiency": "sufficient",
+            "sufficiency_reason": "Found facts in readme.md",
+            "steps": 2,
+            "tool_history": [
+                {"step": 1, "tool": "SEARCH", "results_count": 2, "duration_ms": 12.0},
+            ],
+            "discovered_docs": ["readme.md"],
+            "citations": [
+                {
+                    "evidence_id": "ev_1",
+                    "label": "[readme.md]",
+                    "document_id": "readme.md",
+                    "source_path": "/docs/readme.md",
+                    "snippet": "RAGForge is a framework...",
+                }
+            ],
+            "citation_report": {"total_cited": 1, "verified_count": 1, "citation_integrity": 1.0},
+            "latencies": {"total": 45.0},
+            "evidence_count": 2,
+        }
+    )
     monkeypatch.setattr(AgenticController, "run", mock_run)
 
-    response = client.post("/v2/agentic-ask", json={"question": "What is RAGForge?", "max_steps": 4})
+    response = client.post(
+        "/v2/agentic-ask", json={"question": "What is RAGForge?", "max_steps": 4}
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["question"] == "What is RAGForge?"
@@ -158,23 +178,33 @@ def test_agentic_stream_v2_endpoint(monkeypatch) -> None:
     """Verify /v2/agentic-stream/{query} yields SSE events including start, tool_executed, and complete."""
     import json as _json
     from unittest.mock import MagicMock
+
     from knowledge.agentic.controller import AgenticController
 
-    mock_run = MagicMock(return_value={
-        "question": "What is RAGForge?",
-        "answer": "RAGForge is modular.",
-        "abstained": False,
-        "sufficiency": "sufficient",
-        "steps": 1,
-        "tool_history": [
-            {"step": 1, "tool": "SEARCH", "results_count": 1, "duration_ms": 15.0},
-        ],
-        "citations": [],
-        "citation_report": {"citation_integrity": 1.0},
-        "evidence_count": 1,
-    })
+    mock_run = MagicMock(
+        return_value={
+            "question": "What is RAGForge?",
+            "answer": "RAGForge is modular.",
+            "abstained": False,
+            "sufficiency": "sufficient",
+            "steps": 1,
+            "tool_history": [
+                {"step": 1, "tool": "SEARCH", "results_count": 1, "duration_ms": 15.0},
+            ],
+            "citations": [],
+            "citation_report": {"citation_integrity": 1.0},
+            "evidence_count": 1,
+        }
+    )
     monkeypatch.setattr(AgenticController, "run", mock_run)
 
+    def stream_run(self, question, max_steps=5):
+        result = mock_run(question, max_steps=max_steps)
+        for record in result["tool_history"]:
+            self.on_tool_event(record)
+        return result
+
+    monkeypatch.setattr(AgenticController, "run", stream_run)
     raw_lines: list[str] = []
     with client.stream("GET", "/v2/agentic-stream/What%20is%20RAGForge?max_steps=3") as response:
         assert response.status_code == 200
@@ -183,7 +213,7 @@ def test_agentic_stream_v2_endpoint(monkeypatch) -> None:
             if line.strip():
                 raw_lines.append(line.strip())
 
-    events = [_json.loads(line) for line in raw_lines if line.strip()]
+    events = [_json.loads(line.removeprefix("data: ")) for line in raw_lines if line.strip()]
     event_types = [e.get("event") for e in events]
 
     assert "start" in event_types

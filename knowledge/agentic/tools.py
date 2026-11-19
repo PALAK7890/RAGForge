@@ -60,7 +60,9 @@ class SearchTool:
 
         try:
             for q in queries:
-                raw_results = self.service.search(query=q, top_k=payload.top_k)
+                raw_results = self.service.search(
+                    query=q, top_k=payload.top_k, rerank=payload.rerank
+                )
 
                 for chunk in raw_results:
                     cid = chunk.get("chunk_id")
@@ -79,7 +81,9 @@ class SearchTool:
                         if not match:
                             continue
 
-                    doc_name = Path(chunk.get("source_path", "")).name or chunk.get("document_id", "unknown")
+                    doc_name = Path(chunk.get("source_path", "")).name or chunk.get(
+                        "document_id", "unknown"
+                    )
                     evidence = EvidenceRecord(
                         evidence_id=uuid4().hex[:12],
                         chunk_id=cid,
@@ -168,7 +172,11 @@ class FindTool:
             doc_name = Path(source_p).name
 
             # Match document_id either by filename or exact document_id string
-            if target_doc not in doc_name.lower() and target_doc not in doc_id.lower():
+            if not target_doc or target_doc not in {
+                doc_name.lower(),
+                doc_id.lower(),
+                source_p.lower(),
+            }:
                 continue
 
             text = chunk.get("text", "")
@@ -184,10 +192,13 @@ class FindTool:
 
                 meta = chunk.get("metadata", {}) or {}
                 chunk_char_start = meta.get("char_start")
-                chunk_char_end = meta.get("char_end")
 
-                char_start_doc = (chunk_char_start + start_idx) if chunk_char_start is not None else None
-                char_end_doc = (chunk_char_start + end_idx) if chunk_char_start is not None else None
+                char_start_doc = (
+                    (chunk_char_start + start_idx) if chunk_char_start is not None else None
+                )
+                char_end_doc = (
+                    (chunk_char_start + end_idx) if chunk_char_start is not None else None
+                )
 
                 matches.append(
                     FindMatch(
@@ -248,7 +259,11 @@ class OpenTool:
         for c in all_chunks:
             doc_name = Path(c.get("source_path", "")).name
             doc_id = c.get("document_id", "")
-            if target_doc in doc_name.lower() or target_doc in doc_id.lower():
+            if target_doc and target_doc in {
+                doc_name.lower(),
+                doc_id.lower(),
+                c.get("source_path", "").lower(),
+            }:
                 matching_chunks.append(c)
                 if not source_path:
                     source_path = c.get("source_path", "")
@@ -273,14 +288,12 @@ class OpenTool:
         # Filter by page if requested
         if payload.page is not None:
             filtered = [c for c in matching_chunks if c.get("page_number") == payload.page]
-            if filtered:
-                matching_chunks = filtered
+            matching_chunks = filtered
 
         # Filter by chunk_index if requested
         elif payload.chunk_index is not None:
             filtered = [c for c in matching_chunks if c.get("chunk_index") == payload.chunk_index]
-            if filtered:
-                matching_chunks = filtered
+            matching_chunks = filtered
 
         # Filter by character offsets if requested
         elif payload.char_start is not None or payload.char_end is not None:
@@ -295,8 +308,7 @@ class OpenTool:
                     # Overlap check
                     if max(req_start, cs) < min(req_end, ce):
                         filtered.append(c)
-            if filtered:
-                matching_chunks = filtered
+            matching_chunks = filtered
 
         views: List[ChunkView] = []
         evidence_records: List[EvidenceRecord] = []
@@ -310,7 +322,10 @@ class OpenTool:
 
             if total_chars + char_len > payload.max_output_chars:
                 remaining_budget = max(0, payload.max_output_chars - total_chars)
-                chunk_text = chunk_text[:remaining_budget] + "... [TRUNCATED]"
+                marker = "... [TRUNCATED]"
+                chunk_text = (
+                    chunk_text[: max(0, remaining_budget - len(marker))] + marker[:remaining_budget]
+                )
                 truncated = True
 
             views.append(
@@ -371,9 +386,7 @@ class SummarizeTool:
         """Condense evidence records into a bounded summary with citation provenance."""
         t0 = time.perf_counter()
         target_records = [
-            evidence_store[eid]
-            for eid in payload.evidence_ids
-            if eid in evidence_store
+            evidence_store[eid] for eid in payload.evidence_ids if eid in evidence_store
         ]
 
         if not target_records:
@@ -415,9 +428,7 @@ class SummarizeTool:
 
         if self.llm is not None:
             try:
-                context_blocks = "\n\n".join(
-                    f"[{r.document_id}]: {r.text}" for r in target_records
-                )
+                context_blocks = "\n\n".join(f"[{r.document_id}]: {r.text}" for r in target_records)
                 focus = (
                     f"Focus on information addressing: '{payload.focus_question}'"
                     if payload.focus_question

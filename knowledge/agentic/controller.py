@@ -3,10 +3,9 @@ AgenticRAG Controller: Multi-step iterative retrieval, navigation, and grounded 
 Implements the Agentic Decision-Making Loop from Microsoft's AgenticRAG research paper using LangGraph.
 """
 
-import json
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from langgraph.graph import END, StateGraph
 
@@ -34,7 +33,10 @@ class AgenticController:
         open_tool: Optional[OpenTool] = None,
         summarize_tool: Optional[SummarizeTool] = None,
         llm: Optional[OllamaLLM] = None,
+        on_tool_event: Optional[Callable[[Dict[str, Any]], None]] = None,
     ) -> None:
+        self.top_k = 5
+        self.on_tool_event = on_tool_event
         self.search_tool = search_tool or SearchTool()
         self.find_tool = find_tool or FindTool()
         self.open_tool = open_tool or OpenTool()
@@ -55,7 +57,10 @@ class AgenticController:
 
         # Check for multi-hop or comparative query indicators
         sub_questions: List[str] = []
-        is_comparative = any(term in q_lower for term in ["compare", "difference between", "versus", "vs", "changes between"])
+        is_comparative = any(
+            term in q_lower
+            for term in ["compare", "difference between", "versus", "vs", "changes between"]
+        )
 
         if is_comparative and (" and " in q_lower or " vs " in q_lower):
             # Decompose into sub-queries for comparative analysis
@@ -70,14 +75,16 @@ class AgenticController:
 
         initial_queries = [question]
         if mentioned_doc:
-            clean_q = re.sub(r"\b(?:in|according to|from)\s+[\w-]+\.\w+\b", "", question, flags=re.IGNORECASE).strip()
+            clean_q = re.sub(
+                r"\b(?:in|according to|from)\s+[\w-]+\.\w+\b", "", question, flags=re.IGNORECASE
+            ).strip()
             if clean_q:
                 initial_queries.append(clean_q)
 
         state["sub_questions"] = sub_questions
         state["current_action"] = {
             "tool": "search",
-            "args": {"queries": initial_queries, "top_k": 5},
+            "args": {"queries": initial_queries, "top_k": self.top_k},
         }
         state["latencies"]["plan"] = (time.perf_counter() - t0) * 1000
         return state
@@ -106,6 +113,8 @@ class AgenticController:
                 queries = args.get("queries", [state["question"]])
                 top_k = args.get("top_k", 5)
                 res = self.search_tool.execute(SearchInput(queries=queries, top_k=top_k))
+                if res.error:
+                    raise RuntimeError(f"SEARCH: {res.error.message}")
                 store.add_many(res.evidence)
                 history_entry["results_count"] = res.total_found
                 history_entry["queries_used"] = res.queries_used
@@ -114,6 +123,8 @@ class AgenticController:
                 doc_id = args.get("document_id", "")
                 expr = args.get("expression", "")
                 res_find = self.find_tool.execute(FindInput(document_id=doc_id, expression=expr))
+                if res_find.error:
+                    raise RuntimeError(f"FIND: {res_find.error.message}")
                 history_entry["results_count"] = res_find.total_matches
                 history_entry["matches"] = [m.model_dump() for m in res_find.matches[:3]]
 
@@ -123,8 +134,16 @@ class AgenticController:
                 char_start = args.get("char_start")
                 char_end = args.get("char_end")
                 res_open = self.open_tool.execute(
-                    OpenInput(document_id=doc_id, page=page, char_start=char_start, char_end=char_end)
+                    OpenInput(
+                        document_id=doc_id,
+                        page=page,
+                        char_start=char_start,
+                        char_end=char_end,
+                        max_output_chars=args.get("max_output_chars", 4000),
+                    )
                 )
+                if res_open.error:
+                    raise RuntimeError(f"OPEN: {res_open.error.message}")
                 store.add_many(res_open.evidence_records)
                 history_entry["results_count"] = len(res_open.views)
                 history_entry["total_chars"] = res_open.total_chars
@@ -154,6 +173,8 @@ class AgenticController:
 
         history_entry["duration_ms"] = (time.perf_counter() - t0) * 1000
         state["tool_history"].append(history_entry)
+        if self.on_tool_event is not None:
+            self.on_tool_event(dict(history_entry))
         state["step"] = step_num
         state["latencies"][f"step_{step_num}_{tool_name}"] = history_entry["duration_ms"]
 
@@ -172,10 +193,14 @@ class AgenticController:
         if state["step"] >= state["max_steps"]:
             if len(evidence_list) > 0:
                 state["sufficiency"] = "sufficient"
-                state["sufficiency_reason"] = f"Budget reached ({state['max_steps']} steps); proceeding with best evidence."
+                state["sufficiency_reason"] = (
+                    f"Budget reached ({state['max_steps']} steps); proceeding with best evidence."
+                )
             else:
                 state["sufficiency"] = "unanswerable"
-                state["sufficiency_reason"] = "Budget exhausted without finding any relevant documents or passages."
+                state["sufficiency_reason"] = (
+                    "Budget exhausted without finding any relevant documents or passages."
+                )
             state["latencies"][f"eval_step_{state['step']}"] = (time.perf_counter() - t0) * 1000
             return state
 
@@ -186,13 +211,17 @@ class AgenticController:
                 relaxed_q = re.sub(r"[^\w\s]", "", state["question"]).strip()
                 state["current_action"] = {
                     "tool": "search",
-                    "args": {"queries": [relaxed_q, f"{relaxed_q} overview"], "top_k": 5},
+                    "args": {"queries": [relaxed_q, f"{relaxed_q} overview"], "top_k": self.top_k},
                 }
                 state["sufficiency"] = "pending"
-                state["sufficiency_reason"] = "Initial search yielded no results; retrying with relaxed query."
+                state["sufficiency_reason"] = (
+                    "Initial search yielded no results; retrying with relaxed query."
+                )
             else:
                 state["sufficiency"] = "unanswerable"
-                state["sufficiency_reason"] = "Repeated searches found no matching documents in knowledge base."
+                state["sufficiency_reason"] = (
+                    "Repeated searches found no matching documents in knowledge base."
+                )
             state["latencies"][f"eval_step_{state['step']}"] = (time.perf_counter() - t0) * 1000
             return state
 
@@ -201,7 +230,22 @@ class AgenticController:
         last_tool = last_action.get("tool", "")
 
         # Look for specific target keywords or numbers in question (e.g., "retention", "revenue", "2024")
-        key_terms = [w for w in re.findall(r"\b\w{4,}\b", q_lower) if w not in ["what", "when", "where", "which", "explain", "describe", "about", "could", "would"]]
+        key_terms = [
+            w
+            for w in re.findall(r"\b\w{4,}\b", q_lower)
+            if w
+            not in [
+                "what",
+                "when",
+                "where",
+                "which",
+                "explain",
+                "describe",
+                "about",
+                "could",
+                "would",
+            ]
+        ]
 
         # Decision: If we just searched and found anchor documents, inspect specific candidate with FIND
         if last_tool == "SEARCH" and state["discovered_docs"] and key_terms:
@@ -212,7 +256,9 @@ class AgenticController:
                 "args": {"document_id": target_doc, "expression": term_to_find},
             }
             state["sufficiency"] = "pending"
-            state["sufficiency_reason"] = f"Anchored in document '{target_doc}'; locating keyword '{term_to_find}'."
+            state["sufficiency_reason"] = (
+                f"Anchored in document '{target_doc}'; locating keyword '{term_to_find}'."
+            )
             state["latencies"][f"eval_step_{state['step']}"] = (time.perf_counter() - t0) * 1000
             return state
 
@@ -223,16 +269,26 @@ class AgenticController:
             page = first_match.get("page_number")
             state["current_action"] = {
                 "tool": "open",
-                "args": {"document_id": doc_id, "page": page, "max_output_chars": 2000},
+                "args": {
+                    "document_id": doc_id,
+                    "page": page,
+                    "char_start": first_match.get("char_start") if page is None else None,
+                    "char_end": first_match.get("char_end") if page is None else None,
+                    "max_output_chars": 2000,
+                },
             }
             state["sufficiency"] = "pending"
-            state["sufficiency_reason"] = f"Found match in '{doc_id}'; opening page {page} for complete context."
+            state["sufficiency_reason"] = (
+                f"Found match in '{doc_id}'; opening page {page} for complete context."
+            )
             state["latencies"][f"eval_step_{state['step']}"] = (time.perf_counter() - t0) * 1000
             return state
 
         # Default: Evidence is sufficient
         state["sufficiency"] = "sufficient"
-        state["sufficiency_reason"] = f"Collected {len(evidence_list)} verified evidence passages across {len(state['discovered_docs'])} documents."
+        state["sufficiency_reason"] = (
+            f"Collected {len(evidence_list)} verified evidence passages across {len(state['discovered_docs'])} documents."
+        )
         state["latencies"][f"eval_step_{state['step']}"] = (time.perf_counter() - t0) * 1000
         return state
 
@@ -260,29 +316,22 @@ class AgenticController:
                 f"Reason: {state.get('sufficiency_reason', 'No matching evidence found in corpus.')}"
             )
             state["citations"] = []
-            state["citation_report"] = {"total_cited": 0, "verified_count": 0, "unverified_count": 0, "citation_integrity": 1.0}
+            state["citation_report"] = {
+                "total_cited": 0,
+                "verified_count": 0,
+                "unverified_count": 0,
+                "citation_integrity": 1.0,
+            }
             state["latencies"]["synthesize"] = (time.perf_counter() - t0) * 1000
             return state
 
         context = store.format_context_for_prompt(max_tokens=3000)
 
-        prompt = f"""You are a research-grade enterprise assistant. Answer the user's question accurately using ONLY the provided evidence.
-
-For every claim, cite the source document in brackets using the exact format: [DocumentName] or [DocumentName, p.X].
-If the evidence does not contain sufficient facts to answer completely, explicitly state what is missing.
-
-Question:
-{state['question']}
-
-Evidence:
-{context}
-
-Answer:"""
-
         try:
-            raw_gen = self.llm.generate(state["question"], prompt)
+            raw_gen = self.llm.generate(state["question"], context)
             raw_answer = str(raw_gen).strip() if raw_gen is not None else ""
         except Exception as e:
+            state["error"] = f"Generation failed: {e}"
             # Deterministic fallback when LLM fails or is unavailable
             top_evidence = sorted(
                 store.get_all(),
@@ -290,10 +339,34 @@ Answer:"""
                 reverse=True,
             )
             snippets = [f"[{r.document_id}] {r.text.strip()}" for r in top_evidence[:3]]
-            raw_answer = f"Based on retrieved evidence:\n\n" + "\n\n".join(snippets)
+            raw_answer = "Based on retrieved evidence:\n\n" + "\n\n".join(snippets)
 
         # Validate citation integrity
         citation_report = store.validate_citations(raw_answer)
+        refusal = "I could not find the answer in the indexed documents."
+        needs_citations = bool(raw_answer) and raw_answer != refusal
+        # One bounded repair; never manufacture references by appending sources
+        # to claims the model did not attribute.
+        if not state.get("error") and needs_citations and (
+            not citation_report["total_cited"] or citation_report["unverified_count"]
+        ):
+            try:
+                repaired = self.llm.generate(
+                    f"{state['question']}\n\n"
+                    f"Draft answer:\n{raw_answer}\n\n"
+                    "Rewrite the draft using only the supplied evidence. Cite each factual "
+                    "claim with an exact Source label from the context. Remove unsupported "
+                    "claims and invented locations. Return only the corrected answer.",
+                    context,
+                )
+                repaired = str(repaired or "").strip()
+                checked = store.validate_citations(repaired)
+                if repaired == refusal or (checked["total_cited"] and not checked["unverified_count"]):
+                    raw_answer, citation_report = repaired, checked
+            except Exception as exc:
+                state["error"] = f"Citation correction failed: {exc}"
+            citation_report["repair_attempted"] = True
+        citation_report["missing_citations"] = bool(raw_answer) and raw_answer != refusal and not citation_report["total_cited"]
         citations = store.generate_citations()
 
         state["abstained"] = False
@@ -336,6 +409,10 @@ Answer:"""
         """
         Execute the full AgenticRAG workflow for a user question.
         """
+        if not question.strip():
+            raise ValueError("Question cannot be empty")
+        if not 1 <= max_steps <= 15:
+            raise ValueError("max_steps must be between 1 and 15")
         initial_state: AgenticGraphState = {
             "question": question,
             "step": 0,
@@ -356,9 +433,10 @@ Answer:"""
         }
 
         graph = self.build_graph()
-        final_state = graph.invoke(initial_state)
+        final_state = graph.invoke(initial_state, config={"recursion_limit": max_steps * 3 + 5})
 
         return {
+            "error": final_state.get("error"),
             "question": question,
             "answer": final_state["answer"],
             "abstained": final_state["abstained"],
@@ -371,4 +449,5 @@ Answer:"""
             "citation_report": final_state["citation_report"],
             "latencies": final_state["latencies"],
             "evidence_count": len(final_state["evidence_store_data"]),
+            "evidence_records": list(final_state["evidence_store_data"].values()),
         }

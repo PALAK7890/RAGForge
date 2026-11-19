@@ -9,11 +9,13 @@ from pydantic import BaseModel, Field
 
 class DocumentIndexRequest(BaseModel):
     """Payload for indexing a file or directory."""
+
     path: str = Field(description="File or folder path to index")
 
 
 class DocumentRecord(BaseModel):
     """Metadata for an indexed document."""
+
     name: str
     path: str
     chunks: int = 0
@@ -21,6 +23,7 @@ class DocumentRecord(BaseModel):
 
 class DocumentListResponse(BaseModel):
     """Response containing all indexed documents."""
+
     documents: List[DocumentRecord]
     total_documents: int
     total_chunks: int
@@ -28,12 +31,14 @@ class DocumentListResponse(BaseModel):
 
 class SearchRequest(BaseModel):
     """Search query parameters."""
+
     query: str = Field(description="Search text query")
     top_k: int = Field(default=5, description="Number of results to return")
 
 
 class SearchResultChunk(BaseModel):
     """Individual retrieved chunk with ranking scores."""
+
     chunk_id: Optional[str] = None
     text: str
     source_path: str
@@ -44,12 +49,14 @@ class SearchResultChunk(BaseModel):
 
 class SearchResponse(BaseModel):
     """Search response payload."""
+
     query: str
     results: List[SearchResultChunk]
 
 
 class AskRequest(BaseModel):
     """Question answering query payload."""
+
     question: str = Field(description="User question")
     top_k: int = Field(default=5, description="Number of chunks to retrieve for context")
     stream: bool = Field(default=False, description="Whether to stream the generated answer")
@@ -57,6 +64,7 @@ class AskRequest(BaseModel):
 
 class AskResponse(BaseModel):
     """Standard RAG answer response."""
+
     question: str
     answer: str
     sources: List[str]
@@ -65,12 +73,14 @@ class AskResponse(BaseModel):
 
 class AgentAskRequest(BaseModel):
     """Agentic RAG question request."""
+
     question: str = Field(description="User question")
     max_retries: int = Field(default=2, description="Maximum retrieval rewrite attempts")
 
 
 class AgentAskResponse(BaseModel):
     """Agentic RAG answer response with execution metadata."""
+
     question: str
     answer: str
     query_type: str
@@ -82,12 +92,14 @@ class AgentAskResponse(BaseModel):
 
 class AgenticAskRequest(BaseModel):
     """Research-grade AgenticRAG query payload."""
+
     question: str = Field(description="User question to resolve through agentic navigation")
     max_steps: int = Field(default=5, ge=1, le=15, description="Maximum agent retrieval steps")
 
 
 class AgenticCitation(BaseModel):
     """Citation provenance for an AgenticRAG claim."""
+
     evidence_id: str
     label: str
     document_id: str
@@ -100,6 +112,7 @@ class AgenticCitation(BaseModel):
 
 class AgenticAskResponse(BaseModel):
     """Structured response from the research AgenticRAG controller."""
+
     question: str
     answer: str
     abstained: bool
@@ -112,10 +125,12 @@ class AgenticAskResponse(BaseModel):
     citation_report: Dict[str, Any]
     latencies: Dict[str, float]
     evidence_count: int
+    error: Optional[str] = None
 
 
 class StatsResponse(BaseModel):
     """Workspace index statistics."""
+
     workspace: str
     documents: int
     chunks: int
@@ -128,11 +143,13 @@ class StatsResponse(BaseModel):
 
 class BenchmarkRequest(BaseModel):
     """Payload to trigger retrieval benchmark."""
+
     query: str = Field(description="Query to benchmark")
 
 
 class BenchmarkResponse(BaseModel):
     """Latency benchmark breakdown."""
+
     query: str
     embedding_ms: float
     faiss_ms: float
@@ -146,11 +163,16 @@ class BenchmarkResponse(BaseModel):
 
 class EvaluateRequest(BaseModel):
     """Payload to evaluate against a benchmark dataset."""
-    dataset_path: str = Field(default="knowledge/evaluation/question.json", description="Path to evaluation questions dataset")
+
+    dataset_path: str = Field(
+        default="knowledge/evaluation/question.json",
+        description="Path to evaluation questions dataset",
+    )
 
 
 class FeedbackRequest(BaseModel):
     """Payload to record relevance judgment."""
+
     query: str
     chunk_text: str
     rating: int = Field(default=1, description="+1 for positive, 0 or -1 for negative")
@@ -160,6 +182,7 @@ class FeedbackRequest(BaseModel):
 
 class FeedbackResponse(BaseModel):
     """Response returning confirmation of logged feedback."""
+
     feedback_id: str
     query: str
     rating: int
