@@ -211,3 +211,18 @@ def test_plain_refusal_does_not_trigger_citation_correction():
     })
     assert llm.generate.call_count == 1
     assert result["citation_report"]["missing_citations"] is False
+    assert result["abstained"] is True
+
+
+def test_refusal_from_citation_correction_sets_abstention_flag():
+    refusal = "I could not find the answer in the indexed documents."
+    llm = MagicMock()
+    llm.generate.side_effect = ["An unsupported answer.", refusal]
+    result = AgenticController(llm=llm).synthesize_answer({
+        "question": "How long?", "latencies": {},
+        "evidence_store_data": {"e": EvidenceRecord(evidence_id="e", document_id="policy.md", text="Unrelated fact.").model_dump()},
+    })
+    assert result["answer"] == refusal
+    assert result["abstained"] is True
+    assert result["citation_report"]["repair_attempted"] is True
+    assert result["citation_report"]["missing_citations"] is False

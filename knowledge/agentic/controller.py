@@ -369,7 +369,7 @@ class AgenticController:
         citation_report["missing_citations"] = bool(raw_answer) and raw_answer != refusal and not citation_report["total_cited"]
         citations = store.generate_citations()
 
-        state["abstained"] = False
+        state["abstained"] = raw_answer == refusal
         state["answer"] = raw_answer
         state["citations"] = citations
         state["citation_report"] = citation_report
