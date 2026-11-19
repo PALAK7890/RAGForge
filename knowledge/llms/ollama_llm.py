@@ -14,15 +14,18 @@ class OllamaLLM:
         self.model = model
 
     def _build_prompt(self, question: str, context: str) -> str:
+        citation_rules = ""
+        if any(line.startswith("Source: [") for line in context.splitlines()):
+            citation_rules = (
+                "When the context supplies bracketed source labels, cite each factual claim using\n"
+                "the supporting source label exactly as supplied. Do not invent filenames, page\n"
+                "numbers, or character offsets. Place citations next to the claims they support.\n\n"
+            )
         return f"""You are a Retrieval-Augmented Generation assistant.
 
 Answer ONLY from the supplied context.
 
-When the context supplies bracketed source labels, cite each factual claim using
-the supporting source label exactly as supplied. Do not invent filenames, page
-numbers, or character offsets. Place citations next to the claims they support.
-
-If the answer is not present, reply:
+{citation_rules}If the answer is not present, reply:
 "I could not find the answer in the indexed documents."
 
 Context:
