@@ -224,6 +224,10 @@ OMP_NUM_THREADS=1 python -m knowledge.evaluation.examples --index --output repor
 Use `--mode standard` or `--mode agentic` once Ollama is running. These are practice
 examples, not independently validated research measurements.
 
+[Project-documentation examples](examples/project_docs/README.md) exercise real
+RAGForge documentation, including historical/current report conflicts, calculations,
+ambiguous requests and missing information. They use the same practice runner.
+
 ### AgenticRAG evaluation status (audited 2026-11-17)
 
 The 120 authored questions exist (62 dev, 58 held_out), but the previously
@@ -231,8 +235,10 @@ published comparative and ablation tables have been withdrawn: no saved run
 outputs support those measurements. This is a repository-documentation dataset
 with unreviewed filename/keyword labels, not a validated enterprise benchmark.
 The comparison runner now preserves raw outputs and errors and rejects missing
-corpus sources. Real generated-answer comparisons remain blocked until Ollama
-and a reviewed corpus covering the annotations are available.
+corpus sources. That original dataset still needs a reviewed matching corpus.
+The separate benchmark v2 later completed a
+[360-case local generation run](docs/research/benchmark-v2-full-generation.md);
+its results do not validate the original dataset's withdrawn scores.
 
 See [evaluation status and reproduction commands](docs/research/experimental-results.md)
 and [implementation audit](docs/research/audit-report.md).

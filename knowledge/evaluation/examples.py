@@ -1,4 +1,4 @@
-"""Run the authored fictional practice corpus in an isolated workspace."""
+"""Run an authored practice corpus in an isolated workspace."""
 
 import argparse
 import hashlib
@@ -43,21 +43,27 @@ def run_examples(
     max_samples=None,
     top_k=5,
     index=False,
+    root=EXAMPLES,
 ):
-    questions = load_examples()
+    root = Path(root)
+    questions = load_examples(root)
     service = RAGService(workspace)
+    expected_sources = {p.resolve() for p in (root / "corpus").glob("*.md")}
+    if service.chunks_path.exists():
+        existing = json.loads(service.chunks_path.read_text(encoding="utf-8"))["chunks"]
+        if {Path(c["source_path"]).resolve() for c in existing} != expected_sources:
+            raise ValueError("Workspace must contain only the selected example documents; use a fresh workspace")
     if index:
-        result = service.index_documents(str(EXAMPLES / "corpus"))
+        result = service.index_documents(str(root / "corpus"))
         if result.get("errors"):
             raise RuntimeError(f"Example indexing failed: {result['errors']}")
     if not service.chunks_path.exists():
         raise FileNotFoundError("Build the example index with --index first")
     indexed = json.loads(service.chunks_path.read_text(encoding="utf-8"))["chunks"]
     actual_sources = {Path(c["source_path"]).resolve() for c in indexed}
-    expected_sources = {p.resolve() for p in (EXAMPLES / "corpus").glob("*.md")}
     if actual_sources != expected_sources:
         raise ValueError(
-            "Workspace must contain only the eight example documents; use a fresh workspace"
+            "Workspace must contain only the selected example documents; use a fresh workspace"
         )
     selected = [q for q in questions if split is None or q["split"] == split]
     if max_samples is not None:
@@ -72,6 +78,7 @@ def run_examples(
         open_tool=OpenTool(str(service.chunks_path)),
         llm=service.llm,
     )
+    controller.top_k = top_k
     records = []
     for question in selected:
         row = {
@@ -96,6 +103,7 @@ def run_examples(
             expected = set(question["expected_documents"])
             row.update(
                 output=output,
+                error=output.get("error"),
                 retrieved_documents=retrieved,
                 document_recall=(
                     len(expected.intersection(retrieved)) / len(expected) if expected else None
@@ -111,16 +119,17 @@ def run_examples(
         "records": records,
         "corpus_sha256": {
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted((EXAMPLES / "corpus").glob("*.md"))
+            for p in sorted((root / "corpus").glob("*.md"))
         },
-        "questions_sha256": hashlib.sha256((EXAMPLES / "questions.json").read_bytes()).hexdigest(),
-        "limitations": "Authored fictional practice set. Review answers manually; document recall is not answer correctness. No retrieval credit is assigned to unanswerable questions. Errors are retained.",
+        "questions_sha256": hashlib.sha256((root / "questions.json").read_bytes()).hexdigest(),
+        "limitations": "Authored practice set, not independently reviewed. Review answers manually; document recall is not answer correctness. No retrieval credit is assigned to unanswerable questions. Errors are retained.",
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", default=".knowledge/examples")
+    parser.add_argument("--examples", type=Path, default=EXAMPLES, help="Directory containing questions.json and corpus/")
     parser.add_argument("--mode", choices=["retrieval", "standard", "agentic"], default="retrieval")
     parser.add_argument("--split", choices=["dev", "held_out"])
     parser.add_argument("--max-samples", type=int)
@@ -129,7 +138,7 @@ def main():
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     result = run_examples(
-        args.workspace, args.mode, args.split, args.max_samples, args.top_k, args.index
+        args.workspace, args.mode, args.split, args.max_samples, args.top_k, args.index, args.examples
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
