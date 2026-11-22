@@ -226,3 +226,18 @@ def test_refusal_from_citation_correction_sets_abstention_flag():
     assert result["abstained"] is True
     assert result["citation_report"]["repair_attempted"] is True
     assert result["citation_report"]["missing_citations"] is False
+
+
+@pytest.mark.parametrize("answer", [None, "", " \n\t "])
+def test_empty_generation_reports_failure_and_retains_evidence_fallback(answer):
+    llm = MagicMock()
+    llm.generate.return_value = answer
+    record = EvidenceRecord(evidence_id="e", document_id="policy.md", text="Retain for 30 days.")
+    result = AgenticController(llm=llm).synthesize_answer({
+        "question": "How long?", "latencies": {},
+        "evidence_store_data": {record.evidence_id: record.model_dump()},
+    })
+    assert result["error"] == "Generation failed: LLM returned an empty answer"
+    assert "[policy.md] Retain for 30 days." in result["answer"]
+    assert result["abstained"] is False
+    assert llm.generate.call_count == 1

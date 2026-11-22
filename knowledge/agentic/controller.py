@@ -330,6 +330,8 @@ class AgenticController:
         try:
             raw_gen = self.llm.generate(state["question"], context)
             raw_answer = str(raw_gen).strip() if raw_gen is not None else ""
+            if not raw_answer:
+                raise RuntimeError("LLM returned an empty answer")
         except Exception as e:
             state["error"] = f"Generation failed: {e}"
             # Deterministic fallback when LLM fails or is unavailable
