@@ -190,3 +190,12 @@ Ollama later became available. All 120 questions were run through the three syst
 See [the complete generation report](../../docs/research/benchmark-v2-full-generation.md) for actual outputs, automatic scores,
 execution failures and remaining semantic-review gaps. Earlier blocked-run artifacts
 remain historical records.
+
+## Citation correction rerun
+
+See the [360-case citation-fix report](../../docs/research/benchmark-v2-citation-fix.md)
+for saved before/after outputs, citation coverage, unchanged baseline answers,
+assistant review and the explicit limits of recovered timing data. The corpus and
+questions remain frozen. The known `v2_037` wording ambiguity (absolute versus
+percentage revenue growth) is documented in the review rather than silently
+changing the reference answer during evaluation.

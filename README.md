@@ -209,6 +209,12 @@ The original dataset and practice set remain available. See the
 [measured v2 results and limitations](docs/research/benchmark-v2-results.md);
 v2 scores do not validate the withdrawn original claims.
 
+The [citation-fix rerun](docs/research/benchmark-v2-citation-fix.md) preserves real
+outputs for all 360 cases. AgenticRAG cites 83 answers with valid references;
+27 of 110 evidence-bearing answers still omit citations. This measures reference
+identity, not semantic correctness. The report explains the interrupted-run
+recovery and unavailable timings, and includes source-backed answer reviews.
+
 ### Try the fictional practice corpus
 
 [40 examples with eight source documents](examples/evaluation/README.md) cover

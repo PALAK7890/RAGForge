@@ -33,3 +33,13 @@ HF_HUB_OFFLINE=1 OMP_NUM_THREADS=1 python -m knowledge.evaluation.examples \
 Index only `corpus/`; never index `questions.json`, reference answers or reviews.
 Document recall measures source-file coverage, not passage coverage or answer
 quality. Check raw answers for missing or unsupported claims and citations.
+
+## Recorded checks
+
+All 12 questions completed real retrieval and AgenticRAG generation without an
+execution error. All ten evidence-bearing questions found their required files,
+but exact-passage coverage averaged 85%; only 8/10 retrieved every annotated
+passage. Live answers still showed false refusals, a wrong numerical interpretation,
+rubric confusion and unresolved ambiguity. See the
+[answer review and raw outputs](../../docs/research/project-docs-answer-review.md).
+These are assistant-reviewed findings, not independently validated accuracy scores.

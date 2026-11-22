@@ -1,0 +1,5 @@
+{
+  "commit": "dce13617e34f02b407d90d8b9e66f4f303a5d5d3",
+  "model": "llama3.2",
+  "generation_options": "Ollama runtime defaults; this is an application check, not the fixed-settings benchmark comparison."
+}

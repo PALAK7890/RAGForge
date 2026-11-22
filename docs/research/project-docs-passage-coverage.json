@@ -1,0 +1,121 @@
+{
+  "source_results_sha256": "2e482b3288ef04fbd01eec0ef914fdf63d2b2ec882d49a86b5ca25c8a689ed41",
+  "questions_sha256": "cdd7f41ad041107269c0099294681c658fac924de3d424bed2bfd4bad581f35b",
+  "definition": "For each positive gold quote, require the exact source filename and full quote in a retrieved chunk. Macro average per question; unanswerable questions excluded. This checks annotated passages, not semantic correctness.",
+  "records": [
+    {
+      "id": "project_001",
+      "required_passages": 2,
+      "covered": [
+        true,
+        false
+      ],
+      "passage_recall": 0.5,
+      "all_passages": 0.0
+    },
+    {
+      "id": "project_002",
+      "required_passages": 1,
+      "covered": [
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_003",
+      "required_passages": 1,
+      "covered": [
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_004",
+      "required_passages": 2,
+      "covered": [
+        true,
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_005",
+      "required_passages": 2,
+      "covered": [
+        true,
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_006",
+      "required_passages": 1,
+      "covered": [
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_007",
+      "required_passages": 2,
+      "covered": [
+        true,
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_008",
+      "required_passages": 1,
+      "covered": [
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_009",
+      "required_passages": 2,
+      "covered": [
+        false,
+        false
+      ],
+      "passage_recall": 0.0,
+      "all_passages": 0.0
+    },
+    {
+      "id": "project_010",
+      "required_passages": 1,
+      "covered": [
+        true
+      ],
+      "passage_recall": 1.0,
+      "all_passages": 1.0
+    },
+    {
+      "id": "project_011",
+      "required_passages": 0,
+      "covered": [],
+      "passage_recall": null,
+      "all_passages": null
+    },
+    {
+      "id": "project_012",
+      "required_passages": 0,
+      "covered": [],
+      "passage_recall": null,
+      "all_passages": null
+    }
+  ],
+  "summary": {
+    "passage_recall_mean": 0.85,
+    "all_passages_mean": 0.8,
+    "n": 10
+  }
+}

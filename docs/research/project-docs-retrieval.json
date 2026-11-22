@@ -1,0 +1,1103 @@
+{
+  "mode": "retrieval",
+  "split": null,
+  "top_k": 5,
+  "records": [
+    {
+      "id": "project_001",
+      "question": "How many questions, source documents and categories does benchmark v2 contain?",
+      "expected_answer": "120 questions, 24 Markdown source documents and eight categories.",
+      "gold_evidence": [
+        {
+          "document": "benchmark-guide.md",
+          "quote": "Version **2.0.0** preserves the original benchmark's 120-question category counts\nwhile replacing its missing-corpus assumptions with 24 supplied Markdown files.",
+          "char_start": 66,
+          "char_end": 227
+        },
+        {
+          "document": "benchmark-guide.md",
+          "quote": "| Factual retrieval | 10 | 10 | 20 |\n| Exact keyword | 8 | 7 | 15 |\n| Multi-hop | 10 | 10 | 20 |\n| Comparative | 8 | 7 | 15 |\n| Numerical | 8 | 7 | 15 |\n| Document navigation | 8 | 7 | 15 |\n| Ambiguous | 5 | 5 | 10 |\n| Unanswerable | 5 | 5 | 10 |",
+          "char_start": 715,
+          "char_end": 961
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_0",
+            "text": "# RAGForge benchmark v2 \u2014 fictional evidence-grounded evaluation\n\nVersion **2.0.0** preserves the original benchmark's 120-question category counts\nwhile replacing its missing-corpus assumptions with 24 supplied Markdown files.\nThe original `enterprise_benchmark.json` and the 40 practice examples are unchanged.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01626123744050767,
+            "rerank_score": 6.049620628356934
+          },
+          {
+            "chunk_id": "aae023be55b0_0",
+            "text": "# Benchmark v2: full local generation run\n\nThis run executed all **120 questions through three systems (360 cases)** using local Ollama `llama3.2`. It supersedes the earlier availability blocker for this later run; the old blocked-run artifact is retained as historical evidence.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.013167013167013167,
+            "rerank_score": 4.5280842781066895
+          },
+          {
+            "chunk_id": "63f8c8484743_11",
+            "text": "Use `--split all` for 120 questions or `--max-samples 3` for an explicitly limited\nsmoke run. Default K is 5. The isolated workspace is `.knowledge/benchmark-v2`;\nchoose a fresh directory with `--workspace` if a previous fixture version is indexed.\nThe runner rejects unrelated sources, stale chunks, mismatched vector/chunk counts,\nand any required passage not represented in the index. It does not clear user data.\nDo not index this entire examples directory: only `corpus/` belongs in the index.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 11,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01329225352112676,
+            "rerank_score": 3.68561053276062
+          },
+          {
+            "chunk_id": "63f8c8484743_31",
+            "text": "## Subsequent full generation run\n\nOllama later became available. All 120 questions were run through the three systems.\nSee [the complete generation report](../../docs/research/benchmark-v2-full-generation.md) for actual outputs, automatic scores,\nexecution failures and remaining semantic-review gaps. Earlier blocked-run artifacts\nremain historical records.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 31,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007936507936507936,
+            "rerank_score": 3.6186118125915527
+          },
+          {
+            "chunk_id": "63f8c8484743_7",
+            "text": "`benchmark.json` records source fingerprints and exact quoted passages with\ncharacter spans. Each question has `expected_answer`, `expected_behavior`, and\n`evidence_groups`: every group is required, while IDs within a group are acceptable\nalternatives. An answer that needs two facts has two groups, not two alternative\nfilenames. Unanswerable questions have no positive evidence groups. Ambiguous\nquestions require clarification or explicit conditional answers rather than an",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 7,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014756944444444444,
+            "rerank_score": -0.1945984661579132
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "generation-results.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_002",
+      "question": "Which environment variable setting addresses the recorded native-library threading issue?",
+      "expected_answer": "OMP_NUM_THREADS=1.",
+      "gold_evidence": [
+        {
+          "document": "audit.md",
+          "quote": "Real-model checks used `OMP_NUM_THREADS=1`: a native-library segmentation fault\n  occurred with the default thread setup",
+          "char_start": 4809,
+          "char_end": 4929
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_12",
+            "text": "Do not index this entire examples directory: only `corpus/` belongs in the index.\nOmit offline mode only when intentionally downloading missing models. The thread\nsetting addresses the native-library instability recorded in the prior audit.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 12,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": 4.394542217254639
+          },
+          {
+            "chunk_id": "732ec63e060a_14",
+            "text": "degraded integration behavior, not successful LLM answers.\n- Held-out benchmark preflight correctly rejected missing indexed sources:\n  app.py, graph.py, hybrid.py, main.py, tools.py. The full dataset also references\n  config.yaml absent from a clean tracked checkout.\n- Real-model checks used `OMP_NUM_THREADS=1`: a native-library segmentation fault\n  occurred with the default thread setup when earlier API tests implicitly used",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 14,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015625,
+            "rerank_score": -3.720344066619873
+          },
+          {
+            "chunk_id": "732ec63e060a_15",
+            "text": "occurred with the default thread setup when earlier API tests implicitly used\n  the generated index. Isolation fixed the unit-suite behavior; the installed\n  FAISS/PyTorch/macOS threading combination still needs investigation before\n  claiming unrestricted concurrent model-serving reliability.",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 15,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.016129032258064516,
+            "rerank_score": -7.50752592086792
+          },
+          {
+            "chunk_id": "63f8c8484743_10",
+            "text": "## Reproduce retrieval without Ollama\n\nRun from the repository root with the existing environment and cached models:\n\n```bash\nHF_HUB_OFFLINE=1 OMP_NUM_THREADS=1 venv/bin/python -m knowledge.evaluation.benchmark_v2 \\\n  --index --split dev --output reports/v2-dev-retrieval.json\n\nHF_HUB_OFFLINE=1 OMP_NUM_THREADS=1 venv/bin/python -m knowledge.evaluation.benchmark_v2 \\\n  --split held_out --output reports/v2-evaluation-retrieval.json\n```",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 10,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014693264693264693,
+            "rerank_score": -10.42755126953125
+          },
+          {
+            "chunk_id": "63f8c8484743_14",
+            "text": "OMP_NUM_THREADS=1 venv/bin/python -m knowledge.evaluation.benchmark_v2 \\\n  --split held_out --systems standard self_correcting agentic \\\n  --output reports/v2-evaluation-comparison.json --review-template reports/v2-evaluation-review.json\n```",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 14,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007692307692307693,
+            "rerank_score": -10.701347351074219
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "audit.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_003",
+      "question": "What exact embedding model and reranker does the v2 comparison use?",
+      "expected_answer": "all-MiniLM-L6-v2 and cross-encoder/ms-marco-MiniLM-L-6-v2.",
+      "gold_evidence": [
+        {
+          "document": "benchmark-guide.md",
+          "quote": "Embedding is `all-MiniLM-L6-v2`; reranker is\n`cross-encoder/ms-marco-MiniLM-L-6-v2`.",
+          "char_start": 4947,
+          "char_end": 5031
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_15",
+            "text": "All systems share one isolated index, embedding/reranker instances, Ollama model\nand per-search K. Embedding is `all-MiniLM-L6-v2`; reranker is\n`cross-encoder/ms-marco-MiniLM-L-6-v2`. Final generation requests source citations.\nGeneration uses temperature 0, seed 17, context 8192 tokens and maximum output 1024\ntokens, with a 120-second request timeout. These settings improve reproducibility\nbut do not guarantee bit-identical output across runtimes/hardware.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 15,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": 4.258579254150391
+          },
+          {
+            "chunk_id": "63f8c8484743_13",
+            "text": "## Compare the three systems\n\nFirst start Ollama and install the selected model (`llama3.2` by default). Then:\n\n```bash\nOMP_NUM_THREADS=1 venv/bin/python -m knowledge.evaluation.benchmark_v2 \\\n  --index --split dev --systems standard self_correcting agentic \\\n  --output reports/v2-dev-comparison.json --review-template reports/v2-dev-review.json",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 13,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.006756756756756757,
+            "rerank_score": -3.128570318222046
+          },
+          {
+            "chunk_id": "732ec63e060a_7",
+            "text": "step budgets and size LangGraph's recursion allowance for the chosen budget.\n   Preserve existing fallback answers with an explicit error field.\n5. Emit properly framed v2 SSE events after each actual tool completes, with a\n   terminal error event if the worker fails. Keep v1 behavior compatible. Emit\n   CLI JSON without Rich markup/wrapping, validate CLI budgets, and show errors.\n6. Compare exact filenames, exclude unanswerables from retrieval denominators,",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 7,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007575757575757576,
+            "rerank_score": -5.138254165649414
+          },
+          {
+            "chunk_id": "63f8c8484743_14",
+            "text": "OMP_NUM_THREADS=1 venv/bin/python -m knowledge.evaluation.benchmark_v2 \\\n  --split held_out --systems standard self_correcting agentic \\\n  --output reports/v2-evaluation-comparison.json --review-template reports/v2-evaluation-review.json\n```",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 14,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.006666666666666667,
+            "rerank_score": -5.7874040603637695
+          },
+          {
+            "chunk_id": "63f8c8484743_16",
+            "text": "Standard RAG retrieves once; self-correcting RAG permits two rewrites; AgenticRAG\nhas five tool steps. Their retrieval-call counts and context-selection policies\nare intentionally different. This is equal per-search depth, not equal total\ncompute. Search models are warmed once before timing. Systems run in a fixed\norder with shared warm models; latency is descriptive, not a randomized performance\nstudy. The AgenticRAG controller remains heuristic; benchmark v2 does not add an",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 16,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.006944444444444444,
+            "rerank_score": -6.660490989685059
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "audit.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_004",
+      "question": "After a successful 360-case run, can we claim SUMMARIZE is automatically scheduled or that answers are semantically correct?",
+      "expected_answer": "No. The architecture says SUMMARIZE is separately callable and unscheduled. The completed report leaves semantic correctness, faithfulness and citation-support review unfilled.",
+      "gold_evidence": [
+        {
+          "document": "architecture.md",
+          "quote": "SUMMARIZE is separately callable and is not scheduled by this graph.",
+          "char_start": 4905,
+          "char_end": 4973
+        },
+        {
+          "document": "generation-results.md",
+          "quote": "None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null.",
+          "char_start": 2232,
+          "char_end": 2374
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "aae023be55b0_18",
+            "text": "The full run produced nonempty answers for all 360 cases, and all semantic review fields remain null. This verification checks completeness and artifact consistency; it does not replace human review or establish answer quality.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 18,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.008064516129032258,
+            "rerank_score": 0.836919903755188
+          },
+          {
+            "chunk_id": "2bc98dc5283c_14",
+            "text": "SUMMARIZE is separately callable and is not scheduled by this graph. The\nsufficiency heuristic does not prove relevance or detect contradictions.\nOPEN reads indexed chunks rather than reconstructing original full documents.\nThe v2 stream sends framed SSE `data:` events after tools finish, followed by a\ncomplete or error event. Earlier v1 newline-JSON stream behavior is preserved.\nSee [implementation scope](research/agenticrag-paper-analysis.md) and",
+            "document_id": "2bc98dc5283c",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/architecture.md",
+            "page_number": null,
+            "chunk_index": 14,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": -2.046353816986084
+          },
+          {
+            "chunk_id": "732ec63e060a_17",
+            "text": "The controller still uses heuristics, not an LLM choosing tools. It does not\nschedule SUMMARIZE or genuinely investigate its placeholder subquestions. It\ncannot guarantee relevance, contradictions detection or correct abstention.\nOPEN returns overlapping indexed chunks rather than exact original-source spans.\nDuplicate basenames may be ambiguous. Full wall-clock enforcement, prompt/output\nbudgets, token/cost accounting, semantic citation support, statistical inference,",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 17,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014955357142857142,
+            "rerank_score": -2.5479519367218018
+          },
+          {
+            "chunk_id": "aae023be55b0_5",
+            "text": "## Interpretation\n\nExecution success means the pipeline returned without a recorded exception; it does not establish that the answer is correct. Passage metrics use 110 evidence-bearing questions (including clarification cases). Ten unanswerable questions are excluded from retrieval denominators. Citation-reference validity averages only answers that cite something; missing-citation counts are therefore reported alongside it. Reference validity checks existence/location, not semantic support.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 5,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01527518656716418,
+            "rerank_score": -4.132882118225098
+          },
+          {
+            "chunk_id": "aae023be55b0_6",
+            "text": "Abstention detection is a phrase/flag heuristic, not a reviewed judgment. Exact-answer-match proxies and category breakdowns are retained in the raw JSON. None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null. The supplied review template is run-bound and does not contain fabricated judgments.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 6,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007692307692307693,
+            "rerank_score": -4.700307369232178
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "generation-results.md",
+        "architecture.md",
+        "audit.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_005",
+      "question": "Was Ollama still unavailable when the later full generation report was recorded, despite the earlier audit blocker?",
+      "expected_answer": "No. The audit recorded Ollama as unreachable; the later report completed 120 questions through three systems using local llama3.2. The old blocker is historical.",
+      "gold_evidence": [
+        {
+          "document": "audit.md",
+          "quote": "Ollama was unreachable both inside and outside the restricted environment.\nTherefore full answer-generation comparisons and ablations were not run.",
+          "char_start": 5220,
+          "char_end": 5367
+        },
+        {
+          "document": "generation-results.md",
+          "quote": "This run executed all **120 questions through three systems (360 cases)** using local Ollama `llama3.2`. It supersedes the earlier availability blocker for this later run; the old blocked-run artifact is retained as historical evidence.",
+          "char_start": 43,
+          "char_end": 279
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_31",
+            "text": "## Subsequent full generation run\n\nOllama later became available. All 120 questions were run through the three systems.\nSee [the complete generation report](../../docs/research/benchmark-v2-full-generation.md) for actual outputs, automatic scores,\nexecution failures and remaining semantic-review gaps. Earlier blocked-run artifacts\nremain historical records.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 31,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": 5.7079572677612305
+          },
+          {
+            "chunk_id": "aae023be55b0_0",
+            "text": "# Benchmark v2: full local generation run\n\nThis run executed all **120 questions through three systems (360 cases)** using local Ollama `llama3.2`. It supersedes the earlier availability blocker for this later run; the old blocked-run artifact is retained as historical evidence.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015877016129032258,
+            "rerank_score": 3.58292818069458
+          },
+          {
+            "chunk_id": "63f8c8484743_18",
+            "text": "If Ollama/model availability fails, the runner writes `status: blocked`, the\nreason, no query records, and no fabricated scores, then exits with code 2. Mid-run\nerrors are retained and produce `partial_failure`. Generation-error fallbacks are\nnot successful answers. Retrieval coverage may still be reported if real chunks\nwere collected before generation failed; it is independent of generation success.\n\n## Metrics and their denominators",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 18,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01510676965015902,
+            "rerank_score": 2.5453100204467773
+          },
+          {
+            "chunk_id": "732ec63e060a_16",
+            "text": "## Blockers and remaining scope\n\nOllama was unreachable both inside and outside the restricted environment.\nTherefore full answer-generation comparisons and ablations were not run. Corpus\ncoverage and gold-label review are also required. No replacement benchmark\nnumbers are asserted.",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 16,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015749007936507936,
+            "rerank_score": 1.776060938835144
+          },
+          {
+            "chunk_id": "732ec63e060a_13",
+            "text": "- Real CLI: JSON parsed successfully, 3 tool steps, 11 evidence records, explicit\n  generation error because Ollama was unreachable.\n- Real FastAPI v2 POST: HTTP 200 with 11 evidence records and explicit generation\n  error. Actual v2 stream: start \u2192 3 tool_executed events \u2192 complete, with framed\n  `data:` events and the same generation error. These verify retrieval and\n  degraded integration behavior, not successful LLM answers.",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 13,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015038444142921756,
+            "rerank_score": -1.92891526222229
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "generation-results.md",
+        "audit.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_006",
+      "question": "In the full generation report, how many AgenticRAG answers with bracket citations had no invalid reference?",
+      "expected_answer": "2: 39 cited answers minus 37 with at least one invalid reference. This does not establish semantic support.",
+      "gold_evidence": [
+        {
+          "document": "generation-results.md",
+          "quote": "Of 39 AgenticRAG answers containing bracket citations, 37 contain at least one invalid reference; another 81 answers contain no bracket citations.",
+          "char_start": 6381,
+          "char_end": 6527
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "aae023be55b0_17",
+            "text": "The low AgenticRAG citation-reference score is largely explained by invented page markers such as `[dev_contracts.md, p.1]` for unpaginated Markdown sources. Of 39 AgenticRAG answers containing bracket citations, 37 contain at least one invalid reference; another 81 answers contain no bracket citations. These are observed reference-format/location failures, not a semantic correctness assessment.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 17,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": 7.285978317260742
+          },
+          {
+            "chunk_id": "aae023be55b0_4",
+            "text": "| Execution errors | 0 | 0 | 0 |\n| Answers without bracket citations | 79 | 78 | 81 |\n| Answers with invalid citation references | 1 | 1 | 37 |\n| Correct abstention detections on 10 unanswerable questions (heuristic) | 9/10 | 10/10 | 10/10 |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 4,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.016129032258064516,
+            "rerank_score": 3.4767611026763916
+          },
+          {
+            "chunk_id": "aae023be55b0_10",
+            "text": "| v2_008 | agentic | At least one bracket reference fails identity/location validation | The approved ledger listed 36 BP-42 packs available on 4 February 2026. [Document: dev_parts.md, p.1] |\n| v2_009 | agentic | At least one bracket reference fails identity/location validation | The fiscal 2025 year-end order backlog was EUR 1.1 million. [Document: dev_finance.md, p.335f2c5a2f76] |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 10,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.0078125,
+            "rerank_score": 0.33882614970207214
+          },
+          {
+            "chunk_id": "aae023be55b0_8",
+            "text": "| Question | System | Issue | Answer excerpt |\n|---|---|---|---|\n| v2_002 | agentic | At least one bracket reference fails identity/location validation | According to the provided evidence, SC-COPPER includes a scheduled preventive visit every 6 weeks. [dev_contracts.md, p.1] |\n| v2_003 | agentic | At least one bracket reference fails identity/location validation | The stated warranty period for unopened BP-42 packs is 12 months from dispatch. [dev_parts.md, p.1] |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 8,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007462686567164179,
+            "rerank_score": -0.792641818523407
+          },
+          {
+            "chunk_id": "aae023be55b0_9",
+            "text": "| v2_005 | agentic | At least one bracket reference fails identity/location validation | According to the evidence, a rover that has failed an insulation check must go to Bay Q2 for quarantine. [dev_safety_2026.md, p.1] |\n| v2_006 | agentic | At least one bracket reference fails identity/location validation | According to [dev_records.md, p.1], Records Operations owns the retention schedule. A legal hold suspends deletion until Legal explicitly releases the hold. |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 9,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007142857142857143,
+            "rerank_score": -1.234252691268921
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "generation-results.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_007",
+      "question": "Using the rounded mean latencies in the full report, how many seconds lower was AgenticRAG latency than Standard RAG, and is that a controlled speed claim?",
+      "expected_answer": "1.093 seconds (14.626 - 13.533). No: latency is descriptive for a sequential local run, not a controlled performance comparison.",
+      "gold_evidence": [
+        {
+          "document": "generation-results.md",
+          "quote": "| Mean end-to-end latency (seconds) | 14.626 (n=120) | 24.875 (n=120) | 13.533 (n=120) |",
+          "char_start": 1047,
+          "char_end": 1135
+        },
+        {
+          "document": "generation-results.md",
+          "quote": "Latency is descriptive for this local sequential run, not a statistically controlled performance claim.",
+          "char_start": 2743,
+          "char_end": 2846
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_16",
+            "text": "Standard RAG retrieves once; self-correcting RAG permits two rewrites; AgenticRAG\nhas five tool steps. Their retrieval-call counts and context-selection policies\nare intentionally different. This is equal per-search depth, not equal total\ncompute. Search models are warmed once before timing. Systems run in a fixed\norder with shared warm models; latency is descriptive, not a randomized performance\nstudy. The AgenticRAG controller remains heuristic; benchmark v2 does not add an",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 16,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.016129032258064516,
+            "rerank_score": -0.7047220468521118
+          },
+          {
+            "chunk_id": "aae023be55b0_2",
+            "text": "| Metric | Standard RAG | Self-correcting RAG | AgenticRAG |\n|---|---:|---:|---:|\n| Passage requirement recall@5 | 98.18% (n=110) | 96.89% (n=110) | 98.18% (n=110) |\n| All requirements@5 | 95.45% (n=110) | 92.73% (n=110) | 95.45% (n=110) |\n| All collected evidence coverage | 98.18% (n=110) | 96.89% (n=110) | 98.18% (n=110) |\n| MRR@5 | 0.965 (n=110) | 0.971 (n=110) | 0.954 (n=110) |\n| Precision@5 | 28.18% (n=110) | 27.64% (n=110) | 28.18% (n=110) |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 2,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.00819672131147541,
+            "rerank_score": -2.300405263900757
+          },
+          {
+            "chunk_id": "aae023be55b0_17",
+            "text": "The low AgenticRAG citation-reference score is largely explained by invented page markers such as `[dev_contracts.md, p.1]` for unpaginated Markdown sources. Of 39 AgenticRAG answers containing bracket citations, 37 contain at least one invalid reference; another 81 answers contain no bracket citations. These are observed reference-format/location failures, not a semantic correctness assessment.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 17,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007575757575757576,
+            "rerank_score": -4.075151443481445
+          },
+          {
+            "chunk_id": "aae023be55b0_3",
+            "text": "| Precision@5 | 28.18% (n=110) | 27.64% (n=110) | 28.18% (n=110) |\n| nDCG@5 | 0.950 (n=110) | 0.946 (n=110) | 0.946 (n=110) |\n| Mean end-to-end latency (seconds) | 14.626 (n=120) | 24.875 (n=120) | 13.533 (n=120) |\n| Citation-reference validity (cited answers only) | 97.56% (n=41) | 97.62% (n=42) | 6.41% (n=39) |\n| Abstention accuracy \u2014 phrase/flag heuristic | 89.17% (n=120) | 90.00% (n=120) | 55.83% (n=120) |\n| Execution errors | 0 | 0 | 0 |\n| Answers without bracket citations | 79 | 78 | 81 |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 3,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007936507936507936,
+            "rerank_score": -4.724128723144531
+          },
+          {
+            "chunk_id": "aae023be55b0_7",
+            "text": "All systems share the frozen synthetic corpus, local model and per-search depth. They use different context-selection and iteration policies. Agentic fixed-K ranks use evidence collection order; the self-correcting baseline uses its final retrieval. Total compute is not equalized. Latency is descriptive for this local sequential run, not a statistically controlled performance claim.\n\n## Observed failures",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 7,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014978761457634698,
+            "rerank_score": -5.088837146759033
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "generation-results.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_008",
+      "question": "In the benchmark review rubric, how should an uncited factual answer be scored for citation support, and when is null appropriate?",
+      "expected_answer": "Use 0 when a factual answer requiring citations omits them. Null is appropriate for a refusal with no factual claim needing support.",
+      "gold_evidence": [
+        {
+          "document": "benchmark-guide.md",
+          "quote": "Use 0 for factual answers requiring citations that omit them; null is appropriate\n  for a refusal with no factual claim requiring support.",
+          "char_start": 9532,
+          "char_end": 9670
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_28",
+            "text": "- `citation_support`: whether cited passages actually support the associated claims.\n  Use 0 for factual answers requiring citations that omit them; null is appropriate\n  for a refusal with no factual claim requiring support. Record a note explaining\n  partial scores or disputed labels.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 28,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": 2.3803858757019043
+          },
+          {
+            "chunk_id": "aae023be55b0_6",
+            "text": "Abstention detection is a phrase/flag heuristic, not a reviewed judgment. Exact-answer-match proxies and category breakdowns are retained in the raw JSON. None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null. The supplied review template is run-bound and does not contain fabricated judgments.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 6,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01482213438735178,
+            "rerank_score": -0.050334274768829346
+          },
+          {
+            "chunk_id": "63f8c8484743_27",
+            "text": "- `answer_correctness`: 1 for a complete correct answer, 0 for wrong/unsupported;\n  use a fractional score only with an explanatory note. Clarification cases need\n  ambiguity acknowledged and supported alternatives; unanswerables need refusal\n  to invent the missing fact.\n- `faithfulness`: whether factual claims follow from the supplied source evidence.\n- `citation_support`: whether cited passages actually support the associated claims.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 27,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01518288474810214,
+            "rerank_score": -1.0070185661315918
+          },
+          {
+            "chunk_id": "63f8c8484743_23",
+            "text": "- **Abstention heuristic:** simple phrase/flag detection compared with the\n  unanswerable label. Read the actual answers, especially ambiguous cases.\n- **Citation reference validity:** syntactic identity/page/span validation against\n  retrieved evidence. No citation produces null, not a perfect score. This does\n  not verify claim support or citation completeness.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 23,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.008064516129032258,
+            "rerank_score": -2.480275869369507
+          },
+          {
+            "chunk_id": "63f8c8484743_26",
+            "text": "## Score answers and citations with human review\n\nThe review template is tied to a run ID. Inspect each output alongside the\nreference answer and gold evidence in `benchmark.json`. Enter scores in [0,1]:",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 26,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014978761457634698,
+            "rerank_score": -4.729417324066162
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "generation-results.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_009",
+      "question": "What is the benchmark accuracy?",
+      "expected_answer": "Clarify which benchmark, system and metric. For the recorded full v2 run, passage recall is 98.18%, 96.89%, 98.18%; answer correctness remains unreviewed. Do not call retrieval recall answer accuracy.",
+      "gold_evidence": [
+        {
+          "document": "generation-results.md",
+          "quote": "| Passage requirement recall@5 | 98.18% (n=110) | 96.89% (n=110) | 98.18% (n=110) |",
+          "char_start": 618,
+          "char_end": 701
+        },
+        {
+          "document": "generation-results.md",
+          "quote": "None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null.",
+          "char_start": 2232,
+          "char_end": 2374
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "63f8c8484743_0",
+            "text": "# RAGForge benchmark v2 \u2014 fictional evidence-grounded evaluation\n\nVersion **2.0.0** preserves the original benchmark's 120-question category counts\nwhile replacing its missing-corpus assumptions with 24 supplied Markdown files.\nThe original `enterprise_benchmark.json` and the 40 practice examples are unchanged.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.016001024065540194,
+            "rerank_score": -1.112119197845459
+          },
+          {
+            "chunk_id": "63f8c8484743_7",
+            "text": "`benchmark.json` records source fingerprints and exact quoted passages with\ncharacter spans. Each question has `expected_answer`, `expected_behavior`, and\n`evidence_groups`: every group is required, while IDs within a group are acceptable\nalternatives. An answer that needs two facts has two groups, not two alternative\nfilenames. Unanswerable questions have no positive evidence groups. Ambiguous\nquestions require clarification or explicit conditional answers rather than an",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 7,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007042253521126761,
+            "rerank_score": -2.3232221603393555
+          },
+          {
+            "chunk_id": "63f8c8484743_1",
+            "text": "All organisations, assets, policies, accounts and prices are fictional. This is\nan authored engineering benchmark, not a paper reproduction or an independently\nreviewed enterprise dataset. Its scores cannot be compared directly with the\nwithdrawn v1 numbers or with the smaller practice corpus's document hit rate.\n\n## Data design",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 1,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014141613924050632,
+            "rerank_score": -3.571570634841919
+          },
+          {
+            "chunk_id": "aae023be55b0_0",
+            "text": "# Benchmark v2: full local generation run\n\nThis run executed all **120 questions through three systems (360 cases)** using local Ollama `llama3.2`. It supersedes the earlier availability blocker for this later run; the old blocked-run artifact is retained as historical evidence.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.008064516129032258,
+            "rerank_score": -3.60453462600708
+          },
+          {
+            "chunk_id": "aae023be55b0_3",
+            "text": "| Precision@5 | 28.18% (n=110) | 27.64% (n=110) | 28.18% (n=110) |\n| nDCG@5 | 0.950 (n=110) | 0.946 (n=110) | 0.946 (n=110) |\n| Mean end-to-end latency (seconds) | 14.626 (n=120) | 24.875 (n=120) | 13.533 (n=120) |\n| Citation-reference validity (cited answers only) | 97.56% (n=41) | 97.62% (n=42) | 6.41% (n=39) |\n| Abstention accuracy \u2014 phrase/flag heuristic | 89.17% (n=120) | 90.00% (n=120) | 55.83% (n=120) |\n| Execution errors | 0 | 0 | 0 |\n| Answers without bracket citations | 79 | 78 | 81 |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 3,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.00819672131147541,
+            "rerank_score": -4.745380401611328
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "benchmark-guide.md",
+        "generation-results.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_010",
+      "question": "How many attempts does the agent get?",
+      "expected_answer": "Clarify which agent and which action. In benchmark v2, self-correcting RAG permits two rewrites and AgenticRAG has five tool steps; these are different budgets.",
+      "gold_evidence": [
+        {
+          "document": "benchmark-guide.md",
+          "quote": "Standard RAG retrieves once; self-correcting RAG permits two rewrites; AgenticRAG\nhas five tool steps.",
+          "char_start": 5311,
+          "char_end": 5413
+        }
+      ],
+      "is_unanswerable": false,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "2bc98dc5283c_3",
+            "text": "subgraph Generation[\"Inference & Attribution\"]\n        TOPK --> LLM[Local Ollama LLM]\n        LLM --> ANS[Generated Answer + Source Citations]\n    end\n```\n\n---\n\n## 2. Agentic Self-Correcting Graph Layer (LangGraph)\n\nThe agent layer introduces query intent classification, retrieval sufficiency grading, and automated query rewriting. A configurable hard cap (`max_retrieval_attempts` in `config.yaml`, default 3) ensures the rewrite loop always terminates.",
+            "document_id": "2bc98dc5283c",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/architecture.md",
+            "page_number": null,
+            "chunk_index": 3,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015141165755919854,
+            "rerank_score": -5.0864338874816895
+          },
+          {
+            "chunk_id": "aae023be55b0_17",
+            "text": "The low AgenticRAG citation-reference score is largely explained by invented page markers such as `[dev_contracts.md, p.1]` for unpaginated Markdown sources. Of 39 AgenticRAG answers containing bracket citations, 37 contain at least one invalid reference; another 81 answers contain no bracket citations. These are observed reference-format/location failures, not a semantic correctness assessment.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 17,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.006578947368421052,
+            "rerank_score": -5.63251256942749
+          },
+          {
+            "chunk_id": "63f8c8484743_16",
+            "text": "Standard RAG retrieves once; self-correcting RAG permits two rewrites; AgenticRAG\nhas five tool steps. Their retrieval-call counts and context-selection policies\nare intentionally different. This is equal per-search depth, not equal total\ncompute. Search models are warmed once before timing. Systems run in a fixed\norder with shared warm models; latency is descriptive, not a randomized performance\nstudy. The AgenticRAG controller remains heuristic; benchmark v2 does not add an",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 16,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015339578454332554,
+            "rerank_score": -7.145395278930664
+          },
+          {
+            "chunk_id": "2bc98dc5283c_6",
+            "text": "GEN --> END([Final Answer + Attribution])\n    GEN_WARN --> END\n```\n\n> **Retry hard cap:** `should_continue()` checks `rewrite_count >= max_retries` before returning `\"rewrite\"`. The `max_retries` value is seeded from `AppConfig.max_retrieval_attempts` (default 3) and passed through `AgentState`, so it can never be exceeded regardless of LLM grading behavior.\n\n---\n\n## 3. FastAPI REST Service Architecture",
+            "document_id": "2bc98dc5283c",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/architecture.md",
+            "page_number": null,
+            "chunk_index": 6,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.006756756756756757,
+            "rerank_score": -7.246882438659668
+          },
+          {
+            "chunk_id": "aae023be55b0_8",
+            "text": "| Question | System | Issue | Answer excerpt |\n|---|---|---|---|\n| v2_002 | agentic | At least one bracket reference fails identity/location validation | According to the provided evidence, SC-COPPER includes a scheduled preventive visit every 6 weeks. [dev_contracts.md, p.1] |\n| v2_003 | agentic | At least one bracket reference fails identity/location validation | The stated warranty period for unopened BP-42 packs is 12 months from dispatch. [dev_parts.md, p.1] |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 8,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.0078125,
+            "rerank_score": -7.458436965942383
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "architecture.md",
+        "generation-results.md",
+        "benchmark-guide.md"
+      ],
+      "document_recall": 1.0
+    },
+    {
+      "id": "project_011",
+      "question": "What is the independently human-reviewed answer-correctness percentage for the full 360-case experiment?",
+      "expected_answer": "Not available: semantic answer scores were not independently reviewed.",
+      "gold_evidence": [],
+      "is_unanswerable": true,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "aae023be55b0_18",
+            "text": "The full run produced nonempty answers for all 360 cases, and all semantic review fields remain null. This verification checks completeness and artifact consistency; it does not replace human review or establish answer quality.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 18,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015873015873015872,
+            "rerank_score": 2.8710131645202637
+          },
+          {
+            "chunk_id": "aae023be55b0_0",
+            "text": "# Benchmark v2: full local generation run\n\nThis run executed all **120 questions through three systems (360 cases)** using local Ollama `llama3.2`. It supersedes the earlier availability blocker for this later run; the old blocked-run artifact is retained as historical evidence.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.00819672131147541,
+            "rerank_score": -2.801187038421631
+          },
+          {
+            "chunk_id": "aae023be55b0_16",
+            "text": "## Development and evaluation breakdown\n\n| Split | System | Cases | Passage recall@5 | All requirements@5 |\n|---|---|---:|---:|---:|\n| dev | standard | 62 | 99.42% (n=57) | 98.25% (n=57) |\n| dev | self_correcting | 62 | 96.49% (n=57) | 92.98% (n=57) |\n| dev | agentic | 62 | 99.42% (n=57) | 98.25% (n=57) |\n| held_out | standard | 58 | 96.86% (n=53) | 92.45% (n=53) |\n| held_out | self_correcting | 58 | 97.33% (n=53) | 92.45% (n=53) |\n| held_out | agentic | 58 | 96.86% (n=53) | 92.45% (n=53) |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 16,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007692307692307693,
+            "rerank_score": -3.7589213848114014
+          },
+          {
+            "chunk_id": "63f8c8484743_27",
+            "text": "- `answer_correctness`: 1 for a complete correct answer, 0 for wrong/unsupported;\n  use a fractional score only with an explanatory note. Clarification cases need\n  ambiguity acknowledged and supported alternatives; unanswerables need refusal\n  to invent the missing fact.\n- `faithfulness`: whether factual claims follow from the supplied source evidence.\n- `citation_support`: whether cited passages actually support the associated claims.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 27,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015339578454332554,
+            "rerank_score": -4.372576713562012
+          },
+          {
+            "chunk_id": "aae023be55b0_6",
+            "text": "Abstention detection is a phrase/flag heuristic, not a reviewed judgment. Exact-answer-match proxies and category breakdowns are retained in the raw JSON. None of these automatic scores substitutes for semantic answer correctness, faithfulness or citation-support review. Those fields remain null. The supplied review template is run-bound and does not contain fabricated judgments.",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 6,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014854753521126762,
+            "rerank_score": -5.899867534637451
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "generation-results.md",
+        "benchmark-guide.md"
+      ],
+      "document_recall": null
+    },
+    {
+      "id": "project_012",
+      "question": "What monthly production hosting bill and uptime SLA does RAGForge guarantee?",
+      "expected_answer": "The selected documentation specifies neither a production hosting bill nor a guaranteed uptime SLA.",
+      "gold_evidence": [],
+      "is_unanswerable": true,
+      "output": {
+        "chunks": [
+          {
+            "chunk_id": "2bc98dc5283c_0",
+            "text": "# RAGForge System Architecture\n\nRAGForge is a modular, production-inspired Retrieval-Augmented Generation (RAG) framework with hybrid retrieval, neural reranking, agentic self-correction, domain fine-tuning, and active learning via user feedback.\n\n---\n\n## 1. End-to-End Hybrid RAG Pipeline",
+            "document_id": "2bc98dc5283c",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/architecture.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.014265621860558568,
+            "rerank_score": -4.9580230712890625
+          },
+          {
+            "chunk_id": "732ec63e060a_0",
+            "text": "# RAGForge implementation audit \u2014 2026-11-17\n\n## Repository and evidence",
+            "document_id": "732ec63e060a",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/audit.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.01639344262295082,
+            "rerank_score": -6.372461318969727
+          },
+          {
+            "chunk_id": "63f8c8484743_0",
+            "text": "# RAGForge benchmark v2 \u2014 fictional evidence-grounded evaluation\n\nVersion **2.0.0** preserves the original benchmark's 120-question category counts\nwhile replacing its missing-corpus assumptions with 24 supplied Markdown files.\nThe original `enterprise_benchmark.json` and the 40 practice examples are unchanged.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 0,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.015388257575757576,
+            "rerank_score": -9.085009574890137
+          },
+          {
+            "chunk_id": "aae023be55b0_2",
+            "text": "| Metric | Standard RAG | Self-correcting RAG | AgenticRAG |\n|---|---:|---:|---:|\n| Passage requirement recall@5 | 98.18% (n=110) | 96.89% (n=110) | 98.18% (n=110) |\n| All requirements@5 | 95.45% (n=110) | 92.73% (n=110) | 95.45% (n=110) |\n| All collected evidence coverage | 98.18% (n=110) | 96.89% (n=110) | 98.18% (n=110) |\n| MRR@5 | 0.965 (n=110) | 0.971 (n=110) | 0.954 (n=110) |\n| Precision@5 | 28.18% (n=110) | 27.64% (n=110) | 28.18% (n=110) |",
+            "document_id": "aae023be55b0",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/generation-results.md",
+            "page_number": null,
+            "chunk_index": 2,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.007142857142857143,
+            "rerank_score": -11.051185607910156
+          },
+          {
+            "chunk_id": "63f8c8484743_9",
+            "text": "`build.py` is the deterministic fixture-authoring source. It is not imported by the\nRAG pipeline and its questions/reference answers are never indexed. Regenerating\nit must reproduce the snapshot byte-for-byte. The loader checks counts, unique\nIDs/questions, source hashes, exact passage spans, cross-split evidence isolation\nand multi-document requirements. These checks establish structural integrity;\nhuman review is still needed to certify semantic labels and coverage.",
+            "document_id": "63f8c8484743",
+            "source_path": "/Users/PalakNst/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/cli_ai/examples/project_docs/corpus/benchmark-guide.md",
+            "page_number": null,
+            "chunk_index": 9,
+            "metadata": {
+              "format": "md"
+            },
+            "hybrid_score": 0.00625,
+            "rerank_score": -11.139612197875977
+          }
+        ]
+      },
+      "error": null,
+      "retrieved_documents": [
+        "architecture.md",
+        "audit.md",
+        "benchmark-guide.md",
+        "generation-results.md"
+      ],
+      "document_recall": null
+    }
+  ],
+  "corpus_sha256": {
+    "architecture.md": "669793c157792ece00f1f49fbe403143b3fdc31ed34f04fc818dae0d17cd9c15",
+    "audit.md": "429fc17ffc8736acceb908fe68d452624478e349c293c07999219ea90a9ab827",
+    "benchmark-guide.md": "40cd8f4c71e148877025e20ad326ed80c54e65529ce237fce146269f76440801",
+    "generation-results.md": "3648ad189cf3f737dc056b6f2b9a8ab24bc45ce94017a2f6e06b1cade8bec6d7"
+  },
+  "questions_sha256": "cdd7f41ad041107269c0099294681c658fac924de3d424bed2bfd4bad581f35b",
+  "limitations": "Authored practice set, not independently reviewed. Review answers manually; document recall is not answer correctness. No retrieval credit is assigned to unanswerable questions. Errors are retained."
+}

@@ -122,6 +122,9 @@ flowchart TD
 
 SUMMARIZE is separately callable and is not scheduled by this graph. The
 sufficiency heuristic does not prove relevance or detect contradictions.
+Synthesis makes at most one citation-correction attempt for an answer with missing
+or invalid references. Unresolved omissions remain visible in the citation report;
+reference validation does not establish semantic support.
 OPEN reads indexed chunks rather than reconstructing original full documents.
 The v2 stream sends framed SSE `data:` events after tools finish, followed by a
 complete or error event. Earlier v1 newline-JSON stream behavior is preserved.
