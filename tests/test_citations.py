@@ -95,3 +95,17 @@ def test_format_bibliography(sample_evidence):
     assert "annual_report_2024.pdf" in bib
     assert "page 3" in bib
     assert "cybersecurity_policy.docx" in bib
+
+
+@pytest.mark.parametrize("suffix", ["p.unknown", "p.3extra", "p.-1", "chars 500-unknown"])
+def test_malformed_locations_are_not_accepted_as_document_only(sample_evidence, suffix):
+    report = CitationValidator(sample_evidence).validate(f"[annual_report_2024.pdf, {suffix}]")
+    assert report["valid_citations"] == 0
+    assert report["hallucinated_citations"] == 1
+
+
+def test_unpaginated_source_rejects_invented_page():
+    validator = CitationValidator([EvidenceRecord(document_id="policy.md", text="Policy")])
+    report = validator.validate("Policy [policy.md]. Invented location [policy.md, p.1].")
+    assert report["valid_citations"] == 1
+    assert report["hallucinated_citations"] == 1

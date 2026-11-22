@@ -695,7 +695,7 @@ def agent_ask_cmd(
 @app.command("agentic-ask")
 def agentic_ask_cmd(
     question: str,
-    max_steps: int = typer.Option(5, "--max-steps", "-s", help="Maximum agent retrieval steps (budget)"),
+    max_steps: int = typer.Option(5, "--max-steps", "-s", min=1, max=15, help="Maximum agent retrieval steps (budget)"),
     show_trace: bool = typer.Option(False, "--show-trace", "-t", help="Display granular tool execution trace table"),
     output_json: bool = typer.Option(False, "--output-json", "-j", help="Output raw response and citations as JSON"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed step messages"),
@@ -713,8 +713,11 @@ def agentic_ask_cmd(
     result = controller.run(question, max_steps=max_steps)
 
     if output_json:
-        console.print(_json.dumps(result, indent=2, default=str))
+        typer.echo(_json.dumps(result, indent=2, default=str))
         return
+
+    if result.get("error"):
+        console.print(f"[bold yellow]Execution warning: {result['error']}[/bold yellow]")
 
     # Status summary
     if result["abstained"]:

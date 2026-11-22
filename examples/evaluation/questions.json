@@ -1,0 +1,910 @@
+[
+  {
+    "id": "example_001",
+    "question": "How many paid leave days do full-time employees receive under the 2026 policy?",
+    "category": "factual",
+    "split": "dev",
+    "expected_answer": "24 days per calendar year.",
+    "expected_documents": [
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "24"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Full-time employees receive 24 paid leave days per calendar year.",
+        "char_start": 52,
+        "char_end": 117
+      }
+    ]
+  },
+  {
+    "id": "example_002",
+    "question": "When do days carried over under the 2026 leave policy expire?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_answer": "30 June of the following year.",
+    "expected_documents": [
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "30 June"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Up to 8 unused days may carry over; carried days expire on 30 June of the following year.",
+        "char_start": 118,
+        "char_end": 207
+      }
+    ]
+  },
+  {
+    "id": "example_003",
+    "question": "Who owns the Payments API service?",
+    "category": "factual",
+    "split": "dev",
+    "expected_answer": "The Commerce team.",
+    "expected_documents": [
+      "incident_guide.md"
+    ],
+    "gold_keywords": [
+      "Commerce"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "The service owner for Payments API is the Commerce team.",
+        "char_start": 86,
+        "char_end": 142
+      }
+    ]
+  },
+  {
+    "id": "example_004",
+    "question": "How often must the incident commander post updates during P1?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_answer": "Every 30 minutes.",
+    "expected_documents": [
+      "incident_guide.md"
+    ],
+    "gold_keywords": [
+      "30"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "During a P1 incident, the incident commander posts status updates every 30 minutes.",
+        "char_start": 143,
+        "char_end": 226
+      }
+    ]
+  },
+  {
+    "id": "example_005",
+    "question": "What is the Premium P2 first-response target?",
+    "category": "factual",
+    "split": "dev",
+    "expected_answer": "1 hour.",
+    "expected_documents": [
+      "support_sla.md"
+    ],
+    "gold_keywords": [
+      "1 hour"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "support_sla.md",
+        "quote": "Severity P2 for Premium customers has a first-response target of 1 hour.",
+        "char_start": 404,
+        "char_end": 476
+      }
+    ]
+  },
+  {
+    "id": "example_006",
+    "question": "What is the default value of ATLAS_REQUEST_TIMEOUT_MS?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_answer": "3000 milliseconds.",
+    "expected_documents": [
+      "deployment_runbook.md"
+    ],
+    "gold_keywords": [
+      "3000"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "deployment_runbook.md",
+        "quote": "The environment variable ATLAS_REQUEST_TIMEOUT_MS defaults to 3000.",
+        "char_start": 405,
+        "char_end": 472
+      }
+    ]
+  },
+  {
+    "id": "example_007",
+    "question": "Which endpoint is used for Atlas API readiness checks?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_answer": "/health/ready.",
+    "expected_documents": [
+      "deployment_runbook.md"
+    ],
+    "gold_keywords": [
+      "/health/ready"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "deployment_runbook.md",
+        "quote": "The production service is Atlas API; its health endpoint is /health/ready.",
+        "char_start": 27,
+        "char_end": 101
+      }
+    ]
+  },
+  {
+    "id": "example_008",
+    "question": "Which incident severity is assigned to INC-042?",
+    "category": "exact_keyword",
+    "split": "held_out",
+    "expected_answer": "P1.",
+    "expected_documents": [
+      "incident_guide.md"
+    ],
+    "gold_keywords": [
+      "P1"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "Payments API outage INC-042 is classified as severity P1.",
+        "char_start": 28,
+        "char_end": 85
+      }
+    ]
+  },
+  {
+    "id": "example_009",
+    "question": "Which encryption standards apply at rest and in transit?",
+    "category": "exact_keyword",
+    "split": "dev",
+    "expected_answer": "AES-256 at rest; TLS 1.3 in transit.",
+    "expected_documents": [
+      "security_policy.md"
+    ],
+    "gold_keywords": [
+      "AES-256",
+      "TLS 1.3"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "security_policy.md",
+        "quote": "Encryption uses AES-256 at rest and TLS 1.3 in transit.",
+        "char_start": 188,
+        "char_end": 243
+      }
+    ]
+  },
+  {
+    "id": "example_010",
+    "question": "In the deployment runbook, what triggers aborting a rollout?",
+    "category": "navigation",
+    "split": "held_out",
+    "expected_answer": "Error rate above 2% for 5 consecutive minutes.",
+    "expected_documents": [
+      "deployment_runbook.md"
+    ],
+    "gold_keywords": [
+      "2%",
+      "5"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "deployment_runbook.md",
+        "quote": "Abort rollout if the error rate exceeds 2% for 5 consecutive minutes.",
+        "char_start": 236,
+        "char_end": 305
+      }
+    ]
+  },
+  {
+    "id": "example_011",
+    "question": "What must be preserved before restarting the database?",
+    "category": "navigation",
+    "split": "dev",
+    "expected_answer": "Diagnostic logs.",
+    "expected_documents": [
+      "incident_guide.md"
+    ],
+    "gold_keywords": [
+      "diagnostic logs"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "Do not restart the database before preserving diagnostic logs.",
+        "char_start": 437,
+        "char_end": 499
+      }
+    ]
+  },
+  {
+    "id": "example_012",
+    "question": "Does rollback undo database migrations?",
+    "category": "navigation",
+    "split": "held_out",
+    "expected_answer": "No; it restores the previous signed release artifact only.",
+    "expected_documents": [
+      "deployment_runbook.md"
+    ],
+    "gold_keywords": [
+      "previous signed release artifact"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "deployment_runbook.md",
+        "quote": "Rollback restores the previous signed release artifact; it does not roll back database migrations.",
+        "char_start": 306,
+        "char_end": 404
+      }
+    ]
+  },
+  {
+    "id": "example_013",
+    "question": "When must a review be published after service restoration?",
+    "category": "navigation",
+    "split": "dev",
+    "expected_answer": "Within 3 business days.",
+    "expected_documents": [
+      "incident_guide.md"
+    ],
+    "gold_keywords": [
+      "3 business days"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "After service restoration, the incident commander must publish a review within 3 business days.",
+        "char_start": 341,
+        "char_end": 436
+      }
+    ]
+  },
+  {
+    "id": "example_014",
+    "question": "What was revenue growth from FY2024 to FY2025, in percent?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_answer": "20%: (120 − 100) / 100 × 100.",
+    "expected_documents": [
+      "financial_2025.md"
+    ],
+    "gold_keywords": [
+      "20%"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "financial_2025.md",
+        "quote": "Annual revenue was 120 in FY2025, compared with 100 in FY2024.",
+        "char_start": 94,
+        "char_end": 156
+      }
+    ]
+  },
+  {
+    "id": "example_015",
+    "question": "What percentage of FY2025 revenue came from cloud?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_answer": "60%: 72 / 120 × 100.",
+    "expected_documents": [
+      "financial_2025.md"
+    ],
+    "gold_keywords": [
+      "60%"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "financial_2025.md",
+        "quote": "Annual revenue was 120 in FY2025, compared with 100 in FY2024.",
+        "char_start": 94,
+        "char_end": 156
+      },
+      {
+        "document": "financial_2025.md",
+        "quote": "Cloud revenue was 72 in FY2025. Consulting revenue was 48 in FY2025.",
+        "char_start": 223,
+        "char_end": 291
+      }
+    ]
+  },
+  {
+    "id": "example_016",
+    "question": "What was the FY2025 operating profit margin?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_answer": "25%: 30 / 120 × 100.",
+    "expected_documents": [
+      "financial_2025.md"
+    ],
+    "gold_keywords": [
+      "25%"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "financial_2025.md",
+        "quote": "Operating expenses were 90 in FY2025 and operating profit was 30.",
+        "char_start": 157,
+        "char_end": 222
+      },
+      {
+        "document": "financial_2025.md",
+        "quote": "Annual revenue was 120 in FY2025, compared with 100 in FY2024.",
+        "char_start": 94,
+        "char_end": 156
+      }
+    ]
+  },
+  {
+    "id": "example_017",
+    "question": "What is the monthly cost of Atlas Pro for a workspace with 12 seats?",
+    "category": "numerical",
+    "split": "dev",
+    "expected_answer": "USD 61: 49 + (12 − 10) × 6.",
+    "expected_documents": [
+      "product_catalog.md"
+    ],
+    "gold_keywords": [
+      "61"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "product_catalog.md",
+        "quote": "Atlas Pro costs USD 49 per workspace per month and includes 10 seats.",
+        "char_start": 99,
+        "char_end": 168
+      },
+      {
+        "document": "product_catalog.md",
+        "quote": "Extra seats cost USD 6 per seat per month on either plan.",
+        "char_start": 169,
+        "char_end": 226
+      }
+    ]
+  },
+  {
+    "id": "example_018",
+    "question": "What is the monthly cost of Atlas Basic for a workspace with 5 seats?",
+    "category": "numerical",
+    "split": "held_out",
+    "expected_answer": "USD 31: 19 + (5 − 3) × 6.",
+    "expected_documents": [
+      "product_catalog.md"
+    ],
+    "gold_keywords": [
+      "31"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "product_catalog.md",
+        "quote": "Atlas Basic costs USD 19 per workspace per month and includes 3 seats.",
+        "char_start": 28,
+        "char_end": 98
+      },
+      {
+        "document": "product_catalog.md",
+        "quote": "Extra seats cost USD 6 per seat per month on either plan.",
+        "char_start": 169,
+        "char_end": 226
+      }
+    ]
+  },
+  {
+    "id": "example_019",
+    "question": "How many more paid leave days does the 2026 policy grant than the 2025 policy?",
+    "category": "comparative",
+    "split": "dev",
+    "expected_answer": "4 more days: 24 − 20.",
+    "expected_documents": [
+      "leave_policy_2025.md",
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "4"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2025.md",
+        "quote": "Full-time employees receive 20 paid leave days per calendar year.",
+        "char_start": 52,
+        "char_end": 117
+      },
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Full-time employees receive 24 paid leave days per calendar year.",
+        "char_start": 52,
+        "char_end": 117
+      }
+    ]
+  },
+  {
+    "id": "example_020",
+    "question": "How did the carryover cap change between the 2025 and 2026 policies?",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_answer": "It increased from 5 to 8 days, an increase of 3 days.",
+    "expected_documents": [
+      "leave_policy_2025.md",
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "5",
+      "8",
+      "3"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2025.md",
+        "quote": "Up to 5 unused days may carry over; carried days expire on 31 March of the following year.",
+        "char_start": 118,
+        "char_end": 208
+      },
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Up to 8 unused days may carry over; carried days expire on 30 June of the following year.",
+        "char_start": 118,
+        "char_end": 207
+      }
+    ]
+  },
+  {
+    "id": "example_021",
+    "question": "How did advance approval notice for long leave change in 2026?",
+    "category": "comparative",
+    "split": "dev",
+    "expected_answer": "It decreased from 14 to 10 calendar days.",
+    "expected_documents": [
+      "leave_policy_2025.md",
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "14",
+      "10"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2025.md",
+        "quote": "Leave requests of more than 5 consecutive working days require manager approval at least 14 calendar days in advance.",
+        "char_start": 209,
+        "char_end": 326
+      },
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Leave requests of more than 5 consecutive working days require manager approval at least 10 calendar days in advance.",
+        "char_start": 208,
+        "char_end": 325
+      }
+    ]
+  },
+  {
+    "id": "example_022",
+    "question": "Compare the retention periods for application logs and debug logs.",
+    "category": "comparative",
+    "split": "held_out",
+    "expected_answer": "Application logs: 90 days; diagnostic debug logs: 14 days.",
+    "expected_documents": [
+      "security_policy.md"
+    ],
+    "gold_keywords": [
+      "90",
+      "14"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "security_policy.md",
+        "quote": "Application logs must be retained for 90 days; diagnostic debug logs must be retained for 14 days.",
+        "char_start": 89,
+        "char_end": 187
+      }
+    ]
+  },
+  {
+    "id": "example_023",
+    "question": "Which Atlas plan includes audit-log export?",
+    "category": "comparative",
+    "split": "dev",
+    "expected_answer": "Atlas Pro includes it; Atlas Basic does not.",
+    "expected_documents": [
+      "product_catalog.md"
+    ],
+    "gold_keywords": [
+      "Pro",
+      "Basic"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "product_catalog.md",
+        "quote": "Atlas Pro includes audit-log export; Atlas Basic does not.",
+        "char_start": 227,
+        "char_end": 285
+      }
+    ]
+  },
+  {
+    "id": "example_024",
+    "question": "For a Premium customer affected by INC-042, what is the first-response target?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_answer": "15 minutes, because INC-042 is P1.",
+    "expected_documents": [
+      "incident_guide.md",
+      "support_sla.md"
+    ],
+    "gold_keywords": [
+      "15 minutes",
+      "P1"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "Payments API outage INC-042 is classified as severity P1.",
+        "char_start": 28,
+        "char_end": 85
+      },
+      {
+        "document": "support_sla.md",
+        "quote": "For Premium customers, severity P1 has a first-response target of 15 minutes and a restoration target of 4 hours.",
+        "char_start": 169,
+        "char_end": 282
+      }
+    ]
+  },
+  {
+    "id": "example_025",
+    "question": "Does Atlas Pro automatically provide 24/7 Premium support?",
+    "category": "multihop",
+    "split": "dev",
+    "expected_answer": "No. Both plans include Standard support; Premium support is separate. Only Premium support is 24/7.",
+    "expected_documents": [
+      "product_catalog.md",
+      "support_sla.md"
+    ],
+    "gold_keywords": [
+      "Standard",
+      "Premium",
+      "separately"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "product_catalog.md",
+        "quote": "Atlas Basic and Atlas Pro both include email support under the Standard support tier.",
+        "char_start": 286,
+        "char_end": 371
+      },
+      {
+        "document": "product_catalog.md",
+        "quote": "Premium support is sold separately; its price is not disclosed in this catalog.",
+        "char_start": 372,
+        "char_end": 451
+      },
+      {
+        "document": "support_sla.md",
+        "quote": "Premium customers receive 24/7 support. Standard customers receive support Monday to Friday, 09:00–17:00 UTC, excluding public holidays.",
+        "char_start": 32,
+        "char_end": 168
+      }
+    ]
+  },
+  {
+    "id": "example_026",
+    "question": "Who should be paged for the service affected by INC-042?",
+    "category": "multihop",
+    "split": "held_out",
+    "expected_answer": "The on-call Commerce engineer through the internal paging system.",
+    "expected_documents": [
+      "incident_guide.md"
+    ],
+    "gold_keywords": [
+      "on-call Commerce engineer"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "incident_guide.md",
+        "quote": "Payments API outage INC-042 is classified as severity P1.",
+        "char_start": 28,
+        "char_end": 85
+      },
+      {
+        "document": "incident_guide.md",
+        "quote": "The service owner for Payments API is the Commerce team.",
+        "char_start": 86,
+        "char_end": 142
+      },
+      {
+        "document": "incident_guide.md",
+        "quote": "The escalation contact for Commerce is the on-call Commerce engineer, reached through the internal paging system.",
+        "char_start": 227,
+        "char_end": 340
+      }
+    ]
+  },
+  {
+    "id": "example_027",
+    "question": "Which leave entitlement applies on 1 February 2026 to a full-time employee?",
+    "category": "versioning",
+    "split": "dev",
+    "expected_answer": "24 paid days per calendar year; the policy effective 1 January 2026 applies.",
+    "expected_documents": [
+      "leave_policy_2026.md",
+      "leave_policy_2025.md"
+    ],
+    "gold_keywords": [
+      "24",
+      "2026"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "# Northstar leave policy — effective 1 January 2026",
+        "char_start": 0,
+        "char_end": 51
+      },
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Full-time employees receive 24 paid leave days per calendar year.",
+        "char_start": 52,
+        "char_end": 117
+      },
+      {
+        "document": "leave_policy_2025.md",
+        "quote": "This version is superseded by the policy effective 1 January 2026.",
+        "char_start": 327,
+        "char_end": 393
+      }
+    ]
+  },
+  {
+    "id": "example_028",
+    "question": "Should a current employee rely on the 2025 leave policy for the 2026 carryover deadline?",
+    "category": "versioning",
+    "split": "held_out",
+    "expected_answer": "No. The 2025 version is superseded; the 2026 policy states 30 June of the following year.",
+    "expected_documents": [
+      "leave_policy_2025.md",
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "30 June"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2025.md",
+        "quote": "This version is superseded by the policy effective 1 January 2026.",
+        "char_start": 327,
+        "char_end": 393
+      },
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Up to 8 unused days may carry over; carried days expire on 30 June of the following year.",
+        "char_start": 118,
+        "char_end": 207
+      }
+    ]
+  },
+  {
+    "id": "example_029",
+    "question": "Is a support response target a promise that the issue is resolved?",
+    "category": "negative_premise",
+    "split": "dev",
+    "expected_answer": "No. It means acknowledging the ticket, not guaranteed resolution.",
+    "expected_documents": [
+      "support_sla.md"
+    ],
+    "gold_keywords": [
+      "acknowledging"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "support_sla.md",
+        "quote": "A response target means acknowledging the ticket; it is not a guarantee that the issue will be resolved.",
+        "char_start": 477,
+        "char_end": 581
+      }
+    ]
+  },
+  {
+    "id": "example_030",
+    "question": "Do contractors receive paid leave under the 2026 employee policy?",
+    "category": "negative_premise",
+    "split": "held_out",
+    "expected_answer": "No. Contractors are excluded.",
+    "expected_documents": [
+      "leave_policy_2026.md"
+    ],
+    "gold_keywords": [
+      "excluded"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "leave_policy_2026.md",
+        "quote": "Contractors are excluded from this paid leave policy.",
+        "char_start": 326,
+        "char_end": 379
+      }
+    ]
+  },
+  {
+    "id": "example_031",
+    "question": "Does the Standard P1 SLA commit to restoration within four hours?",
+    "category": "negative_premise",
+    "split": "dev",
+    "expected_answer": "No. Standard P1 has no committed restoration target; four hours is the Premium P1 target.",
+    "expected_documents": [
+      "support_sla.md"
+    ],
+    "gold_keywords": [
+      "no restoration target",
+      "Premium"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "support_sla.md",
+        "quote": "For Standard customers, severity P1 has a first-response target of 2 business hours; no restoration target is committed.",
+        "char_start": 283,
+        "char_end": 403
+      },
+      {
+        "document": "support_sla.md",
+        "quote": "For Premium customers, severity P1 has a first-response target of 15 minutes and a restoration target of 4 hours.",
+        "char_start": 169,
+        "char_end": 282
+      }
+    ]
+  },
+  {
+    "id": "example_032",
+    "question": "How long does emergency administrator access last?",
+    "category": "factual",
+    "split": "held_out",
+    "expected_answer": "60 minutes; a recorded justification is required.",
+    "expected_documents": [
+      "security_policy.md"
+    ],
+    "gold_keywords": [
+      "60",
+      "justification"
+    ],
+    "is_unanswerable": false,
+    "gold_evidence": [
+      {
+        "document": "security_policy.md",
+        "quote": "Emergency administrator access expires after 60 minutes and requires a recorded justification.",
+        "char_start": 244,
+        "char_end": 338
+      }
+    ]
+  },
+  {
+    "id": "example_033",
+    "question": "What is the price of Premium support?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_answer": "The catalog does not disclose the Premium support price.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_034",
+    "question": "What was FY2025 revenue in Europe?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_answer": "The report does not disclose regional revenue.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_035",
+    "question": "What is the production AES encryption key?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_answer": "No encryption key is provided in this corpus.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_036",
+    "question": "What is the guaranteed Standard P1 restoration time?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_answer": "No restoration target is committed for Standard P1.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_037",
+    "question": "What database engine does Atlas API use?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_answer": "The corpus does not specify a database engine.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_038",
+    "question": "What was Northstar revenue in FY2023?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_answer": "The corpus provides no FY2023 revenue.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_039",
+    "question": "How many employees work at Northstar?",
+    "category": "unanswerable",
+    "split": "dev",
+    "expected_answer": "The corpus does not state employee headcount.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  },
+  {
+    "id": "example_040",
+    "question": "What is the phone number of the on-call Commerce engineer?",
+    "category": "unanswerable",
+    "split": "held_out",
+    "expected_answer": "The corpus specifies internal paging but no phone number.",
+    "expected_documents": [],
+    "gold_keywords": [],
+    "is_unanswerable": true,
+    "gold_evidence": []
+  }
+]

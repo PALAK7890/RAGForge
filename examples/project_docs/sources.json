@@ -1,0 +1,22 @@
+{
+  "source_commit": "327fc7446b1903d5928e7f69f3d5d3013bb475f8",
+  "review_status": "Assistant-authored; independent review pending",
+  "documents": {
+    "architecture.md": {
+      "repository_path": "docs/architecture.md",
+      "sha256": "669793c157792ece00f1f49fbe403143b3fdc31ed34f04fc818dae0d17cd9c15"
+    },
+    "audit.md": {
+      "repository_path": "docs/research/audit-report.md",
+      "sha256": "429fc17ffc8736acceb908fe68d452624478e349c293c07999219ea90a9ab827"
+    },
+    "benchmark-guide.md": {
+      "repository_path": "examples/benchmark_v2/README.md",
+      "sha256": "40cd8f4c71e148877025e20ad326ed80c54e65529ce237fce146269f76440801"
+    },
+    "generation-results.md": {
+      "repository_path": "docs/research/benchmark-v2-full-generation.md",
+      "sha256": "3648ad189cf3f737dc056b6f2b9a8ab24bc45ce94017a2f6e06b1cade8bec6d7"
+    }
+  }
+}

@@ -1,25 +1,26 @@
 """
-Citation validation, claim-to-evidence alignment, and hallucination detection engine.
-Ensures every citation in generated answers references verified, indexed document passages.
+Citation identity and location validation against retrieved evidence.
+This checks reference integrity, not whether a passage supports a claim.
 """
 
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 from knowledge.agentic.schemas import EvidenceRecord
 
 
 class CitationValidator:
     """
-    Validates citation integrity, extracts in-text references, and checks
-    alignment between claims and underlying retrieved evidence records.
+    Extracts in-text references and validates their identities and locations.
     """
 
     def __init__(self, evidence_records: Optional[List[EvidenceRecord]] = None) -> None:
         self.records = evidence_records or []
         self._doc_names: Set[str] = {r.document_id.lower() for r in self.records if r.document_id}
         self._evidence_ids: Set[str] = {r.evidence_id for r in self.records}
-        self._source_paths: Set[str] = {r.source_path.lower() for r in self.records if r.source_path}
+        self._source_paths: Set[str] = {
+            r.source_path.lower() for r in self.records if r.source_path
+        }
 
     def extract_citations(self, text: str) -> List[Dict[str, Any]]:
         """
@@ -40,24 +41,28 @@ class CitationValidator:
             if content.startswith("http") or content.lower().startswith("note:"):
                 continue
 
-            # Parse document name and optional page / offsets
-            page_match = re.search(r",\s*p(?:age|\.)\s*(\d+)", content, re.IGNORECASE)
-            page = int(page_match.group(1)) if page_match else None
+            # Consume the entire location suffix. Malformed locations must not
+            # silently become a valid document-only reference.
+            match = re.fullmatch(
+                r"(?P<token>.+?)(?:,\s*p(?:age|\.)\s*(?P<page>\d+))?"
+                r"(?:,\s*chars\s*(?P<start>\d+)\s*-\s*(?P<end>\d+))?",
+                content,
+                re.IGNORECASE,
+            )
+            base_token = match["token"].strip() if match else content
+            page = int(match["page"]) if match and match["page"] else None
+            char_start = int(match["start"]) if match and match["start"] else None
+            char_end = int(match["end"]) if match and match["end"] else None
 
-            span_match = re.search(r",\s*chars\s*(\d+)\s*-\s*(\d+)", content, re.IGNORECASE)
-            char_start = int(span_match.group(1)) if span_match else None
-            char_end = int(span_match.group(2)) if span_match else None
-
-            # Base document or evidence token
-            base_token = re.split(r",\s*p|,\s*chars", content, flags=re.IGNORECASE)[0].strip()
-
-            citations.append({
-                "raw": f"[{content}]",
-                "token": base_token,
-                "page": page,
-                "char_start": char_start,
-                "char_end": char_end,
-            })
+            citations.append(
+                {
+                    "raw": f"[{content}]",
+                    "token": base_token,
+                    "page": page,
+                    "char_start": char_start,
+                    "char_end": char_end,
+                }
+            )
 
         return citations
 
@@ -85,43 +90,50 @@ class CitationValidator:
             token_lower = cite["token"].lower()
             matched_record = None
 
-            # Check evidence_id match
-            if cite["token"] in self._evidence_ids:
-                matched_record = next(r for r in self.records if r.evidence_id == cite["token"])
-
-            # Check document_id match
-            if not matched_record:
-                for r in self.records:
-                    if r.document_id and (token_lower in r.document_id.lower() or r.document_id.lower() in token_lower):
-                        matched_record = r
-                        break
-
-            # Check source_path match
-            if not matched_record:
-                for r in self.records:
-                    if r.source_path and token_lower in r.source_path.lower():
-                        matched_record = r
-                        break
+            # A reference must resolve exactly, including every claimed location.
+            evidence_token = re.sub(r"^evidence:\s*", "", cite["token"], flags=re.I)
+            for record in self.records:
+                identity = (
+                    evidence_token == record.evidence_id
+                    or token_lower == record.document_id.lower()
+                    or token_lower == record.source_path.lower()
+                )
+                page_ok = cite["page"] is None or cite["page"] == record.page_number
+                span_ok = cite["char_start"] is None or (
+                    record.char_start is not None
+                    and record.char_end is not None
+                    and record.char_start
+                    <= cite["char_start"]
+                    < cite["char_end"]
+                    <= record.char_end
+                )
+                if identity and page_ok and span_ok:
+                    matched_record = record
+                    break
 
             if matched_record:
                 # Verify page number if specified
                 page_valid = True
                 if cite["page"] is not None and matched_record.page_number is not None:
-                    page_valid = (cite["page"] == matched_record.page_number)
+                    page_valid = cite["page"] == matched_record.page_number
 
-                verified.append({
-                    "citation": cite["raw"],
-                    "document_id": matched_record.document_id,
-                    "source_path": matched_record.source_path,
-                    "evidence_id": matched_record.evidence_id,
-                    "page_match": page_valid,
-                })
+                verified.append(
+                    {
+                        "citation": cite["raw"],
+                        "document_id": matched_record.document_id,
+                        "source_path": matched_record.source_path,
+                        "evidence_id": matched_record.evidence_id,
+                        "page_match": page_valid,
+                    }
+                )
             else:
-                hallucinated.append({
-                    "citation": cite["raw"],
-                    "unresolved_token": cite["token"],
-                    "reason": "Referenced document or evidence ID not found in retrieved records.",
-                })
+                hallucinated.append(
+                    {
+                        "citation": cite["raw"],
+                        "unresolved_token": cite["token"],
+                        "reason": "Referenced document or evidence ID not found in retrieved records.",
+                    }
+                )
 
         total = len(extracted)
         valid_count = len(verified)

@@ -18,10 +18,14 @@ def route_query(state: AgentState) -> AgentState:
     t0 = time.perf_counter()
     query_lower = state["original_query"].lower()
 
-    if any(k in query_lower for k in ["summarize", "summary", "overview", "all", "explain everything"]):
+    if any(
+        k in query_lower for k in ["summarize", "summary", "overview", "all", "explain everything"]
+    ):
         q_type = "summarization"
         top_k = 8
-    elif any(k in query_lower for k in ["compare", "difference", "vs", "versus", "both", "relationship"]):
+    elif any(
+        k in query_lower for k in ["compare", "difference", "vs", "versus", "both", "relationship"]
+    ):
         q_type = "multi-hop"
         top_k = 6
     else:
@@ -35,12 +39,13 @@ def route_query(state: AgentState) -> AgentState:
     return state
 
 
-def retrieve_context(state: AgentState) -> AgentState:
+def retrieve_context(state: AgentState, rag_service=None) -> AgentState:
     """Execute hybrid retrieval + cross-encoder reranking."""
     t0 = time.perf_counter()
     try:
-        chunks = service.search(query=state["current_query"], top_k=state["top_k"])
-    except Exception:
+        chunks = (rag_service or service).search(query=state["current_query"], top_k=state["top_k"])
+    except Exception as exc:
+        state["error"] = f"Retrieval failed: {exc}"
         chunks = []
 
     state["retrieved_chunks"] = chunks
@@ -48,7 +53,7 @@ def retrieve_context(state: AgentState) -> AgentState:
     return state
 
 
-def grade_sufficiency(state: AgentState) -> AgentState:
+def grade_sufficiency(state: AgentState, llm_client=None) -> AgentState:
     """Use the local LLM to grade if the retrieved context is sufficient."""
     t0 = time.perf_counter()
     chunks = state.get("retrieved_chunks", [])
@@ -61,14 +66,14 @@ def grade_sufficiency(state: AgentState) -> AgentState:
 
     context = "\n\n".join(c["text"] for c in chunks[:3])
     prompt = f"""Assess whether the context contains sufficient facts to answer the question.
-Question: {state['current_query']}
+Question: {state["current_query"]}
 Context:
 {context}
 
 Respond with only one word: SUFFICIENT or INSUFFICIENT."""
 
     try:
-        verdict = llm.generate(state["current_query"], prompt).strip().upper()
+        verdict = (llm_client or llm).generate(state["current_query"], prompt).strip().upper()
         if "INSUFFICIENT" in verdict:
             state["sufficiency"] = "insufficient"
             state["sufficiency_reason"] = "Retrieved chunks do not contain enough facts to answer."
@@ -76,25 +81,25 @@ Respond with only one word: SUFFICIENT or INSUFFICIENT."""
             state["sufficiency"] = "sufficient"
             state["sufficiency_reason"] = "Context contains relevant facts."
     except Exception:
-        # Graceful fallback: assume sufficient if LLM grading fails
-        state["sufficiency"] = "sufficient"
+        state["error"] = "LLM sufficiency grading failed"
+        state["sufficiency"] = "insufficient"
         state["sufficiency_reason"] = "LLM grader bypassed."
 
     state["latencies"]["grade"] = (time.perf_counter() - t0) * 1000
     return state
 
 
-def rewrite_query(state: AgentState) -> AgentState:
+def rewrite_query(state: AgentState, llm_client=None) -> AgentState:
     """Rewrite query to improve semantic retrieval on the next iteration."""
     t0 = time.perf_counter()
     state["rewrite_count"] += 1
 
-    prompt = f"""The previous query "{state['current_query']}" did not retrieve sufficient context to answer: "{state['original_query']}".
+    prompt = f"""The previous query "{state["current_query"]}" did not retrieve sufficient context to answer: "{state["original_query"]}".
 Formulate a better, more specific keyword search query to find the relevant document passages.
 Output ONLY the rewritten query with no explanation."""
 
     try:
-        new_q = llm.generate(state["original_query"], prompt).strip().strip('"')
+        new_q = (llm_client or llm).generate(state["original_query"], prompt).strip().strip('"')
         if new_q and len(new_q) > 3:
             state["current_query"] = new_q
     except Exception:
@@ -105,7 +110,7 @@ Output ONLY the rewritten query with no explanation."""
     return state
 
 
-def generate_answer(state: AgentState) -> AgentState:
+def generate_answer(state: AgentState, llm_client=None) -> AgentState:
     """Synthesize the final answer using retrieved context."""
     t0 = time.perf_counter()
     chunks = state.get("retrieved_chunks", [])
@@ -117,16 +122,23 @@ def generate_answer(state: AgentState) -> AgentState:
         return state
 
     context = "\n\n".join(c["text"] for c in chunks)
+    if llm_client is not None:
+        context = "Cite factual claims using [filename].\n\n" + "\n\n".join(
+            f"[{Path(c['source_path']).name}] {c['text']}" for c in chunks
+        )
     prefix = ""
     if state["sufficiency"] == "insufficient":
         prefix = "[Note: Context may be incomplete despite query reformulation.]\n\n"
 
     try:
-        raw_answer = llm.generate(state["original_query"], context)
+        raw_answer = (llm_client or llm).generate(state["original_query"], context)
         state["answer"] = f"{prefix}{raw_answer}"
     except Exception as e:
+        state["error"] = f"Generation failed: {e}"
         state["answer"] = f"Failed to generate answer: {str(e)}"
 
-    state["sources"] = list(dict.fromkeys(Path(c["source_path"]).name for c in chunks if "source_path" in c))
+    state["sources"] = list(
+        dict.fromkeys(Path(c["source_path"]).name for c in chunks if "source_path" in c)
+    )
     state["latencies"]["generate"] = (time.perf_counter() - t0) * 1000
     return state

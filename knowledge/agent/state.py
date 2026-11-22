@@ -2,11 +2,13 @@
 State definition for the RAGForge LangGraph agent.
 """
 
-from typing import Any, Dict, List, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
 
 
 class AgentState(TypedDict):
     """Execution state passed between nodes in the agentic graph."""
+
+    error: Optional[str]
     original_query: str
     current_query: str
     query_type: str  # "factual", "summarization", "multi-hop"
