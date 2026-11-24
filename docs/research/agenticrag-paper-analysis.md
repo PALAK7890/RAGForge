@@ -19,17 +19,24 @@ is an implementation mapping, not an independently complete paper reproduction.
   return an exact clipped character span. Unavailable offsets cannot be invented.
 - SUMMARIZE is separately callable with provenance references and an approximate
   character-based budget. It is not scheduled or consumed by the default controller.
-- The LangGraph controller follows deterministic heuristics: SEARCH, optionally
+- The default LangGraph controller follows deterministic heuristics: SEARCH, optionally
   FIND in the first discovered document, optionally OPEN, then synthesis. Empty
   search can trigger a relaxed retry. Comparative subquestions are placeholders
-  and are not independently investigated. It is not an LLM-directed planner.
-- Nonempty retrieved evidence is treated as sufficient by a heuristic. This does
+  and are not independently investigated in this mode. The opt-in `--planner model`
+  mode asks the LLM for a validated next action after each tool result. It can
+  reformulate searches, investigate another discovered document, answer, abstain,
+  or ask for clarification. Decisions and errors are retained in `decision_history`.
+  This adds model-directed investigation; it does not reproduce the paper's
+  complete navigation, context management, or experimental protocol.
+- In heuristic mode, nonempty retrieved evidence is treated as sufficient. This does
   not prove relevance, detect contradictory sources, or guarantee abstention on
   unanswerable queries. A step cap is enforced; wall-clock cancellation, per-query
-  token accounting and independent tool-call budgets are not implemented.
+  token accounting are not implemented. Model mode bounds both tool calls and
+  planner calls, gives each planner request a timeout, and stops invalid or repeated
+  actions explicitly. Model judgments about evidence sufficiency can still be wrong.
 - Citation validation checks reference identity and available page/span bounds.
-  It does not verify semantic support for each claim or automatically repair
-  invalid citations. A citation-free response has vacuous integrity of 1.0 and
+  It does not verify semantic support for each claim. Missing or invalid citations
+  trigger one bounded generation correction. A citation-free response has vacuous integrity of 1.0 and
   must not be interpreted as fully grounded.
 - Failed generation retains an extractive fallback and an explicit error. That
   degraded output cannot count as a successful benchmark answer.
@@ -49,5 +56,6 @@ than a verified integrated agentic research experiment.
 
 Filenames remain the public document identifiers; duplicate basenames across
 folders can be ambiguous. Original-source navigation, stable corpus-wide IDs,
-autonomous multi-hop planning and independently reviewed evidence labels remain
-future work. See [evaluation status](experimental-results.md).
+reliable multi-hop planning and independently reviewed evidence labels remain
+future work. The historical benchmark describes heuristic mode; its scores do not
+validate the opt-in planner. See [evaluation status](experimental-results.md).

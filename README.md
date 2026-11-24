@@ -6,8 +6,8 @@ rank fusion, and cross-encoder reranking. A CLI and FastAPI service expose the
 retrieval pipeline and three question-answering workflows.
 
 The repository includes versioned evaluation corpora, raw model outputs, and
-reproduction commands. The AgenticRAG workflow is an experimental heuristic
-controller. Recorded retrieval and citation scores do not establish semantic
+reproduction commands. AgenticRAG supports the existing heuristic controller and
+an experimental model-directed planner. Recorded retrieval and citation scores do not establish semantic
 answer accuracy or production readiness.
 
 ## Architecture
@@ -41,7 +41,7 @@ The three answer workflows share these retrieval components:
 |---|---|---|
 | Standard RAG | `ask` | Retrieves context once and generates an answer. |
 | Self-correcting RAG | `agent-ask` | Uses LLM context grading and bounded query rewriting through LangGraph. |
-| AgenticRAG | `agentic-ask` | Accumulates evidence through heuristic SEARCH, optional FIND, and optional OPEN steps. |
+| AgenticRAG | `agentic-ask` | Accumulates evidence with SEARCH, FIND, and OPEN; choose heuristic or model-directed tool selection. |
 
 AgenticRAG exposes execution traces, evidence provenance, and citation-reference
 checks. Missing or invalid citations trigger at most one generation correction.
@@ -118,6 +118,38 @@ knowledge agentic-ask "What does citation validity measure?" --max-steps 4 --out
 
 The sample corpus contains documentation snapshots. Answers should reflect those
 snapshots; they do not describe the current runtime environment automatically.
+
+### Model-directed investigation
+
+Enable the experimental planner explicitly:
+
+```bash
+knowledge agentic-ask "Why were the original benchmark claims withdrawn?" \
+  --planner model --max-steps 5 --output-json
+```
+
+The model reviews the question, collected evidence, recent tool results, and
+remaining tool budget before choosing SEARCH, FIND, OPEN, ANSWER, ABSTAIN, or
+CLARIFY. It can search a second document for a missing fact, finish without forced
+navigation, or ask a clarification question. JSON output includes `decision_history`
+with each action, its short rationale, timing, and any planning error.
+
+Tool arguments and document identities are validated before execution. Repeated
+actions stop with an explicit error. A run permits at most `max_steps` tool calls
+and `max_steps + 1` planner calls; each planner request has a 120-second timeout.
+Budget exhaustion alone does not establish sufficient evidence. Planning failures
+remain visible and do not silently switch to heuristics.
+
+The default remains `--planner heuristic`, preserving the workflow used by the
+saved benchmark. Model planning adds inference calls and can choose poor actions;
+it does not guarantee correct evidence assessment or answers. It does not add
+full-source navigation or automatic summarization. The API accepts `"planner":
+"model"` on `/v2/agentic-ask`, or `planner=model` on the v2 stream endpoint.
+
+The [live investigation checks](docs/research/model-planner-smoke.md) demonstrate
+a real second-document lookup and record the remaining failures. In the final
+three-question comparison, model planning hit two repeated-action errors while
+the heuristic baseline had none. This mode is not yet a demonstrated quality upgrade.
 
 ## CLI and API reference
 
@@ -242,7 +274,18 @@ OMP_NUM_THREADS=1 python -m knowledge.evaluation.benchmark_v2 \
 ```
 
 Use `--split dev --max-samples 3` for a limited v2 smoke run. Practice runners
-support `--mode standard` and `--mode agentic` for generation. Never index question
+support `--mode standard` and `--mode agentic` for generation. Add `--planner model`
+to agentic practice runs. In benchmark v2, select the separate `agentic_model`
+system to evaluate model planning alongside the existing `agentic` baseline:
+
+```bash
+OMP_NUM_THREADS=1 python -m knowledge.evaluation.benchmark_v2 \
+  --index --split dev --max-samples 3 --systems agentic agentic_model \
+  --output reports/v2-planner-smoke.json
+```
+
+The historical 360-case results above describe the heuristic system only.
+Never index question
 files, reference answers, or review artifacts as source evidence.
 
 `OMP_NUM_THREADS=1` addresses the native-library threading failure observed during
@@ -267,8 +310,8 @@ quality.
 
 Current implementation limits:
 
-- The AgenticRAG controller uses deterministic routing rather than an autonomous
-  planner. Citation correction is bounded and can still leave answers uncited.
+- Heuristic routing remains the default. The opt-in model planner requires its
+  own quality evaluation. Citation correction is bounded and can still leave answers uncited.
 - False refusals, incomplete attribution, and incorrect reasoning remain in saved
   outputs even when the required evidence was retrieved.
 - The legacy CLI indexing path differs from the service path. Service updates
