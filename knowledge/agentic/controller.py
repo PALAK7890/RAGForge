@@ -1,8 +1,8 @@
 """
-AgenticRAG Controller: Multi-step iterative retrieval, navigation, and grounded generation.
-Implements the Agentic Decision-Making Loop from Microsoft's AgenticRAG research paper using LangGraph.
+Agentic retrieval with heuristic or bounded model-directed tool selection.
 """
 
+import json
 import re
 import time
 from typing import Any, Callable, Dict, List, Optional
@@ -13,6 +13,7 @@ from knowledge.agentic.evidence_store import EvidenceStore
 from knowledge.agentic.schemas import (
     FindInput,
     OpenInput,
+    PlannerDecision,
     SearchInput,
     SummarizeInput,
 )
@@ -34,7 +35,11 @@ class AgenticController:
         summarize_tool: Optional[SummarizeTool] = None,
         llm: Optional[OllamaLLM] = None,
         on_tool_event: Optional[Callable[[Dict[str, Any]], None]] = None,
+        planner_mode: str = "heuristic",
     ) -> None:
+        if planner_mode not in {"heuristic", "model"}:
+            raise ValueError("planner_mode must be 'heuristic' or 'model'")
+        self.planner_mode = planner_mode
         self.top_k = 5
         self.on_tool_event = on_tool_event
         self.search_tool = search_tool or SearchTool()
@@ -42,6 +47,129 @@ class AgenticController:
         self.open_tool = open_tool or OpenTool()
         self.llm = llm or OllamaLLM()
         self.summarize_tool = summarize_tool or SummarizeTool(llm=self.llm)
+
+    def _planner_context(self, state: AgenticGraphState) -> str:
+        """Bound the decision prompt while showing new evidence and navigation results."""
+        records = list(state["evidence_store_data"].values())
+        evidence, remaining = [], 10000
+        # Recent discoveries must remain visible even when earlier evidence filled the context.
+        for record in reversed(records):
+            text = record["text"][:min(2000, remaining)]
+            if not text:
+                break
+            evidence.append({
+                key: record.get(key)
+                for key in ("document_id", "source_path", "page_number", "char_start", "char_end")
+            } | {"text": text, "truncated": len(text) < len(record["text"])})
+            remaining -= len(text)
+        history = [
+            {key: item[key] for key in ("tool", "inputs", "results_count", "matches", "error") if key in item}
+            for item in state["tool_history"][-4:]
+        ]
+        return json.dumps({
+            "remaining_tool_calls": state["max_steps"] - state["step"],
+            "recent_tool_results": history,
+            "omitted_evidence_records": len(records) - len(evidence),
+            "evidence": evidence,
+        }, ensure_ascii=False)
+
+    def _model_arguments(self, decision: PlannerDecision, state: AgenticGraphState) -> dict:
+        """Validate model input before it reaches any tool; keep retrieval limits fixed."""
+        action, args = decision.action, decision.arguments
+        allowed = {
+            "search": {"queries"},
+            "find": {"document_id", "expression"},
+            "open": {"document_id", "page", "char_start", "char_end", "chunk_index"},
+            "answer": set(), "abstain": set(), "clarify": {"question"},
+        }
+        if set(args) - allowed[action]:
+            raise ValueError(f"Unexpected arguments for {action}")
+        if action == "search":
+            queries = args.get("queries")
+            if not isinstance(queries, list) or not 1 <= len(queries) <= 3:
+                raise ValueError("SEARCH requires one to three queries")
+            if any(not isinstance(q, str) or not q.strip() or len(q) > 500 for q in queries):
+                raise ValueError("SEARCH queries must be nonempty strings of at most 500 characters")
+            return {"queries": list(dict.fromkeys(q.strip() for q in queries)), "top_k": self.top_k}
+        if action in {"find", "open"}:
+            doc = args.get("document_id")
+            records = list(state["evidence_store_data"].values())
+            matches = [r for r in records if doc and doc in {r.get("document_id"), r.get("source_path")}]
+            if not matches:
+                raise ValueError("Navigation requires an already discovered document ID")
+            if len({r.get("source_path") for r in matches}) > 1:
+                raise ValueError("Ambiguous document ID; use the full source_path")
+            if action == "find":
+                payload = FindInput.model_validate(args, strict=True)
+                if not payload.expression.strip() or len(payload.expression) > 500:
+                    raise ValueError("FIND requires a nonempty literal expression of at most 500 characters")
+                return {"document_id": doc, "expression": payload.expression.strip()}
+            payload = OpenInput.model_validate(args, strict=True)
+            selectors = (payload.page, payload.char_start, payload.char_end, payload.chunk_index)
+            if any(value is not None and value < 0 for value in selectors):
+                raise ValueError("OPEN locations cannot be negative")
+            if payload.char_end is not None and payload.char_end <= (payload.char_start or 0):
+                raise ValueError("OPEN char_end must follow char_start")
+            selector_count = sum((
+                payload.page is not None,
+                payload.chunk_index is not None,
+                payload.char_start is not None or payload.char_end is not None,
+            ))
+            if selector_count > 1:
+                raise ValueError("OPEN must use one location selector")
+            return {key: value for key, value in args.items() if value is not None} | {"max_output_chars": 4000}
+        if action == "clarify":
+            question = args.get("question")
+            if not isinstance(question, str) or not question.strip() or len(question) > 1000:
+                raise ValueError("CLARIFY requires a concise question")
+            return {"question": question.strip()}
+        return args
+
+    def _choose_model_action(self, state: AgenticGraphState) -> AgenticGraphState:
+        t0 = time.perf_counter()
+        history = state.setdefault("decision_history", [])
+        entry = {"decision": len(history) + 1, "after_step": state["step"]}
+        try:
+            decision = PlannerDecision.model_validate(
+                self.llm.plan_action(state["question"], self._planner_context(state))
+            )
+            entry.update(decision.model_dump())
+            args = self._model_arguments(decision, state)
+            state["sufficiency_reason"] = decision.reason
+            state["current_action"] = {}
+            if decision.action in {"search", "find", "open"}:
+                if state["step"] >= state["max_steps"]:
+                    state["sufficiency"] = "insufficient"
+                    state["sufficiency_reason"] = "Tool budget exhausted before the planner established sufficient evidence."
+                else:
+                    signature = json.dumps({"tool": decision.action, "args": args}, sort_keys=True).casefold()
+                    previous = [
+                        json.dumps({"tool": item["tool"].lower(), "args": item["inputs"]}, sort_keys=True).casefold()
+                        for item in state["tool_history"]
+                    ]
+                    if signature in previous:
+                        raise ValueError("Planner repeated an identical tool action")
+                    state["current_action"] = {"tool": decision.action, "args": args}
+                    state["sufficiency"] = "pending"
+            elif decision.action == "answer":
+                if not state["evidence_store_data"]:
+                    raise ValueError("Planner cannot answer without retrieved evidence")
+                state["sufficiency"] = "sufficient"
+            elif decision.action == "abstain":
+                state["sufficiency"] = "unanswerable"
+            else:
+                state["sufficiency"] = "needs_clarification"
+                state["clarification_question"] = args["question"]
+        except Exception as exc:
+            state["error"] = f"Planning failed: {exc}"
+            state["sufficiency"] = "insufficient"
+            state["sufficiency_reason"] = state["error"]
+            state["current_action"] = {}
+            entry["error"] = state["error"]
+        entry["duration_ms"] = (time.perf_counter() - t0) * 1000
+        history.append(entry)
+        state["latencies"][f"planning_{len(history)}"] = entry["duration_ms"]
+        return state
 
     # -------------------------------------------------------------------------
     # Graph Nodes
@@ -51,6 +179,8 @@ class AgenticController:
         """
         Analyze question intent, decompose multi-hop/comparative needs, and initialize retrieval trajectory.
         """
+        if self.planner_mode == "model":
+            return self._choose_model_action(state)
         t0 = time.perf_counter()
         question = state["question"].strip()
         q_lower = question.lower()
@@ -118,6 +248,7 @@ class AgenticController:
                 store.add_many(res.evidence)
                 history_entry["results_count"] = res.total_found
                 history_entry["queries_used"] = res.queries_used
+                history_entry["documents"] = list(dict.fromkeys(r.document_id for r in res.evidence))
 
             elif tool_name == "find":
                 doc_id = args.get("document_id", "")
@@ -139,6 +270,7 @@ class AgenticController:
                         page=page,
                         char_start=char_start,
                         char_end=char_end,
+                        chunk_index=args.get("chunk_index"),
                         max_output_chars=args.get("max_output_chars", 4000),
                     )
                 )
@@ -184,6 +316,12 @@ class AgenticController:
         """
         Evaluate whether collected evidence is sufficient to answer the question, or choose the next navigation step.
         """
+        if self.planner_mode == "model":
+            if state.get("error"):
+                state["sufficiency"] = "insufficient"
+                state["sufficiency_reason"] = state["error"]
+                return state
+            return self._choose_model_action(state)
         t0 = time.perf_counter()
         store = EvidenceStore.from_dict(state["evidence_store_data"])
         evidence_list = store.get_all()
@@ -294,7 +432,7 @@ class AgenticController:
 
     def should_continue(self, state: AgenticGraphState) -> str:
         """Route to synthesis when evidence is sufficient or budget exhausted, else continue loop."""
-        if state.get("sufficiency") in ("sufficient", "unanswerable"):
+        if state.get("sufficiency") in ("sufficient", "unanswerable", "insufficient", "needs_clarification"):
             return "synthesize"
         if state.get("step", 0) >= state.get("max_steps", 5):
             return "synthesize"
@@ -307,6 +445,16 @@ class AgenticController:
         """
         t0 = time.perf_counter()
         store = EvidenceStore.from_dict(state["evidence_store_data"])
+
+        if state.get("sufficiency") == "needs_clarification":
+            state["answer"] = state["clarification_question"]
+            state["abstained"] = False
+            state["citations"] = []
+            state["citation_report"] = {
+                **store.validate_citations(""), "missing_citations": False,
+            }
+            state["latencies"]["synthesize"] = (time.perf_counter() - t0) * 1000
+            return state
 
         # Grounded Abstention Case
         if state.get("sufficiency") == "unanswerable" or len(store) == 0:
@@ -328,7 +476,13 @@ class AgenticController:
         context = store.format_context_for_prompt(max_tokens=3000)
 
         try:
-            raw_gen = self.llm.generate(state["question"], context)
+            question = state["question"]
+            if state.get("sufficiency") == "insufficient":
+                question += (
+                    "\nInvestigation ended before evidence completeness was established. "
+                    "Answer only supported parts, state what remains unknown, and do not guess."
+                )
+            raw_gen = self.llm.generate(question, context)
             raw_answer = str(raw_gen).strip() if raw_gen is not None else ""
             if not raw_answer:
                 raise RuntimeError("LLM returned an empty answer")
@@ -392,7 +546,10 @@ class AgenticController:
         workflow.add_node("synthesize", self.synthesize_answer)
 
         workflow.set_entry_point("plan")
-        workflow.add_edge("plan", "execute_tool")
+        workflow.add_conditional_edges(
+            "plan", self.should_continue,
+            {"continue": "execute_tool", "synthesize": "synthesize"},
+        )
         workflow.add_edge("execute_tool", "evaluate_evidence")
 
         workflow.add_conditional_edges(
@@ -424,6 +581,8 @@ class AgenticController:
             "discovered_docs": [],
             "sub_questions": [],
             "current_action": {},
+            "decision_history": [],
+            "clarification_question": "",
             "sufficiency": "pending",
             "sufficiency_reason": "",
             "answer": "",
@@ -438,6 +597,8 @@ class AgenticController:
         final_state = graph.invoke(initial_state, config={"recursion_limit": max_steps * 3 + 5})
 
         return {
+            "planner_mode": self.planner_mode,
+            "decision_history": final_state.get("decision_history", []),
             "error": final_state.get("error"),
             "question": question,
             "answer": final_state["answer"],

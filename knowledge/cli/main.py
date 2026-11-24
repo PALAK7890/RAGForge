@@ -5,6 +5,7 @@ Main entrypoint for the KnowledgeOS CLI.
 import json
 import os
 import time
+from enum import Enum
 from pathlib import Path
 
 import typer
@@ -36,6 +37,11 @@ llm = OllamaLLM()
 bm25 = BM25Retriever()
 reranker = CrossEncoderReranker()
 expander = QueryExpander()
+
+
+class PlannerMode(str, Enum):
+    heuristic = "heuristic"
+    model = "model"
 
 @app.callback()
 def callback() -> None:
@@ -699,17 +705,20 @@ def agentic_ask_cmd(
     show_trace: bool = typer.Option(False, "--show-trace", "-t", help="Display granular tool execution trace table"),
     output_json: bool = typer.Option(False, "--output-json", "-j", help="Output raw response and citations as JSON"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed step messages"),
+    planner: PlannerMode = typer.Option(PlannerMode.heuristic, "--planner", help="Tool selection: existing heuristics or model-directed investigation"),
 ) -> None:
-    """Answer questions using Microsoft AgenticRAG multi-tool navigation (SEARCH, FIND, OPEN, SUMMARIZE)."""
+    """Investigate documents using heuristic or model-directed SEARCH, FIND, and OPEN."""
     import json as _json
+
     from rich.table import Table
+
     from knowledge.agentic.controller import AgenticController
 
     if not output_json:
         console.print(f"\n[bold cyan]AgenticRAG Query:[/bold cyan] {question}")
         console.print(f"[dim]Executing AgenticRAG controller (max_steps={max_steps})...[/dim]\n")
 
-    controller = AgenticController()
+    controller = AgenticController(planner_mode=planner.value)
     result = controller.run(question, max_steps=max_steps)
 
     if output_json:

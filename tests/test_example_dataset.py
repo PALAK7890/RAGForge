@@ -47,3 +47,35 @@ def test_example_index_rejects_user_workspace_before_mutating_it(tmp_path, monke
     with pytest.raises(ValueError, match="fresh workspace"):
         run_examples(index=True, root=EXAMPLES.parent / "project_docs")
     service.index_documents.assert_not_called()
+
+
+@pytest.mark.parametrize("planner", ["heuristic", "model"])
+def test_example_runner_selects_and_records_agent_planner(tmp_path, monkeypatch, planner):
+    service = MagicMock(chunks_path=tmp_path / "chunks.json")
+    service.chunks_path.write_text(json.dumps({
+        "chunks": [{"source_path": str(p)} for p in (EXAMPLES / "corpus").glob("*.md")]
+    }))
+    question = load_examples()[0]
+    controller = MagicMock()
+    controller.run.return_value = {
+        "answer": "example answer", "discovered_docs": question["expected_documents"],
+        "planner_mode": planner, "decision_history": [{"tool": "SEARCH"}],
+    }
+    factory = MagicMock(return_value=controller)
+    monkeypatch.setattr("knowledge.evaluation.examples.RAGService", lambda _: service)
+    monkeypatch.setattr("knowledge.evaluation.examples.AgenticController", factory)
+    result = run_examples(mode="agentic", max_samples=1, planner=planner)
+    assert factory.call_args.kwargs["planner_mode"] == planner
+    assert factory.call_args.kwargs["llm"] is service.llm
+    assert result["planner"] == planner
+    assert result["records"][0]["output"]["decision_history"] == [{"tool": "SEARCH"}]
+    controller.run.assert_called_once_with(question["question"])
+
+
+@pytest.mark.parametrize("mode, planner", [("retrieval", "model"), ("standard", "model"), ("agentic", "unknown")])
+def test_example_runner_rejects_inapplicable_planner_before_indexing(monkeypatch, mode, planner):
+    service = MagicMock()
+    monkeypatch.setattr("knowledge.evaluation.examples.RAGService", service)
+    with pytest.raises(ValueError, match="planner"):
+        run_examples(mode=mode, planner=planner, index=True)
+    service.assert_not_called()

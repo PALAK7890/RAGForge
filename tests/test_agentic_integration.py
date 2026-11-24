@@ -162,7 +162,8 @@ def test_llm_failure_resilience(multi_doc_fixture):
     assert len(result["citations"]) > 0
 
 
-def test_cli_agentic_ask_json_output(monkeypatch):
+@pytest.mark.parametrize("planner", ["heuristic", "model"])
+def test_cli_agentic_ask_json_output(monkeypatch, planner):
     """Test CLI agentic-ask command with --output-json flag."""
     from knowledge.agentic.controller import AgenticController
 
@@ -182,10 +183,14 @@ def test_cli_agentic_ask_json_output(monkeypatch):
         "latencies": {},
         "evidence_count": 2,
     })
-    monkeypatch.setattr(AgenticController, "run", mock_run)
+    def run(self, *args, **kwargs):
+        assert self.planner_mode == planner
+        return mock_run(*args, **kwargs)
+
+    monkeypatch.setattr(AgenticController, "run", run)
 
     runner = CliRunner()
-    result = runner.invoke(app, ["agentic-ask", "What is RAGForge?", "--output-json", "--max-steps", "3"])
+    result = runner.invoke(app, ["agentic-ask", "What is RAGForge?", "--output-json", "--max-steps", "3", "--planner", planner])
     assert result.exit_code == 0
     parsed = json.loads(result.stdout)
     assert parsed["question"] == "What is RAGForge?"

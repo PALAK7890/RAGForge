@@ -127,7 +127,8 @@ def test_agent_stream_endpoint() -> None:
     assert "sufficiency" in answer_event
 
 
-def test_agentic_ask_v2_endpoint(monkeypatch) -> None:
+@pytest.mark.parametrize("planner", [None, "model"])
+def test_agentic_ask_v2_endpoint(monkeypatch, planner) -> None:
     """Verify /v2/agentic-ask endpoint processes queries and returns structured AgenticAskResponse."""
     from unittest.mock import MagicMock
 
@@ -157,12 +158,21 @@ def test_agentic_ask_v2_endpoint(monkeypatch) -> None:
             "citation_report": {"total_cited": 1, "verified_count": 1, "citation_integrity": 1.0},
             "latencies": {"total": 45.0},
             "evidence_count": 2,
+            "decision_history": [{"tool": "SEARCH", "reason": "Locate project facts"}],
         }
     )
-    monkeypatch.setattr(AgenticController, "run", mock_run)
 
+    def run(self, question, max_steps=5):
+        assert self.planner_mode == (planner or "heuristic")
+        return mock_run(question, max_steps=max_steps)
+
+    monkeypatch.setattr(AgenticController, "run", run)
+
+    payload = {"question": "What is RAGForge?", "max_steps": 4}
+    if planner:
+        payload["planner"] = planner
     response = client.post(
-        "/v2/agentic-ask", json={"question": "What is RAGForge?", "max_steps": 4}
+        "/v2/agentic-ask", json=payload
     )
     assert response.status_code == 200
     data = response.json()
@@ -172,9 +182,13 @@ def test_agentic_ask_v2_endpoint(monkeypatch) -> None:
     assert len(data["citations"]) == 1
     assert data["citations"][0]["document_id"] == "readme.md"
     assert data["citation_report"]["citation_integrity"] == 1.0
+    assert data["planner_mode"] == (planner or "heuristic")
+    assert data["decision_history"][0]["tool"] == "SEARCH"
+    mock_run.assert_called_once_with("What is RAGForge?", max_steps=4)
 
 
-def test_agentic_stream_v2_endpoint(monkeypatch) -> None:
+@pytest.mark.parametrize("planner", [None, "model"])
+def test_agentic_stream_v2_endpoint(monkeypatch, planner) -> None:
     """Verify /v2/agentic-stream/{query} yields SSE events including start, tool_executed, and complete."""
     import json as _json
     from unittest.mock import MagicMock
@@ -199,6 +213,7 @@ def test_agentic_stream_v2_endpoint(monkeypatch) -> None:
     monkeypatch.setattr(AgenticController, "run", mock_run)
 
     def stream_run(self, question, max_steps=5):
+        assert self.planner_mode == (planner or "heuristic")
         result = mock_run(question, max_steps=max_steps)
         for record in result["tool_history"]:
             self.on_tool_event(record)
@@ -206,7 +221,10 @@ def test_agentic_stream_v2_endpoint(monkeypatch) -> None:
 
     monkeypatch.setattr(AgenticController, "run", stream_run)
     raw_lines: list[str] = []
-    with client.stream("GET", "/v2/agentic-stream/What%20is%20RAGForge?max_steps=3") as response:
+    params = {"max_steps": 3}
+    if planner:
+        params["planner"] = planner
+    with client.stream("GET", "/v2/agentic-stream/What%20is%20RAGForge", params=params) as response:
         assert response.status_code == 200
         assert "event-stream" in response.headers.get("content-type", "")
         for line in response.iter_lines():
@@ -219,3 +237,14 @@ def test_agentic_stream_v2_endpoint(monkeypatch) -> None:
     assert "start" in event_types
     assert "tool_executed" in event_types
     assert "complete" in event_types
+    assert events[0]["planner_mode"] == (planner or "heuristic")
+    assert next(e for e in events if e["event"] == "complete")["planner_mode"] == (planner or "heuristic")
+
+
+def test_agentic_endpoints_reject_unknown_planner():
+    response = client.post(
+        "/v2/agentic-ask", json={"question": "test", "planner": "unknown"}
+    )
+    assert response.status_code == 422
+    response = client.get("/v2/agentic-stream/test", params={"planner": "unknown"})
+    assert response.status_code == 422

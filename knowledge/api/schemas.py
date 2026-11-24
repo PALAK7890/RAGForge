@@ -2,7 +2,7 @@
 Pydantic schemas for the RAGForge REST API.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -95,6 +95,9 @@ class AgenticAskRequest(BaseModel):
 
     question: str = Field(description="User question to resolve through agentic navigation")
     max_steps: int = Field(default=5, ge=1, le=15, description="Maximum agent retrieval steps")
+    planner: Literal["heuristic", "model"] = Field(
+        default="heuristic", description="Tool-selection strategy"
+    )
 
 
 class AgenticCitation(BaseModel):
@@ -126,6 +129,8 @@ class AgenticAskResponse(BaseModel):
     latencies: Dict[str, float]
     evidence_count: int
     error: Optional[str] = None
+    planner_mode: Literal["heuristic", "model"] = "heuristic"
+    decision_history: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class StatsResponse(BaseModel):

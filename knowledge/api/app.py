@@ -3,7 +3,7 @@ FastAPI application for RAGForge.
 """
 
 import asyncio
-from typing import Any, Dict, Iterator
+from typing import Any, Dict, Iterator, Literal
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -331,7 +331,7 @@ async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
     try:
         from knowledge.agentic.controller import AgenticController
 
-        controller = AgenticController()
+        controller = AgenticController(planner_mode=payload.planner)
         # Non-blocking execution
         result = await asyncio.to_thread(
             controller.run, payload.question, max_steps=payload.max_steps
@@ -365,6 +365,8 @@ async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
             latencies=result["latencies"],
             evidence_count=result["evidence_count"],
             error=result.get("error"),
+            planner_mode=result.get("planner_mode", payload.planner),
+            decision_history=result.get("decision_history", []),
         )
     except Exception as e:
         raise HTTPException(
@@ -376,6 +378,7 @@ async def agentic_ask_v2(payload: AgenticAskRequest) -> AgenticAskResponse:
 async def agentic_stream_v2(
     query: str,
     max_steps: int = Query(default=5, ge=1, le=15, description="Maximum agent retrieval steps"),
+    planner: Literal["heuristic", "model"] = Query(default="heuristic"),
 ) -> StreamingResponse:
     """
     Stream granular AgenticRAG tool execution events and final answer via Server-Sent Events (SSE).
@@ -399,7 +402,7 @@ async def agentic_stream_v2(
             }
             loop.call_soon_threadsafe(events.put_nowait, event)
 
-        controller = AgenticController(on_tool_event=publish)
+        controller = AgenticController(on_tool_event=publish, planner_mode=planner)
 
         async def execute():
             try:
@@ -412,6 +415,8 @@ async def agentic_stream_v2(
                         "evidence_count": result.get("evidence_count"),
                         "answer": result.get("answer"),
                         "error": result.get("error"),
+                        "planner_mode": result.get("planner_mode", planner),
+                        "decision_history": result.get("decision_history", []),
                         "citations": result.get("citations", [])[:5],
                         "citation_integrity": result.get("citation_report", {}).get(
                             "citation_integrity"
@@ -425,7 +430,7 @@ async def agentic_stream_v2(
 
         yield (
             "data: "
-            + _json.dumps({"event": "start", "query": query, "max_steps": max_steps})
+            + _json.dumps({"event": "start", "query": query, "max_steps": max_steps, "planner_mode": planner})
             + "\n\n"
         )
         task = asyncio.create_task(execute())

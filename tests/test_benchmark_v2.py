@@ -183,7 +183,8 @@ def test_authored_snapshot_regenerates_byte_for_byte(tmp_path):
         assert (tmp_path / "corpus" / source.name).read_bytes() == source.read_bytes()
 
 
-def test_all_three_adapters_share_corpus_model_and_depth(tmp_path, monkeypatch):
+@pytest.mark.parametrize("use_model_planner", [False, True])
+def test_adapters_share_corpus_model_and_depth(tmp_path, monkeypatch, use_model_planner):
     data = load_benchmark()
     q = data["questions"][0]
     p = data["passages"][q["evidence_groups"][0][0]]
@@ -227,16 +228,66 @@ def test_all_three_adapters_share_corpus_model_and_depth(tmp_path, monkeypatch):
     )
     legacy = MagicMock(return_value={"answer": "Reference answer", "retrieved_chunks": [chunk]})
     monkeypatch.setattr("knowledge.evaluation.benchmark_v2.run_agent_workflow", legacy)
-    controller = MagicMock()
-    controller.run.return_value = {"answer": "Reference answer", "evidence_records": [chunk]}
-    factory = MagicMock(return_value=controller)
+    controllers = {}
+
+    def create_controller(**kwargs):
+        controller = MagicMock()
+        mode = kwargs["planner_mode"]
+        controllers[mode] = controller
+        controller.run.return_value = {
+            "answer": "Reference answer", "evidence_records": [chunk], "planner_mode": mode,
+        }
+        return controller
+
+    factory = MagicMock(side_effect=create_controller)
     monkeypatch.setattr("knowledge.evaluation.benchmark_v2.AgenticController", factory)
-    result = run(systems=("standard", "self_correcting", "agentic"), k=3, max_samples=1)
-    assert len(result["records"]) == 3
+    systems = ("standard", "self_correcting", "agentic")
+    if use_model_planner:
+        systems += ("agentic_model",)
+    result = run(systems=systems, k=3, max_samples=1)
+    assert len(result["records"]) == len(systems)
     assert result["status"] == "complete"
     assert legacy.call_args.kwargs["service"] is shared
     assert legacy.call_args.kwargs["llm"] is mock_llm
     assert legacy.call_args.kwargs["top_k"] == 3
-    assert factory.call_args.kwargs["search_tool"].service is shared
-    assert controller.top_k == 3
+    for call in factory.call_args_list:
+        assert call.kwargs["search_tool"].service is shared
+        assert call.kwargs["llm"] is mock_llm
+        assert call.kwargs["find_tool"].chunks_path == shared.chunks_path
+        assert call.kwargs["open_tool"].chunks_path == shared.chunks_path
+    assert set(controllers) == ({"heuristic", "model"} if use_model_planner else {"heuristic"})
+    for controller in controllers.values():
+        assert controller.top_k == 3
+        controller.run.assert_called_once_with(q["question"], max_steps=5)
+    for row in result["records"]:
+        if row["system"] in {"agentic", "agentic_model"}:
+            assert row["output"]["planner_mode"] == (
+                "model" if row["system"] == "agentic_model" else "heuristic"
+            )
     assert all(row["metrics"]["passage_recall_at_k"] == 1 for row in result["records"])
+
+
+def test_benchmark_planner_and_generation_share_recorded_options(monkeypatch):
+    from knowledge.evaluation.benchmark_v2 import GENERATION_OPTIONS, BenchmarkLLM
+
+    client = MagicMock()
+    decision = {"action": "search", "arguments": {"queries": ["target fact"]}, "reason": "Locate the missing fact"}
+    client.chat.return_value = {"message": {"content": json.dumps(decision)}}
+    factory = MagicMock(return_value=client)
+    monkeypatch.setattr("ollama.Client", factory)
+    llm = BenchmarkLLM("selected-model")
+    assert llm.plan_action("question", "planner state") == decision
+    request = client.chat.call_args.kwargs
+    assert request["model"] == "selected-model"
+    assert request["options"] == GENERATION_OPTIONS
+    assert request["format"]["oneOf"][0]["type"] == "object"
+    assert "action" in request["format"]["oneOf"][0]["properties"]
+    assert "timeout" not in request
+    factory.assert_called_with(timeout=120)
+
+    client.chat.return_value = {"message": {"content": "answer"}}
+    assert llm.generate("question", "context") == "answer"
+    request = client.chat.call_args.kwargs
+    assert request["messages"] == [{"role": "user", "content": llm._build_prompt("question", "context")}]
+    assert request["options"] == GENERATION_OPTIONS
+    assert "format" not in request

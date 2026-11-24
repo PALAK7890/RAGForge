@@ -17,6 +17,8 @@ class AgenticGraphState(TypedDict):
     discovered_docs: List[str]
     sub_questions: List[str]
     current_action: Dict[str, Any]
+    decision_history: List[Dict[str, Any]]
+    clarification_question: str
     sufficiency: str  # "pending", "sufficient", "insufficient", "unanswerable"
     sufficiency_reason: str
     answer: str

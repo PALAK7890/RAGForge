@@ -44,7 +44,14 @@ def run_examples(
     top_k=5,
     index=False,
     root=EXAMPLES,
+    planner="heuristic",
 ):
+    if mode not in {"retrieval", "standard", "agentic"}:
+        raise ValueError("Unsupported mode")
+    if planner not in {"heuristic", "model"}:
+        raise ValueError("Unsupported planner")
+    if planner != "heuristic" and mode != "agentic":
+        raise ValueError("A model planner requires --mode agentic")
     root = Path(root)
     questions = load_examples(root)
     service = RAGService(workspace)
@@ -70,13 +77,12 @@ def run_examples(
         if max_samples < 1:
             raise ValueError("max_samples must be positive")
         selected = selected[:max_samples]
-    if mode not in {"retrieval", "standard", "agentic"}:
-        raise ValueError("Unsupported mode")
     controller = AgenticController(
         search_tool=SearchTool(service),
         find_tool=FindTool(str(service.chunks_path)),
         open_tool=OpenTool(str(service.chunks_path)),
         llm=service.llm,
+        planner_mode=planner,
     )
     controller.top_k = top_k
     records = []
@@ -114,6 +120,7 @@ def run_examples(
         records.append(row)
     return {
         "mode": mode,
+        "planner": planner if mode == "agentic" else None,
         "split": split,
         "top_k": top_k,
         "records": records,
@@ -131,6 +138,7 @@ def main():
     parser.add_argument("--workspace", default=".knowledge/examples")
     parser.add_argument("--examples", type=Path, default=EXAMPLES, help="Directory containing questions.json and corpus/")
     parser.add_argument("--mode", choices=["retrieval", "standard", "agentic"], default="retrieval")
+    parser.add_argument("--planner", choices=["heuristic", "model"], default="heuristic")
     parser.add_argument("--split", choices=["dev", "held_out"])
     parser.add_argument("--max-samples", type=int)
     parser.add_argument("--top-k", type=int, choices=range(1, 51), default=5)
@@ -138,7 +146,8 @@ def main():
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     result = run_examples(
-        args.workspace, args.mode, args.split, args.max_samples, args.top_k, args.index, args.examples
+        args.workspace, args.mode, args.split, args.max_samples, args.top_k, args.index, args.examples,
+        planner=args.planner,
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

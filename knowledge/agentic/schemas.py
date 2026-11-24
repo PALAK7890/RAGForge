@@ -3,10 +3,47 @@ Pydantic data schemas for AgenticRAG tools, evidence records, and results.
 """
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class PlannerDecision(BaseModel):
+    """A bounded retrieval action, or an explicit decision to stop investigating."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    action: Literal["search", "find", "open", "answer", "abstain", "clarify"]
+    reason: str = Field(min_length=1, max_length=1000)
+    arguments: Dict[str, Any] = Field(default_factory=dict)
+
+    @classmethod
+    def response_schema(cls) -> dict:
+        """Constrain each action's required arguments during model decoding too."""
+        text = {"type": "string", "minLength": 1, "maxLength": 500}
+        location = {"type": "integer", "minimum": 0}
+        arguments = {
+            "search": ({"queries": {"type": "array", "items": text, "minItems": 1, "maxItems": 3}}, ["queries"]),
+            "find": ({"document_id": text, "expression": text}, ["document_id", "expression"]),
+            "open": ({"document_id": text, **{key: location for key in ("page", "char_start", "char_end", "chunk_index")}}, ["document_id"]),
+            "answer": ({}, []),
+            "abstain": ({}, []),
+            "clarify": ({"question": {**text, "maxLength": 1000}}, ["question"]),
+        }
+        return {"oneOf": [
+            {
+                "type": "object", "additionalProperties": False,
+                "required": ["action", "reason", "arguments"],
+                "properties": {
+                    "action": {"const": action},
+                    "reason": {"type": "string", "minLength": 1, "maxLength": 1000},
+                    "arguments": {"type": "object", "properties": properties,
+                                  "required": required, "additionalProperties": False},
+                },
+            }
+            for action, (properties, required) in arguments.items()
+        ]}
 
 
 class EvidenceRecord(BaseModel):

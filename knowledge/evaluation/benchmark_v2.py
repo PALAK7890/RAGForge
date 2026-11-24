@@ -202,15 +202,25 @@ GENERATION_OPTIONS = {"temperature": 0, "seed": 17, "num_ctx": 8192, "num_predic
 
 
 class BenchmarkLLM(OllamaLLM):
-    """One bounded, explicit generation configuration shared by all three systems."""
+    """One bounded configuration for generation and planning across all systems."""
 
-    def generate(self, question, context):
+    def _chat(self, *, messages, **kwargs):
         import ollama
 
-        response = ollama.Client(timeout=120).chat(
+        # Planning supplies its own defaults; every benchmark call must instead
+        # use the options recorded in this run's metadata.
+        kwargs.pop("options", None)
+        kwargs.pop("timeout", None)
+        return ollama.Client(timeout=120).chat(
             model=self.model,
-            messages=[{"role": "user", "content": self._build_prompt(question, context)}],
+            messages=messages,
             options=GENERATION_OPTIONS,
+            **kwargs,
+        )
+
+    def generate(self, question, context):
+        response = self._chat(
+            messages=[{"role": "user", "content": self._build_prompt(question, context)}],
         )
         answer = str(response["message"]["content"]).strip()
         if not answer:
@@ -301,7 +311,7 @@ def run(
 ):
     if split not in {"dev", "held_out", "all"} or not 1 <= k <= 50:
         raise ValueError("Invalid split or retrieval depth")
-    if not systems or set(systems) - {"retrieval", "standard", "self_correcting", "agentic"}:
+    if not systems or set(systems) - {"retrieval", "standard", "self_correcting", "agentic", "agentic_model"}:
         raise ValueError("Unknown system")
     if len(set(systems)) != len(systems):
         raise ValueError("Systems must not be repeated")
@@ -368,13 +378,18 @@ def run(
         raise ValueError("FAISS and chunk counts disagree; use a fresh workspace")
     # Warm the same embedding and reranker once outside measured query latency.
     service.search("benchmark warmup", top_k=k)
-    controller = AgenticController(
-        search_tool=SearchTool(service),
-        find_tool=FindTool(str(service.chunks_path)),
-        open_tool=OpenTool(str(service.chunks_path)),
-        llm=service.llm,
-    )
-    controller.top_k = k
+    controllers = {}
+    for system in systems:
+        if system in {"agentic", "agentic_model"}:
+            controller = AgenticController(
+                search_tool=SearchTool(service),
+                find_tool=FindTool(str(service.chunks_path)),
+                open_tool=OpenTool(str(service.chunks_path)),
+                llm=service.llm,
+                planner_mode="model" if system == "agentic_model" else "heuristic",
+            )
+            controller.top_k = k
+            controllers[system] = controller
     for q in selected:
         for system in systems:
             row = dict(
@@ -406,7 +421,7 @@ def run(
                     )
                     chunks = output["retrieved_chunks"]
                 else:
-                    output = controller.run(q["question"], max_steps=max_steps)
+                    output = controllers[system].run(q["question"], max_steps=max_steps)
                     chunks = output["evidence_records"]
                 row["error"] = output.get("error")
             except Exception as exc:
@@ -491,7 +506,7 @@ def main():
     parser.add_argument(
         "--systems",
         nargs="+",
-        choices=["retrieval", "standard", "self_correcting", "agentic"],
+        choices=["retrieval", "standard", "self_correcting", "agentic", "agentic_model"],
         default=["retrieval"],
     )
     parser.add_argument("--workspace", default=".knowledge/benchmark-v2")
